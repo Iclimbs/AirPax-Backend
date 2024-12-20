@@ -523,8 +523,29 @@ userRouter.get("/register/google", async (req, res) => {
         if (!user) {
             user = new UserModel({ name, email, picture, accounttype: "user", verified: { email: true } });
             const userDetails = await user.save()
-            const id = userDetails._id;            
-            let token = jwt.sign({_id:id.toHexString(), name: user.name, email: user.email, exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) }, "Authentication")
+            const id = userDetails._id;
+            let token = jwt.sign({ _id: id.toHexString(), name: user.name, email: user.email, exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) }, "Authentication")
+            return res.json({ status: "success", message: "Registration Successful", token: token, type: "user" })
+        } else {
+            let token = jwt.sign({ _id: user._id, name: user.name, email: user.email, exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) }, "Authentication")
+            return res.json({ status: "success", message: "Login Successful", token: token, type: "user" })
+        }
+    } catch (error) {
+        return res.json({ status: "error", message: `Error Found in User Registration ${error}` })
+    }
+})
+
+// Register With Google In App 
+
+userRouter.post("/register/google/app", async (req, res) => {
+    const { name, email, picture } = req.body
+    try {
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            user = new UserModel({ name, email, picture, accounttype: "user", verified: { email: true } });
+            const userDetails = await user.save()
+            const id = userDetails._id;
+            let token = jwt.sign({ _id: id.toHexString(), name: user.name, email: user.email, exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) }, "Authentication")
             return res.json({ status: "success", message: "Registration Successful", token: token, type: "user" })
         } else {
             let token = jwt.sign({ _id: user._id, name: user.name, email: user.email, exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) }, "Authentication")
