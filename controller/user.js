@@ -8,6 +8,7 @@ const { RegistrationAuthentication } = require('../middleware/Registration');
 const { UserAuthentication } = require('../middleware/Authentication');
 const { AdminAuthentication } = require('../middleware/Authorization');
 const { transporter } = require('../service/transporter');
+const { ObjectId } = require('mongodb');
 const userRouter = express.Router()
 const ejs = require("ejs")
 const path = require('node:path');
@@ -46,7 +47,7 @@ userRouter.post("/login", async (req, res) => {
                     }, "Authentication")
                     res.json({ status: "success", message: "Login Successful", token: token, type: "user" })
                 } else {
-                    res.json({ status: "error", message: "You cannot login using Admin Credentials !!"})
+                    res.json({ status: "error", message: "You cannot login using Admin Credentials !!" })
                 }
             } else if (hash.sha256(password) !== userExists[0].password) {
                 res.json({ status: "error", message: "Wrong Password Please Try Again" })
@@ -519,16 +520,15 @@ userRouter.get("/register/google", async (req, res) => {
         const result = await googleresponse.json()
         const { email, name, picture } = result;
         let user = await UserModel.findOne({ email });
-        console.log("USer google login ", user);
-
         if (!user) {
-            user = new UserModel({ name, email, picture, verified: { email: true } });
-            await user.save()
-            let token = jwt.sign({ name: user.name, email: user.email, exp: Math.floor(Date.now() / 1000) + (60 * 60) }, "Authentication")
-            return res.json({ status: "success", message: "Registration Successful", token: token })
+            user = new UserModel({ name, email, picture, accounttype: "user", verified: { email: true } });
+            const userDetails = await user.save()
+            const id = userDetails._id;            
+            let token = jwt.sign({_id:id.toHexString(), name: user.name, email: user.email, exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) }, "Authentication")
+            return res.json({ status: "success", message: "Registration Successful", token: token, type: "user" })
         } else {
-            let token = jwt.sign({ name: user.name, email: user.email, exp: Math.floor(Date.now() / 1000) + (60 * 60) }, "Authentication")
-            return res.json({ status: "success", message: "Login Successful", token: token })
+            let token = jwt.sign({ _id: user._id, name: user.name, email: user.email, exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) }, "Authentication")
+            return res.json({ status: "success", message: "Login Successful", token: token, type: "user" })
         }
     } catch (error) {
         return res.json({ status: "error", message: `Error Found in User Registration ${error}` })
