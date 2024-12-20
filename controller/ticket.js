@@ -445,6 +445,7 @@ TicketRouter.post("/otp/generate", async (req, res) => {
 
 TicketRouter.post("/cancel/guest", async (req, res) => {
     const { pnr, tripId, seatNumbers, bookingId, reasonForCancellation, otp } = req.body
+
     let seatsbooked = [];
     let emails = [];
     let hasAllSeats = true;
@@ -457,7 +458,7 @@ TicketRouter.post("/cancel/guest", async (req, res) => {
     } else {
         return res.json({ status: "error", message: "OTP Not Verified" })
     }
-    
+
     for (let index = 0; index < seatsbooked.length; index++) {
         if (seatNumbers.includes(seatsbooked[index]) === false) {
             hasAllSeats = false
