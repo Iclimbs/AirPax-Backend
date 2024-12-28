@@ -35,6 +35,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
     const { tripId, bookingRefId, pnr, cancelticket } = req.body;
     // Basic Detail's Requirements
     let ticketcost = 0;
+    let totalamount = 0;
     let cancelticketno = cancelticket.length;
     let journeytime = '';
     const currentDateTime = new Date();
@@ -60,14 +61,32 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
 
     // Changing Seat Status in Seat Model     
     const seatdetails = await SeatModel.find({ pnr: pnr, tripId: tripId })
+    if (seatdetails.length == 0) {
+        return res.json({ status: "error", message: "No Seat Detail's Found Related to this Pnr" })
+    }
+
+    const tripdetails = await TripModel.find({ _id: ticketdetails[0].tripId })
+    if (tripdetails.length == 0) {
+        return res.json({ status: "error", message: "No Trip Detail's Found Related to this Pnr" })
+    }
+
+    journeytime = new Date(`${tripdetails[0].journeystartdate}T${tripdetails[0].starttime}:00`)
+
 
     let bulkwriteseat = []
     for (let index = 0; index < seatdetails.length; index++) {
         if (cancelticket.includes(seatdetails[index].seatNumber) && (seatdetails[index].tripId === tripId) && (seatdetails[index].pnr === pnr)) {
+            totalamount += seatdetails[index].details.amount;
             bulkwriteseat.push({
                 updateOne: {
                     filter: { pnr: pnr, seatNumber: seatdetails[index].seatNumber, tripId: seatdetails[index].tripId },         // condition to match first document
-                    update: { $set: { "details.status": "Refunded" } }
+                    update: {
+                        $set: {
+                            "details.status": "Refunded",
+                            "details.refundAmount": RefundAmountCalculator({ amount: seatdetails[index].details.amount, currentDateTime, journeytime }),
+                            "details.cancellationReason": "Cancelled By User From GMR Website"
+                        }
+                    }
                 }
             })
         }
@@ -80,10 +99,8 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
     }
 
     // Getting Trip Details Like JourNey Data & Ticket Cost
-    const tripdetails = await TripModel.find({ _id: ticketdetails[0].tripId })
     ticketcost = tripdetails[0].price;
     let bookedseats = tripdetails[0].seatsbooked;
-    journeytime = new Date(`${tripdetails[0].journeystartdate}T${tripdetails[0].starttime}:00`)
     let newseats = bookedseats.filter(seat => !cancelticket.includes(seat));
 
     tripdetails[0].seatsbooked = newseats;
@@ -98,23 +115,16 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
 
     // Getting Payment Details of the Pnr To Change detail's like staus & refund amount 
     const paymentdetails = await PaymentModel.find({ pnr: pnr })
-    if (paymentdetails[0].paymentstatus.pending == true || paymentdetails[0].paymentstatus.failure == true) {
+    if (paymentdetails[0].paymentstatus === "Failed") {
         return res.json({ status: "error", message: "Ticket Cancellation Process Failed !! Payment is Not Confirmed For This Pnr" })
     } else {
-        let refundamount = 0;
-        const timeDifferenceMs = journeytime - currentDateTime
-        const timeDifferenceHours = timeDifferenceMs / (1000 * 60 * 60);
-
-        if (timeDifferenceHours > 48) {
-
-            refundamount = Math.floor((ticketcost * cancelticketno) * 0.9)
-        } else if (timeDifferenceHours > 24) {
-            refundamount = Math.floor((ticketcost * cancelticketno) * 0.5)
-        }
+        let refundamount = RefundAmountCalculator({ amount: totalamount, currentDateTime, journeytime })
+        let cancellationReason = paymentdetails[0]?.refundreason;
+        cancellationReason.push("Cancelled By User From GMR Website")
         try {
-            paymentdetails[0].refundamount = refundamount;
-            paymentdetails[0].paymentstatus.complete = false;
-            paymentdetails[0].paymentstatus.refund = true;
+            paymentdetails[0].refundamount = paymentdetails[0]?.refundamount + refundamount;
+            paymentdetails[0].paymentstatus = "Refunded";
+            paymentdetails[0].refundreason = cancellationReason
             await paymentdetails[0].save()
         } catch (error) {
             res.json({ status: "error", message: "Failed To Save Refund Amount For this Pnr " })
