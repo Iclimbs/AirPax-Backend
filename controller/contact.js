@@ -24,7 +24,7 @@ ContactRouter.post("/", async (req, res) => {
         } else {
             const mailOptions = {
                 from: process.env.emailuser,
-                to: `uttamkr5599@gmail.com`,
+                to: process.env.contactuser,
                 subject: `Received New Contact Message From ${fname} ${lname}`,
                 html: template
             }
