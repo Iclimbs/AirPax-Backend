@@ -22,7 +22,7 @@ vehicleRouter.patch("/edit/:id", async (req, res) => {
     try {
         const vehicle = await VehicleModel.findByIdAndUpdate({ _id: id }, req.body)
         await vehicle.save()
-        res.json({ status: "success", message: " vehicle Details Successfully Updated !!" })
+        res.json({ status: "success", message: "Vehicle Details Successfully Updated !!" })
     } catch (error) {
         res.json({ status: "error", message: "Failed To Update  vehicle  Details" })
     }
@@ -36,23 +36,23 @@ vehicleRouter.patch("/disable/:id", async (req, res) => {
         const vehicle = await VehicleModel.findById({ _id: id })
         vehicle.active = !vehicle.active;
         await vehicle.save()
-        res.json({ status: "success", message: "Vehicle Condition Updated Successfully !!" })
+        res.json({ status: "success", message: "Vehicle Availability Status Updated Successfully !!" })
     } catch (error) {
-        res.json({ status: "error", message: "Failed To Update Vehicle Condition Details" })
+        res.json({ status: "error", message: "Failed To Update Vehicle Availability Status" })
     }
 })
 
 
 vehicleRouter.get("/listall", async (req, res) => {
     try {
-        const vehicleList = await VehicleModel.find({ assigned: null })
-        if (vehicleList) {
+        const vehicleList = await VehicleModel.find()
+        if (vehicleList.length !== 0) {
             res.json({ status: "success", data: vehicleList })
         } else {
             res.json({ status: "error", message: "No Bus is Available Right Now !" })
         }
     } catch (error) {
-        res.json({ status: "error", message: error.message })
+        res.json({ status: "error", message:`Failed To Fetch Details Of Each Vehicle error:-${error.message}`  })
     }
 })
 
@@ -60,9 +60,13 @@ vehicleRouter.get("/listall", async (req, res) => {
 vehicleRouter.get("/search/:name", async (req, res) => {
     try {
         const vehicleList = await VehicleModel.find({ name: req.params.name })
-        res.json({ status: "success", data: vehicleList })
+        if (vehicleList.length !== 0) {
+            res.json({ status: "success", data: vehicleList })
+        } else {
+            res.json({ status: "error", message: "No Vehicle Found With This Partiucarl Name" })
+        }
     } catch (error) {
-        res.json({ status: "error", message: error.message })
+        res.json({ status: "error", message:`Failed To Fetch Detail Of A Particular Vehicle error:- ${error.message}` })
     }
 })
 
