@@ -2,34 +2,26 @@ require("dotenv").config();
 const express = require("express");
 const { FeaturedBlogModel } = require("../model/featuredblog.model");
 const BlogRouter = express.Router();
-const multer = require("multer");
-const path = require("node:path");
 const { PopularBlogModel } = require("../model/popularblog.model");
 const { ActivityCardBlogModel } = require("../model/activitycardblog.model");
 const { ActivityBlogModel } = require("../model/activityblog.model");
-const uploadPath = path.join(__dirname, "../public/");
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadPath);
-    },
-    filename: function (req, file, cb) {
-        let uniqueSuffix = Date.now();
-        cb(null, uniqueSuffix + file.originalname);
-    },
-});
-
-const upload = multer({ storage: storage });
+const { uploadMiddleWare } = require("../middleware/FileUpload")
 
 // Popular Blog Routes
 
-BlogRouter.post("/popularblog/add", upload.single("img"), async (req, res) => {
+BlogRouter.post("/popularblog/add", uploadMiddleWare.single("img"), async (req, res) => {
     const { title, place } = req.body;
-    const fileName = req.file.filename;
+    if (!req?.file) {
+        return res.json({
+            status: "error",
+            message: `Please Upload Image`,
+        });
+    }
     try {
         const newpopularblog = new PopularBlogModel({
             title,
             place,
-            img: fileName,
+            img: req?.file?.location,
         });
         await newpopularblog.save();
         res.json({ status: "success", message: "New Popular Blog Added !!" });
@@ -41,32 +33,28 @@ BlogRouter.post("/popularblog/add", upload.single("img"), async (req, res) => {
     }
 });
 
-BlogRouter.patch(
-    "/popularblog/edit/:id",
-    upload.single("img"),
-    async (req, res) => {
-        const { id } = req.params;
-        const { title, place } = req.body;
-        const fileName = req.file.filename;
-
-        try {
-            const popularblog = await PopularBlogModel.find(
-                { _id: id });
-            popularblog[0].title = title,
-                popularblog[0].place = place
-            popularblog[0].img = fileName
-            await popularblog[0].save();
-            res.json({
-                status: "success",
-                message: "Popular Blog Details Successfully Updated !!",
-            });
-        } catch (error) {
-            res.json({
-                status: "error",
-                message: `Failed To Update Popular Blog Item Details ${error.message}`,
-            });
+BlogRouter.patch("/popularblog/edit/:id", uploadMiddleWare.single("img"), async (req, res) => {
+    const { id } = req.params;
+    const { title, place } = req.body;
+    try {
+        const popularblog = await PopularBlogModel.find({ _id: id });
+        popularblog[0].title = title,
+            popularblog[0].place = place
+        if (req.file) {
+            popularblog[0].img = req.file.location
         }
+        await popularblog[0].save();
+        res.json({
+            status: "success",
+            message: "Popular Blog Details Successfully Updated !!",
+        });
+    } catch (error) {
+        res.json({
+            status: "error",
+            message: `Failed To Update Popular Blog Item Details ${error.message}`,
+        });
     }
+}
 );
 
 BlogRouter.patch("/popularblog/disable/:id", async (req, res) => {
@@ -127,40 +115,41 @@ BlogRouter.get("/popularblog/listall/active", async (req, res) => {
 
 // Activity Card Blog Routes
 
-BlogRouter.post(
-    "/activitycardblog/add",
-    upload.single("img"),
-    async (req, res) => {
-        const { title, activity } = req.body;
-        const fileName = req.file.filename;
-        try {
-            const newactivitycardblog = new ActivityCardBlogModel({
-                title,
-                img: fileName,
-                activity,
-            });
-            await newactivitycardblog.save();
-            res.json({ status: "success", message: "New Activity Blog Added !!" });
-        } catch (error) {
-            res.json({
-                status: "error",
-                message: `Failed To Add New Activity Blog ${error.message}`,
-            });
-        }
+BlogRouter.post("/activitycardblog/add", uploadMiddleWare.single("img"), async (req, res) => {
+    const { title, activity } = req.body;
+    if (!req?.file) {
+        return res.json({
+            status: "error",
+            message: `Please Upload Image`,
+        });
     }
+    try {
+        const newactivitycardblog = new ActivityCardBlogModel({
+            title,
+            img: req.file.location,
+            activity,
+        });
+        await newactivitycardblog.save();
+        res.json({ status: "success", message: "New Activity Blog Added !!" });
+    } catch (error) {
+        res.json({
+            status: "error",
+            message: `Failed To Add New Activity Blog ${error.message}`,
+        });
+    }
+}
 );
 
-BlogRouter.patch("/activitycardblog/edit/:id", upload.single("img"), async (req, res) => {
+BlogRouter.patch("/activitycardblog/edit/:id", uploadMiddleWare.single("img"), async (req, res) => {
     const { id } = req.params;
     const { title, activity } = req.body;
-    const fileName = req.file.filename;
-
     try {
-        const activitycardblog = await ActivityCardBlogModel.find(
-            { _id: id });
+        const activitycardblog = await ActivityCardBlogModel.find({ _id: id });
         activitycardblog[0].title = title
         activitycardblog[0].activity = activity
-        activitycardblog[0].img = fileName
+        if (req.file) {
+            activitycardblog[0].img = req.file.location
+        }
 
         await activitycardblog[0].save();
         res.json({
@@ -231,13 +220,18 @@ BlogRouter.get("/activitycardblog/listall/active", async (req, res) => {
 
 // Activity Blog Routes
 
-BlogRouter.post("/activity/add", upload.single("img"), async (req, res) => {
+BlogRouter.post("/activity/add", uploadMiddleWare.single("img"), async (req, res) => {
     const { title, tour } = req.body;
-    const fileName = req.file.filename;
+    if (!req?.file) {
+        return res.json({
+            status: "error",
+            message: `Please Upload Image`,
+        });
+    }
     try {
         const newactivityblog = new ActivityBlogModel({
             title,
-            img: fileName,
+            img: req.file?.location,
             tour,
         });
         await newactivityblog.save();
@@ -250,16 +244,17 @@ BlogRouter.post("/activity/add", upload.single("img"), async (req, res) => {
     }
 });
 
-BlogRouter.patch("/activity/edit/:id", upload.single("img"), async (req, res) => {
+BlogRouter.patch("/activity/edit/:id", uploadMiddleWare.single("img"), async (req, res) => {
     const { id } = req.params;
     const { title, tour } = req.body;
-    const fileName = req.file.filename;
 
     try {
         const activityblog = await ActivityBlogModel.find({ _id: id });
         activityblog[0].title = title;
         activityblog[0].tour = tour
-        activityblog[0].img = fileName
+        if (req.file) {
+            activityblog[0].img = req.file.location
+        }
         await activityblog[0].save();
         res.json({
             status: "success",
@@ -332,11 +327,16 @@ BlogRouter.get("/activity/listall/active", async (req, res) => {
 
 // Feature Blog Routes
 
-BlogRouter.post("/featuredblog/add", upload.single("img"), async (req, res) => {
+BlogRouter.post("/featuredblog/add", uploadMiddleWare.single("img"), async (req, res) => {
     const { title } = req.body;
-    const fileName = req.file.filename;
+    if (!req?.file) {
+        return res.json({
+            status: "error",
+            message: `Please Upload Image`,
+        });
+    }
     try {
-        const newfeaturedblog = new FeaturedBlogModel({ title, img: fileName });
+        const newfeaturedblog = new FeaturedBlogModel({ title, img: req.file?.location });
         await newfeaturedblog.save();
         res.json({ status: "success", message: "New Featured Blog Added !!" });
     } catch (error) {
@@ -347,15 +347,16 @@ BlogRouter.post("/featuredblog/add", upload.single("img"), async (req, res) => {
     }
 });
 
-BlogRouter.patch("/featuredblog/edit/:id", upload.single("img"), async (req, res) => {
+BlogRouter.patch("/featuredblog/edit/:id", uploadMiddleWare.single("img"), async (req, res) => {
     const { id } = req.params;
     const { title } = req.body;
-    const fileName = req.file.filename;
 
     try {
         const featuredList = await FeaturedBlogModel.find({ _id: id });
         featuredList[0].title = title
-        featuredList[0].img = fileName
+        if (req.file) {
+            featuredList[0].img = req.file.location
+        }
         await featuredList[0].save();
         res.json({
             status: "success",
