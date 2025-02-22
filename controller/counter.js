@@ -21,7 +21,7 @@ CounterRouter.patch("/edit/:id", async (req, res) => {
         await counter.save()
         res.json({ status: "success", message: "Counter Details Successfully Updated !!" })
     } catch (error) {
-        res.json({ status: "error", message: "Failed To Update Counter  Details" })
+        res.json({ status: "error", message: "Failed To Update Counter Details" })
     }
 })
 
@@ -33,9 +33,9 @@ CounterRouter.patch("/disable/:id", async (req, res) => {
         counter.status.enabled = !counter.status.enabled;
         counter.status.disabled = !counter.status.disabled;
         await counter.save()
-        res.json({ status: "success", message: "Counter Details Successfully Updated !!" })
+        res.json({ status: "success", message: `Counter Status Successfully Updated !!` })
     } catch (error) {
-        res.json({ status: "error", message: "Failed To Update Counter  Details" })
+        res.json({ status: "error", message: "Failed To Update Counter Status" })
     }
 })
 
@@ -43,21 +43,31 @@ CounterRouter.patch("/disable/:id", async (req, res) => {
 CounterRouter.get("/listall", async (req, res) => {
     try {
         const counterList = await CounterModel.find()
-        res.json({ status: "success", data: counterList })
+        if (counterList.length === 0) {
+            res.json({ status: "error", message: `No Counter Found` })
 
+        } else {
+            res.json({ status: "success", data: counterList })
+
+        }
     } catch (error) {
-        res.json({ status: "error", message: error.message })
+        res.json({ status: "error", message: `Failed To Get Listall Of All Counters error:- ${error.message}` })
     }
 })
 
 
 CounterRouter.get("/search/:name", async (req, res) => {
     try {
-        const counterList = await CounterModel.find({name:req.params.name})        
-        res.json({ status: "success", data: counterList })
+        const counterList = await CounterModel.find({ name: req.params.name })
+        if (counterList.length === 0) {
+            res.json({ status: "error", message: `No Counter Found` })
 
+        } else {
+            res.json({ status: "success", data: counterList })
+
+        }
     } catch (error) {
-        res.json({ status: "error", message: error.message })
+        res.json({ status: "error", message: `No Counter Found  With That Particular Name error :-  error.message` })
     }
 })
 
