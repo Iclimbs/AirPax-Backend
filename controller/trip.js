@@ -64,9 +64,26 @@ tripRouter.patch("/edit/:id", async (req, res) => {
 })
 
 tripRouter.get("/listall", async (req, res) => {
+    const { page, limit } = req.query;
     try {
-        const trips = await TripModel.find({}).sort({ journeystartdate: -1 }).limit(25)
-        res.json({ status: "success", data: trips })
+        const skip = (page - 1) * limit;
+
+        // Fetch paginated documents
+        const trips = await TripModel.find()
+            .sort({ journeystartdate: -1 })
+            .skip(skip)
+            .limit(limit)
+            .exec();
+
+        // Get the total number of documents in the collection
+        const totalDocuments = await TripModel.countDocuments();
+
+        // Calculate the total number of pages
+        const totalPages = Math.ceil(totalDocuments / limit);
+
+        // const trips = await TripModel.find({}).sort({ journeystartdate: -1 }).limit(25)    
+
+        res.json({ status: "success", data: trips, totalPages: totalPages })
     } catch (error) {
         res.json({ status: "error", message: "Get List Failed" })
     }

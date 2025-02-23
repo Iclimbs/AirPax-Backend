@@ -145,7 +145,6 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
                 }
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
-                        console.log(error);
                         return res.json({ status: "error", message: 'Failed to send email', redirect: "/" });
                     } else {
                         return res.json({ status: "success", message: 'Please Check Your Email', redirect: "/" });

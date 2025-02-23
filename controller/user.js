@@ -80,9 +80,7 @@ userRouter.post("/login/admin", async (req, res) => {
         }
         if (userExists.length === 0) {
             return res.json({ status: "error", message: "No Admin User Exists Please Contact Your Developer" })
-        } else {
-            console.log(userExists[0]);
-            
+        } else {            
             if (userExists[0].accounttype !== "admin" && userExists[0].accounttype !== "conductor" && userExists[0].accounttype !== "driver" && userExists[0].accounttype !== "hr") {
                 res.json({ status: "error", message: "Please Leave This Site You Don't Have Required Access" })
             } else if (hash.sha256(password) === userExists[0].password) {
@@ -654,8 +652,6 @@ userRouter.post("/admin/update/password/:id", AdminAuthentication, async (req, r
     }
 })
 
-
-
 userRouter.patch("/admin/disable/:id", AdminAuthentication, async (req, res) => {
     const { id } = req.params
     try {
@@ -664,7 +660,6 @@ userRouter.patch("/admin/disable/:id", AdminAuthentication, async (req, res) => 
         await user.save()
         res.json({ status: "success", message: "Admin User Status Successfully Updated !!" })
     } catch (error) {
-        console.log("error ", error.message);
         res.json({ status: "error", message: "Failed To Update Admin User Status" })
     }
 })
