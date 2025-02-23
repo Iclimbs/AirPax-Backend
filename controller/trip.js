@@ -5,6 +5,8 @@ const { SeatModel } = require("../model/seat.model");
 const { AdminAuthentication } = require("../middleware/Authorization");
 const { VehicleModel } = require("../model/vehicle.model");
 const tripRouter = express.Router()
+const { DateTime } = require('luxon')
+
 
 
 function timeToMinutes(timeStr) {
@@ -90,21 +92,34 @@ tripRouter.get("/listall", async (req, res) => {
 })
 
 tripRouter.get("/list", async (req, res) => {
+
     const { from, to, date } = req.query
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    // Getting Current Date & Time Using Luxon Library
+
+    const currentDate = DateTime.now().setZone('Asia/Kolkata');
+
+    // Format the current date to 'YYYY-MM-DD'
+    const todayDate = currentDate.toFormat('yyyy-MM-dd');
+    // Format the current time to 'HH:MM'
+    const currenttime = currentDate.toFormat('HH:mm');
+
+    // const now = new Date();
+    // const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
     try {
         const trips = await TripModel.find({ from: from, to: to, journeystartdate: date })
-        const dateObj = new Date();
+
+        // const dateObj = new Date();
         // Creating Date
-        const month = (dateObj.getUTCMonth() + 1) < 10 ? String(dateObj.getUTCMonth() + 1).padStart(2, '0') : dateObj.getUTCMonth() + 1 // months from 1-12
-        const day = dateObj.getUTCDate() < 10 ? String(dateObj.getUTCDate()).padStart(2, '0') : dateObj.getUTCDate()
-        const year = dateObj.getUTCFullYear();
-        const newDate = year + "-" + month + "-" + day;
+        // const month = (dateObj.getUTCMonth() + 1) < 10 ? String(dateObj.getUTCMonth() + 1).padStart(2, '0') : dateObj.getUTCMonth() + 1 // months from 1-12
+        // const day = dateObj.getUTCDate() < 10 ? String(dateObj.getUTCDate()).padStart(2, '0') : dateObj.getUTCDate()
+        // const year = dateObj.getUTCFullYear();
+        // const newDate = year + "-" + month + "-" + day;
 
         // Checking For Current Date If The Current Date & Date passed in Query is Same Return The list of trips based on timing or return all trip list.
-        if (newDate == date) {
-            const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > currentMinutes);
+        if (todayDate == date) {
+            // const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > currentMinutes);
+            const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > timeToMinutes(currenttime));
             if (upcomingEvents.length >= 1) {
                 res.json({ status: "success", data: upcomingEvents })
             } else {
