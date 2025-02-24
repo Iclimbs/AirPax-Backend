@@ -75,7 +75,7 @@ userRouter.post("/login/admin", async (req, res) => {
     try {
         const { phoneno, password } = req.body
         const userExists = await UserModel.find({ phoneno })
-        if (userExists[0].disabled === "true") {
+        if (userExists[0].disabled === true) {
             res.json({ status: "error", message: "Your Account has been Temporarily disabled" })
         }
         if (userExists.length === 0) {
