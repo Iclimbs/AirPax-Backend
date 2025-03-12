@@ -81,7 +81,7 @@ userRouter.post("/login/admin", async (req, res) => {
         if (userExists.length === 0) {
             return res.json({ status: "error", message: "No Admin User Exists Please Contact Your Developer" })
         } else {            
-            if (userExists[0].accounttype !== "admin" && userExists[0].accounttype !== "conductor" && userExists[0].accounttype !== "driver" && userExists[0].accounttype !== "hr") {
+            if (userExists[0].accounttype !== "admin" && userExists[0].accounttype !== "Mt's" && userExists[0].accounttype !== "supervisor" && userExists[0].accounttype !== "hr") {
                 res.json({ status: "error", message: "Please Leave This Site You Don't Have Required Access" })
             } else if (hash.sha256(password) === userExists[0].password) {
                 let token = jwt.sign({
@@ -560,8 +560,8 @@ userRouter.post("/register/google/app", async (req, res) => {
 
 
 // Create Additional Admin User's 
-// Routes to Create Driver & Conductor
-// Create Conductor & Driver Account's
+// Routes to Create supervisor & Mt's
+// Create Mt's & supervisor Account's
 
 userRouter.post("/create/admin", AdminAuthentication, async (req, res) => {
     const { name, age, gender, phoneno, password, accounttype } = req.body
@@ -595,7 +595,7 @@ userRouter.post("/create/admin", AdminAuthentication, async (req, res) => {
 userRouter.get("/admin/listall", AdminAuthentication, async (req, res) => {
     try {
         const user = await UserModel.find({
-            accounttype: { $in: ["conductor", "driver", "hr"] }
+            accounttype: { $in: ["supervisor", "Mt's","hr"] }
         })
         res.json({ status: "success", data: user })
     } catch (error) {
@@ -606,7 +606,7 @@ userRouter.get("/admin/listall", AdminAuthentication, async (req, res) => {
 userRouter.get("/admin/listall/driver", async (req, res) => {
     try {
         const user = await UserModel.find({
-            accounttype: "driver"
+            accounttype: "supervisor"
         }, { password: 0, CreatedAt: 0 })
         res.json({ status: "success", data: user })
     } catch (error) {
@@ -617,7 +617,7 @@ userRouter.get("/admin/listall/driver", async (req, res) => {
 userRouter.get("/admin/listall/conductor", async (req, res) => {
     try {
         const user = await UserModel.find({
-            accounttype: "conductor"
+            accounttype: "Mt's"
         }, { password: 0, CreatedAt: 0 })
         res.json({ status: "success", data: user })
     } catch (error) {

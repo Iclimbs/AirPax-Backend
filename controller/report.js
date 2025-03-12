@@ -33,7 +33,7 @@ ReportRouter.get("/today", async (req, res) => {
         {
             color: "gray",
             icon: "ChartBarIcon",
-            title: "Today's Registration Number's",
+            title: "Today's Ticket Bookings",
             value: "",
         },
         {
