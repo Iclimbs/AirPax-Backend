@@ -81,7 +81,7 @@ userRouter.post("/login/admin", async (req, res) => {
         if (userExists.length === 0) {
             return res.json({ status: "error", message: "No Admin User Exists Please Contact Your Developer" })
         } else {            
-            if (userExists[0].accounttype !== "admin" && userExists[0].accounttype !== "Mt's" && userExists[0].accounttype !== "supervisor" && userExists[0].accounttype !== "hr") {
+            if (userExists[0].accounttype !== "admin" && userExists[0].accounttype !== "Mt's" && userExists[0].accounttype !== "supervisor" && userExists[0].accounttype !== "hr" && userExists[0].accounttype !== "agra-lounge") {
                 res.json({ status: "error", message: "Please Leave This Site You Don't Have Required Access" })
             } else if (hash.sha256(password) === userExists[0].password) {
                 let token = jwt.sign({

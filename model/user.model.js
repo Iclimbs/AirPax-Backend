@@ -46,7 +46,7 @@ const userschema = mongoose.Schema({
   },
   accounttype: {
     type: String,
-    enum: ["user", "admin", "supervisor", "Mt's","hr"], 
+    enum: ["user", "admin", "supervisor", "Mt's","hr","agra-lounge"], 
     default: "user"
   },
   disabled: {
