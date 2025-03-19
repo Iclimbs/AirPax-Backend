@@ -4,9 +4,13 @@ const { FoodModel } = require("../model/food.model")
 const FoodRouter = express.Router()
 
 FoodRouter.post("/add", async (req, res) => {
-    const { name, price } = req.body;
+    const { name, price, availableAt } = req.body;
     try {
-        const newfood = new FoodModel({ name, price })
+        if (!name) return res.send({ status: "error", message: "Name required!" })
+        if (!price) return res.send({ status: "error", message: "Price required!" })
+        if (!availableAt) return res.send({ status: "error", message: "availableAt field required!" })
+
+        const newfood = new FoodModel({ name, price, availableAt })
         await newfood.save()
         res.json({ status: "success", message: "New Food Item Added !!" })
     } catch (error) {
@@ -50,7 +54,7 @@ FoodRouter.get("/listall", async (req, res) => {
 
 FoodRouter.get("/listall/active", async (req, res) => {
     try {
-        const foodList = await FoodModel.find({ available: true },{available:0,CreatedAt:0})
+        const foodList = await FoodModel.find({ available: true }, { available: 0, CreatedAt: 0 })
         if (foodList.length >= 1) {
             res.json({ status: "success", data: foodList })
         } else {
@@ -60,4 +64,5 @@ FoodRouter.get("/listall/active", async (req, res) => {
         res.json({ status: "error", message: error.message })
     }
 })
+
 module.exports = { FoodRouter }

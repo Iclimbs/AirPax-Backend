@@ -13,6 +13,12 @@ const foodschema = mongoose.Schema({
         default: true,
 
     },
+    availableAt: {
+        type: String,
+        enum: ["In Bus", "Agra lounge"],
+        default: "In Bus",
+        required: true
+    },
     CreatedAt: { type: Date, default: Date.now },
 });
 const FoodModel = mongoose.model("Food", foodschema);
