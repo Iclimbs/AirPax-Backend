@@ -40,11 +40,57 @@ AgraLounge.post("/create-order", async (req, res) => {
 
 AgraLounge.get("/get-all-orders", async (req, res) => {
     try {
-        const allOrders = await agraLoungeFoodOrders.find({}).sort({ createdAt: -1 })
+        const { payment } = req.query
+        const pipeline = []
+        if (payment) {
+
+            if (payment !== "online" && payment !== "cash") return res.json({ message: "Invalid payment filter!", status: "error" })
+        }
+
+        pipeline.push({
+            $match: {}
+        })
+        if (payment) {
+            pipeline.push({
+                $match: {
+                    paymentMethod: { $regex: payment, "$options": "i" }
+                }
+            })
+        }
+
+        const allOrders = await agraLoungeFoodOrders.aggregate(
+            pipeline
+        )
         res.send(allOrders)
     } catch (error) {
         res.json({ status: "error", message: error })
     }
 })
+
+AgraLounge.get("/get-today-orders", async (req, res) => {
+    try {
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0); // Set time to midnight
+
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999); // Set time to end of the day
+
+        const allOrders = await agraLoungeFoodOrders.aggregate([
+            {
+                $match: {
+                    createdAt: {
+                        $gte: startOfDay,
+                        $lte: endOfDay
+                    }
+                }
+            }
+        ]);
+
+        res.send({ orders: allOrders, totalOrders: allOrders.length });
+    } catch (error) {
+        res.json({ status: "error", message: error.message });
+    }
+});
+
 
 module.exports = { AgraLounge }
