@@ -1,6 +1,7 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
 const { SuperviorReport, FoodAllocation } = require("../model/SupervisorReport.model");
+const { TripModel } = require("../model/trip.model");
 const SupervisorRouter = express.Router();
 
 
@@ -50,7 +51,7 @@ SupervisorRouter.post("/submit-report", async (req, res) => {
 
 SupervisorRouter.get("/get-all-reports", async (req, res) => {
     try {
-        const allReports = await SuperviorReport.find({})
+        const allReports = await SuperviorReport.find({}).populate("trip", "name")
 
         res.send(allReports)
     } catch (error) {
@@ -87,6 +88,18 @@ SupervisorRouter.post("/allocate-food", async (req, res) => {
         res.send({ status: "success", message: "Food Allocated Successfully!" })
     } catch (error) {
         res.send({ status: "error", message: error?.message || "Something went wrong while food allocation!" })
+    }
+})
+
+SupervisorRouter.get("/get-trip-food-info", async (req, res) => {
+    try {
+        const { tripId } = req.query
+        if (!tripId) return res.send({ status: "error", message: "Trip Id required!" })
+        if (!mongoose.isValidObjectId(tripId)) return res.send({ status: "error", message: "Invalid Trip Id!" })
+        const data = await FoodAllocation.findOne({ trip: tripId }).populate("trip", "name")
+        res.send({ status: "success", data })
+    } catch (error) {
+        return res.send({ status: "error", message: "Something went wrong while fetching trip food info" })
     }
 })
 

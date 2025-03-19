@@ -9,7 +9,11 @@ FoodRouter.post("/add", async (req, res) => {
         if (!name) return res.send({ status: "error", message: "Name required!" })
         if (!price) return res.send({ status: "error", message: "Price required!" })
         if (!availableAt) return res.send({ status: "error", message: "availableAt field required!" })
-
+        //         if (availableAt) {
+        //             if (availableAt !== "In Bus" && availableAt !== "Agra lounge"){
+        //                 return res.send({status:"error",message:"You can pass "})
+        //             }
+        // }
         const newfood = new FoodModel({ name, price, availableAt })
         await newfood.save()
         res.json({ status: "success", message: "New Food Item Added !!" })
