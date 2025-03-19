@@ -12,6 +12,7 @@ const { PaymentGateway } = require("../controller/paymentgateway");
 const { PnrRouter } = require("../controller/pnr");
 const { ReportRouter } = require("../controller/report");
 const { SeatRouter } = require("../controller/seat");
+const { SupervisorRouter } = require("../controller/SupervisorReport");
 const { TicketRouter } = require("../controller/ticket");
 const { tripRouter } = require("../controller/trip");
 const { userRouter } = require("../controller/user");
@@ -39,6 +40,7 @@ router
     .use("/foodbooking", FoodBookingRouter)
     .use("/contact", ContactRouter)
     .use("/agraLounge", AgraLounge)
+    .use("/supervisor", SupervisorRouter)
 
 
 module.exports = router;

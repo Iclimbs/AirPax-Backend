@@ -4,7 +4,7 @@ const AdminAuthentication = (req, res, next) => {
         try {
             const token = req.headers.authorization.split(" ")[1]
             const decoded = jwt.verify(token, 'Authorization')
-            if (decoded.accounttype === "admin" || decoded.accounttype === "conductor" || decoded.accounttype === "driver" || decoded.accounttype === "hr") {
+            if (decoded.accounttype === "admin" || decoded.accounttype === "Mt's" || decoded.accounttype === "supervisor" || decoded.accounttype === "hr") {
                 next()
             } else {
                 res.json({ status: "error", message: "Admin Permission's Not Found In Your Account", redirect: "/" })
