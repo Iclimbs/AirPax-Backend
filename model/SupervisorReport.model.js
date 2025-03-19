@@ -45,4 +45,25 @@ const SuperviorReportSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 const SuperviorReport = mongoose.model("SuperviorReport", SuperviorReportSchema)
-module.exports = { SuperviorReport }
+
+const foodAllocateDetails = new mongoose.Schema({
+    foodName: {
+        type: String,
+        required: true
+    },
+    quantity: {
+        type: Number,
+        required: true
+    }
+})
+const FoodAllocationSchema = new mongoose.Schema({
+    trip: {
+        type: mongoose.Types.ObjectId,
+        ref: "Trips",
+        required: true
+    },
+    foodUnit: [foodAllocateDetails],
+}, { timestamps: true })
+const FoodAllocation = mongoose.model("FoodAllocation", FoodAllocationSchema)
+
+module.exports = { SuperviorReport, FoodAllocation }

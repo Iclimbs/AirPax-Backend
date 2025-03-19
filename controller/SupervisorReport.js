@@ -1,6 +1,6 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
-const { SuperviorReport } = require("../model/SupervisorReport.model");
+const { SuperviorReport, FoodAllocation } = require("../model/SupervisorReport.model");
 const SupervisorRouter = express.Router();
 
 
@@ -58,6 +58,36 @@ SupervisorRouter.get("/get-all-reports", async (req, res) => {
     }
 })
 
+SupervisorRouter.post("/allocate-food", async (req, res) => {
+    try {
+        const { trip, foodDetails } = req?.body
 
+        if (!trip) return res.send({ status: "error", message: "Trip Name Required!" })
+        if (!mongoose.isValidObjectId(trip)) return res.send({ status: "error", message: "Invalid Trip Id!" })
+        if (!Array.isArray(foodDetails)) return res.send({ status: "error", message: "Food details Should be an Array!" })
+
+
+        const allFoods = []
+
+        if (foodDetails.length > 0) {
+            for (const element of foodDetails) {
+                if (!element.foodName) continue
+                if (!element.quantity) continue
+                allFoods.push({
+                    foodName: element.foodName,
+                    quantity: Number(element.quantity)
+                })
+            }
+        }
+
+
+        const creatingFoodAllocation = await FoodAllocation.create({
+            trip, foodUnit: allFoods.length > 0 ? allFoods : []
+        })
+        res.send({ status: "success", message: "Food Allocated Successfully!" })
+    } catch (error) {
+        res.send({ status: "error", message: error?.message || "Something went wrong while food allocation!" })
+    }
+})
 
 module.exports = { SupervisorRouter }
