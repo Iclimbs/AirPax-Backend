@@ -17,3 +17,5 @@ const vehicleFeatures = mongoose.Schema({
 });
 const vehicleFeaturesModel = mongoose.model("VehicleFeatures", vehicleFeatures)
 module.exports = { vehicleFeaturesModel };
+
+///vehicle model
