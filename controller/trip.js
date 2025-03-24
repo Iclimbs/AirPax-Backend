@@ -26,9 +26,7 @@ tripRouter.post("/add", async (req, res) => {
     }
 })
 
-tripRouter.post("/add/bulk", async (req, res) => {
-    console.log("req.body",req.body);
-    
+tripRouter.post("/add/bulk", async (req, res) => {    
     const { name, from, to, busid, journeystartdate, journeyenddate, starttime, endtime, distance, totaltime, price, totalseats } = req.body;
     // Bulk Data Which Will be Stored in Data Base
     const data = [];
