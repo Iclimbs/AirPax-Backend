@@ -28,8 +28,6 @@ AgraLounge.post("/create-order", async (req, res) => {
             allItems.push({ itemsId: i.itemsId, quantity: i.quantity, pricePerItem: Number(findingItem.price) })
             totalAmount += Number(i.quantity * findingItem.price)
         }
-
-        console.log(totalAmount);
         const newfood = new agraLoungeFoodOrders({ items: allItems, totalAmount: totalAmount, phoneNumber, paymentMethod })
         await newfood.save()
         return res.json({ status: "success", message: "New Food Item Added !!" })

@@ -89,6 +89,33 @@ SupervisorRouter.post("/allocate-food", async (req, res) => {
     }
 })
 
+
+SupervisorRouter.patch("/allocate-food/update/:id", async (req, res) => {
+
+    try {
+        const { trip, foodDetails } = req?.body
+
+        if (!trip) return res.json({ status: "error", message: "Trip Name Required!" })
+        if (!mongoose.isValidObjectId(trip)) return res.json({ status: "error", message: "Invalid Trip Id!" })
+        if (!Array.isArray(foodDetails)) return res.json({ status: "error", message: "Food details Should be an Array!" })
+
+        const result = await FoodAllocation.updateOne(
+            {
+                trip: new mongoose.Types.ObjectId(trip)
+            },
+            {
+                foodUnit: foodDetails
+            },
+            { new: true }
+        );
+        console.log("result ", result);
+
+        return res.json({ status: "success", message: "Food Allocated Successfully!" })
+    } catch (error) {
+        return res.json({ status: "error", message: error?.message || "Something went wrong while food allocation!" })
+    }
+})
+
 SupervisorRouter.get("/get-trip-food-info", async (req, res) => {
     try {
         const { tripId } = req.query

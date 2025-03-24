@@ -1,6 +1,8 @@
 require('dotenv').config()
 const express = require("express")
 const { FoodModel } = require("../model/food.model")
+const { default: mongoose } = require('mongoose')
+const { FoodAllocation } = require('../model/SupervisorReport.model')
 const FoodRouter = express.Router()
 
 FoodRouter.post("/add", async (req, res) => {
@@ -70,10 +72,27 @@ FoodRouter.get("/listall/active", async (req, res) => {
 })
 
 
+FoodRouter.get("/listall/active/food-allocation/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const foodList = await FoodAllocation.aggregate([{ $match: { trip : new mongoose.Types.ObjectId(id) }}])
+        console.log("food list ", foodList);
+
+        if (foodList.length >= 1) {
+            return res.json({ status: "success", data: foodList })
+        } else {
+            return res.json({ status: "error", message: "No Food Item is Available Right Now !" })
+        }
+    } catch (error) {
+        return res.json({ status: "error", message: error.message })
+    }
+})
+
+
 FoodRouter.get("/listall/active/:condition", async (req, res) => {
     const { condition } = req.params;
     console.log("");
-    
+
     try {
         const foodList = await FoodModel.find({ available: true, availableAt: condition }, { available: 0, CreatedAt: 0 })
         if (foodList.length >= 1) {
@@ -85,5 +104,6 @@ FoodRouter.get("/listall/active/:condition", async (req, res) => {
         return res.json({ status: "error", message: error.message })
     }
 })
+
 
 module.exports = { FoodRouter }

@@ -16,4 +16,4 @@ const RegistrationAuthentication = (req, res, next) => {
 
 module.exports = {
     RegistrationAuthentication
-}
+}               
