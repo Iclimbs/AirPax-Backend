@@ -21,7 +21,7 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
     try {
         const seat = await SeatModel.updateMany(filter, update);
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Seat Status ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Seat Status ${error.message}` })
     }
     // Get All Emails 
 
@@ -41,7 +41,7 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
     try {
         await paymentdetails[0].save()
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Payment  Status ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Payment  Status ${error.message}` })
     }
     const seatdetails = await SeatModel.find({ pnr: pnr, expireAt: null, isBooked: true, isLocked: true, "details.status": "Confirmed" })
     // console.log("seatdetails ", seatdetails);
@@ -69,7 +69,7 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
         tripdetails[0].availableseats = tripdetails[0].totalseats - newbookedseats.length
         await tripdetails[0].save()
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
     }
 
     // Working On Booking Model's 
@@ -95,13 +95,13 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
         try {
             await BookingDetails.save()
         } catch (error) {
-            res.json({ status: "error", message: `Failed To Save Booking Detail's ${error.message}` })
+            return res.json({ status: "error", message: `Failed To Save Booking Detail's ${error.message}` })
         }
     }
     let confirmpayment = path.join(__dirname, "../emailtemplate/confirmpayment.ejs")
     ejs.renderFile(confirmpayment, { user: userdetails[0], seat: seatdetails, trip: tripdetails[0], payment: paymentdetails[0] }, function (err, template) {
         if (err) {
-            res.json({ status: "error", message: err.message })
+            return res.json({ status: "error", message: err.message })
         } else {
             const mailOptions = {
                 from: process.env.emailuser,
@@ -165,7 +165,7 @@ PaymentRouter.get("/failure/:pnr/:ref_no/:mode", async (req, res) => {
     let failedpayment = path.join(__dirname, "../emailtemplate/failedpayment.ejs")
     ejs.renderFile(failedpayment, { user: "Sir/Madam", seat: bookedSeats, trip: tripdetails[0], payment: paymentdetails[0] }, function (err, template) {
         if (err) {
-            res.json({ status: "error", message: err.message })
+            return res.json({ status: "error", message: err.message })
         } else {
             const mailOptions = {
                 from: process.env.emailuser,

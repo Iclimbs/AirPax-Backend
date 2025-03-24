@@ -20,9 +20,9 @@ tripRouter.post("/add", async (req, res) => {
     try {
         const newtrip = new TripModel({ name, from, to, busid, journeystartdate, journeyenddate, starttime, endtime, totaltime, price, distance, totalseats, bookedseats: 0, availableseats: totalseats, conductor, driver, foodavailability, "driverdetails.LogIn": "00:00", "driverdetails.LogOut": "00:00", "driverdetails.fuel": 0, "driverdetails.maintenance": 0, "conductordetails.LogIn": "00:00", "conductordetails.LogOut": "00:00", "conductordetails.fuel": 0, "conductordetails.fuelCost": 0 })
         await newtrip.save()
-        res.json({ status: "success", message: "Successfully Addeded A New Trip" })
+        return res.json({ status: "success", message: "Successfully Addeded A New Trip" })
     } catch (error) {
-        res.json({ status: "error", message: "Adding Trip Process Failed" })
+        return res.json({ status: "error", message: "Adding Trip Process Failed" })
     }
 })
 
@@ -48,9 +48,9 @@ tripRouter.post("/add/bulk", async (req, res) => {
 
     try {
         await TripModel.insertMany(data)
-        res.json({ status: "success", message: "Successfully Addeded Trip's in Bulk", })
+        return res.json({ status: "success", message: "Successfully Addeded Trip's in Bulk", })
     } catch (error) {
-        res.json({ status: "error", message: `Adding Trip Process Failed ${error.message}` })
+        return res.json({ status: "error", message: `Adding Trip Process Failed ${error.message}` })
     }
 })
 
@@ -59,9 +59,9 @@ tripRouter.patch("/edit/:id", async (req, res) => {
     try {
         const trip = await TripModel.findByIdAndUpdate({ _id: id }, req.body)
         await trip.save()
-        res.json({ status: "success", message: " Trip Details Successfully Updated !!" })
+        return res.json({ status: "success", message: " Trip Details Successfully Updated !!" })
     } catch (error) {
-        res.json({ status: "error", message: "Failed To Update  Trip  Details" })
+        return res.json({ status: "error", message: "Failed To Update  Trip  Details" })
     }
 })
 
@@ -85,9 +85,9 @@ tripRouter.get("/listall", async (req, res) => {
 
         // const trips = await TripModel.find({}).sort({ journeystartdate: -1 }).limit(25)    
 
-        res.json({ status: "success", data: trips, totalPages: totalPages })
+        return res.json({ status: "success", data: trips, totalPages: totalPages })
     } catch (error) {
-        res.json({ status: "error", message: "Get List Failed" })
+        return res.json({ status: "error", message: "Get List Failed" })
     }
 })
 
@@ -121,19 +121,19 @@ tripRouter.get("/list", async (req, res) => {
             // const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > currentMinutes);
             const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > timeToMinutes(currenttime));
             if (upcomingEvents.length >= 1) {
-                res.json({ status: "success", data: upcomingEvents })
+                return res.json({ status: "success", data: upcomingEvents })
             } else {
-                res.json({ status: "error", message: "No Upcoming Trips Found" })
+                return res.json({ status: "error", message: "No Upcoming Trips Found" })
             }
         } else {
             if (trips.length >= 1) {
-                res.json({ status: "success", data: trips })
+                return res.json({ status: "success", data: trips })
             } else {
-                res.json({ status: "error", message: "No Upcoming Trips Found" })
+                return res.json({ status: "error", message: "No Upcoming Trips Found" })
             }
         }
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Get List Of Today's Trip's ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Get List Of Today's Trip's ${error.message}` })
     }
 })
 
@@ -170,13 +170,13 @@ tripRouter.get("/detailone/:id", async (req, res) => {
         trips[0].availableseats = trips[0].totalseats - currentseat.length
 
         if (trips.length !== 0) {
-            res.json({ status: "success", data: trips })
+            return res.json({ status: "success", data: trips })
         } else {
-            res.json({ status: "error", message: "No Trip Found With This ID" })
+            return res.json({ status: "error", message: "No Trip Found With This ID" })
         }
 
     } catch (error) {
-        res.json({ status: "error", message: `Get List Failed ${error.message}` })
+        return res.json({ status: "error", message: `Get List Failed ${error.message}` })
     }
 })
 
@@ -209,13 +209,13 @@ tripRouter.get("/booking/:id", async (req, res) => {
         trips[0].bookedseats = currentseat.length;
         trips[0].availableseats = trips[0].totalseats - currentseat.length
         if (trips.length !== 0) {
-            res.json({ status: "success", data: trips, bookings: bookings })
+            return res.json({ status: "success", data: trips, bookings: bookings })
         } else {
-            res.json({ status: "error", message: "No Trip Found With This ID" })
+            return res.json({ status: "error", message: "No Trip Found With This ID" })
         }
 
     } catch (error) {
-        res.json({ status: "error", message: `Get List Failed ${error.message}` })
+        return res.json({ status: "error", message: `Get List Failed ${error.message}` })
     }
 })
 
@@ -235,13 +235,12 @@ tripRouter.get("/assigned/conductor", AdminAuthentication, async (req, res) => {
     try {
         const trip = await TripModel.find({ journeystartdate: { $gte: newDate }, conductor: decoded._id })
         if (trip.length > 0) {
-            res.json({ status: "success", data: trip })
+            return res.json({ status: "success", data: trip })
         } else {
-            res.json({ status: "error", message: 'No Upcoming Trip Assigned To This Conductor' })
-
+            return res.json({ status: "error", message: 'No Upcoming Trip Assigned To This Conductor' })
         }
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Get List ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Get List ${error.message}` })
     }
 })
 
@@ -258,13 +257,13 @@ tripRouter.get("/assigned/driver", AdminAuthentication, async (req, res) => {
     try {
         const trip = await TripModel.find({ journeystartdate: { $gte: newDate }, driver: decoded._id })
         if (trip.length > 0) {
-            res.json({ status: "success", data: trip })
+            return res.json({ status: "success", data: trip })
         } else {
-            res.json({ status: "error", message: 'No Upcoming Trip Assigned To This Driver' })
+            return res.json({ status: "error", message: 'No Upcoming Trip Assigned To This Driver' })
 
         }
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Get List ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Get List ${error.message}` })
     }
 })
 
@@ -276,16 +275,16 @@ tripRouter.patch("/update/driver/details", AdminAuthentication, async (req, res)
     try {
         const trip = await TripModel.find({ _id: id, driver: decoded._id })
         if (trip.length === 0) {
-            res.json({ status: "error", message: "No Trip Found With This ID !!" })
+            return res.json({ status: "error", message: "No Trip Found With This ID !!" })
         }
         trip[0].driverdetails.LogIn = LogIn;
         trip[0].driverdetails.LogOut = LogOut;
         trip[0].driverdetails.fuel = fuel;
         trip[0].driverdetails.maintenance = maintenance;
         await trip[0].save()
-        res.json({ status: "success", message: " Trip Details Successfully Updated !!" })
+        return res.json({ status: "success", message: " Trip Details Successfully Updated !!" })
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update  Trip  Details ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update  Trip  Details ${error.message}` })
     }
 })
 
@@ -297,16 +296,16 @@ tripRouter.patch("/update/conductor/details", AdminAuthentication, async (req, r
     try {
         const trip = await TripModel.find({ _id: id, conductor: decoded._id })
         if (trip.length === 0) {
-            res.json({ status: "error", message: "No Trip Found With This ID !!" })
+            return res.json({ status: "error", message: "No Trip Found With This ID !!" })
         }
         trip[0].conductordetails.LogIn = LogIn;
         trip[0].conductordetails.LogOut = LogOut;
         trip[0].conductordetails.fuel = fuel;
         trip[0].conductordetails.fuelCost = fuelCost;
         await trip[0].save()
-        res.json({ status: "success", message: " Trip Details Successfully Updated !!" })
+        return res.json({ status: "success", message: " Trip Details Successfully Updated !!" })
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update  Trip  Details ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update  Trip  Details ${error.message}` })
     }
 })
 

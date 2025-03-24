@@ -209,7 +209,7 @@ ReportRouter.get("/today", async (req, res) => {
     { lifetimeSuccessSales.length !== 0 ? statisticsCardsData[5].value = `₹ ${lifetimeSuccessSales[0]?.totalSum}` : statisticsCardsData[5].value = 0 }
     { lifetimeFailedSales.length !== 0 ? statisticsCardsData[6].value = `₹ ${lifetimeFailedSales[0]?.totalSum}` : statisticsCardsData[6].value = 0 }
     { lifetimeRefundedSales.length !== 0 ? statisticsCardsData[7].value = `₹ ${lifetimeRefundedSales[0]?.totalSum}` : statisticsCardsData[7].value = 0 }
-    res.json({ status: "success", data: statisticsCardsData })
+    return res.json({ status: "success", data: statisticsCardsData })
 })
 
 ReportRouter.get("/sales/daily", async (req, res) => {
@@ -243,9 +243,9 @@ ReportRouter.get("/sales/daily", async (req, res) => {
         },
     ]);
     if (todayResult.length > 0) {
-        res.json({ status: "success", data: todayResult })
+        return res.json({ status: "success", data: todayResult })
     } else {
-        res.json({ status: "error", message: "No Data Found On The Particular Date" })
+        return res.json({ status: "error", message: "No Data Found On The Particular Date" })
 
     }
 
@@ -288,10 +288,9 @@ ReportRouter.get("/sales/weekly", async (req, res) => {
         { $sort: { _id: 1 } }, // Sort by date in ascending order
     ]);
     if (result.length > 0) {
-        res.json({ status: "success", data: result })
+        return res.json({ status: "success", data: result })
     } else {
-        res.json({ status: "error", message: "No Data Found Between Following Dates" })
-
+        return res.json({ status: "error", message: "No Data Found Between Following Dates" })
     }
 })
 
@@ -346,12 +345,12 @@ ReportRouter.post("/sales/custom", async (req, res) => {
 
         ]);
         if (result.length > 0) {
-            res.json({ status: "success", data: result })
+            return res.json({ status: "success", data: result })
         } else {
-            res.json({ status: "error", message: "No Data Found For Following Month" })
+            return res.json({ status: "error", message: "No Data Found For Following Month" })
         }
     } catch (error) {
-        res.json({ status: "error", message: `Error Found ${error.message}` })
+        return res.json({ status: "error", message: `Error Found ${error.message}` })
     }
 
 })
@@ -414,12 +413,12 @@ ReportRouter.post("/group/age/custom", async (req, res) => {
             }
         ]);
         if (result.length > 0) {
-            res.json({ status: "success", data: result })
+            return res.json({ status: "success", data: result })
         } else {
-            res.json({ status: "error", message: "No Data Found For Following Month" })
+            return res.json({ status: "error", message: "No Data Found For Following Month" })
         }
     } catch (error) {
-        res.json({ status: "error", message: `Error Found ${error.message}` })
+        return res.json({ status: "error", message: `Error Found ${error.message}` })
     }
 })
 
@@ -488,12 +487,12 @@ ReportRouter.post("/group/day/custom", async (req, res) => {
             }
         ])
         if (result.length > 0) {
-            res.json({ status: "success", data: result })
+            return res.json({ status: "success", data: result })
         } else {
-            res.json({ status: "error", message: "No Data Found For Following Month" })
+            return res.json({ status: "error", message: "No Data Found For Following Month" })
         }
     } catch (error) {
-        res.json({ status: "error", message: `Error Found ${error.message}` })
+        return res.json({ status: "error", message: `Error Found ${error.message}` })
 
     }
 })
@@ -566,12 +565,12 @@ ReportRouter.post("/group/platform/custom", async (req, res) => {
             }
         ]);
         if (result.length > 0) {
-            res.json({ status: "success", data: result })
+            return res.json({ status: "success", data: result })
         } else {
-            res.json({ status: "error", message: "No Data Found For Following Month" })
+            return res.json({ status: "error", message: "No Data Found For Following Month" })
         }
     } catch (error) {
-        res.json({ status: "error", message: `Error Found ${error.message}` })
+        return res.json({ status: "error", message: `Error Found ${error.message}` })
 
     }
 
@@ -635,12 +634,12 @@ ReportRouter.post("/group/utilisation/trip", async (req, res) => {
             },
         ])
         if (result.length > 0) {
-            res.json({ status: "success", data: result })
+            return res.json({ status: "success", data: result })
         } else {
-            res.json({ status: "error", message: "No Data Found For Following Parameters" })
+            return res.json({ status: "error", message: "No Data Found For Following Parameters" })
         }
     } catch (error) {
-        res.json({ status: "error", message: `Error Found ${error.message}` })
+        return res.json({ status: "error", message: `Error Found ${error.message}` })
     }
 })
 

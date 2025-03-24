@@ -6,10 +6,10 @@ const UserAuthentication = (req, res, next) => {
             const decoded = jwt.verify(token, 'Authentication')
             next()
         } catch (error) {
-            res.json({ status: "error", message: "Authentication Token Expired. Please Login Again", redirect: "/user/login" })
+            return res.json({ status: "error", message: "Authentication Token Expired. Please Login Again", redirect: "/user/login" })
         }
     } else {
-        res.json({ status: "error", message: "No Token Found in Headers." })
+        return res.json({ status: "error", message: "No Token Found in Headers." })
     }
 }
 

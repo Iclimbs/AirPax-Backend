@@ -6,10 +6,10 @@ const RegistrationAuthentication = (req, res, next) => {
             const decoded = jwt.verify(token, 'Registration')
             next()
         } catch (error) {
-            res.json({ status: "error", message: "Registration Token Expired. Please Register Again" })
+            return res.json({ status: "error", message: "Registration Token Expired. Please Register Again" })
         }
     } else {
-        res.json({ status: "error", message: "No Token Found in Headers." })
+        return res.json({ status: "error", message: "No Token Found in Headers." })
     }
 }
 

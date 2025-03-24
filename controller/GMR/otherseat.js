@@ -22,7 +22,7 @@ OtherSeatRouter.post("/selectedseats", async (req, res) => {
             seatNumber: PassengerDetails[index].SeatNo, isLocked: true, tripId: TripId, bookedby: PrimaryUser.PhoneNo,
             expireAt: Date.now() + 15 * 60 * 1000, // Lock for 15 minutes
             pnr: ticketpnr,
-            platform:"others",
+            platform: "others",
             details: {
                 fname: PassengerDetails[index].Fname,
                 lname: PassengerDetails[index].Lname,
@@ -71,13 +71,13 @@ OtherSeatRouter.post("/selectedseats", async (req, res) => {
         try {
             await newticket.save()
         } catch (error) {
-            res.json({ status: "error", message: `Failed To Save Details ${error.message}` })
+            return res.json({ status: "error", message: `Failed To Save Details ${error.message}` })
         }
 
         try {
             const result = await SeatModel.insertMany(seatdetails);
         } catch (error) {
-            res.json({ status: "error", message: `Failed To Save Details ${error.message}` })
+            return res.json({ status: "error", message: `Failed To Save Details ${error.message}` })
         }
 
         const payment = new PaymentModel({
@@ -90,7 +90,7 @@ OtherSeatRouter.post("/selectedseats", async (req, res) => {
         try {
             await payment.save()
         } catch (error) {
-            res.json({ status: "error", message: `Failed To Save Details ${error.message}` })
+            return res.json({ status: "error", message: `Failed To Save Details ${error.message}` })
         }
 
         return res.json({ status: "success", pnr: ticketpnr })

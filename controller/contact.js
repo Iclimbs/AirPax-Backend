@@ -14,13 +14,13 @@ ContactRouter.post("/", async (req, res) => {
     try {
         contactData = await contact.save()
     } catch (error) {
-        res.status({ status: 'success', message: `Failed To Save Contact Message ${error.message}` })
+        return res.json({ status: 'error', message: `Failed To Save Contact Message ${error.message}` })
     }
 
     let contactmail = path.join(__dirname, "../emailtemplate/contact.ejs")
     ejs.renderFile(contactmail, { list: contactData }, function (err, template) {
         if (err) {
-            res.json({ status: "error", message: err.message })
+            return res.json({ status: "error", message: err.message })
         } else {
             const mailOptions = {
                 from: process.env.emailuser,

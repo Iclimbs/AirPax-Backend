@@ -56,7 +56,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
         ticketdetails[0].passengerdetails = newpassengerdetails;
         await ticketdetails[0].save()
     } catch (error) {
-        res.json({ status: "error", message: "Failed To Update Ticket Details " })
+        return res.json({ status: "error", message: "Failed To Update Ticket Details " })
     }
 
     // Changing Seat Status in Seat Model     
@@ -95,7 +95,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
     try {
         await SeatModel.bulkWrite(bulkwriteseat)
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Bulk Update Seat Detail's ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Bulk Update Seat Detail's ${error.message}` })
     }
 
     // Getting Trip Details Like JourNey Data & Ticket Cost
@@ -110,7 +110,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
     try {
         await tripdetails[0].save()
     } catch (error) {
-        res.json({ status: "error", message: "Ticket Cancellation Process Failed " })
+        return res.json({ status: "error", message: "Ticket Cancellation Process Failed " })
     }
 
     // Getting Payment Details of the Pnr To Change detail's like staus & refund amount 
@@ -127,7 +127,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
             paymentdetails[0].refundreason = cancellationReason
             await paymentdetails[0].save()
         } catch (error) {
-            res.json({ status: "error", message: "Failed To Save Refund Amount For this Pnr " })
+            return res.json({ status: "error", message: "Failed To Save Refund Amount For this Pnr " })
         }
         let user = ticketdetails[0].primaryuser;
         let seat = ticketdetails[0].passengerdetails;
@@ -135,7 +135,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
         let ticketcanceltemplate = path.join(__dirname, "../emailtemplate/gmrticketcancel.ejs")
         ejs.renderFile(ticketcanceltemplate, { user: ticketdetails[0].primaryuser, pnr: pnr, seat: seat, trip: tripdetails[0], payment: paymentdetails[0], amount: refundamount }, function (err, template) {
             if (err) {
-                res.json({ status: "error", message: err.message })
+                return res.json({ status: "error", message: err.message })
             } else {
                 const mailOptions = {
                     from: process.env.emailuser,
@@ -176,13 +176,13 @@ TicketRouter.get("/history", UserAuthentication, async (req, res) => {
             const upcomingtrips = await BookingModel.find({ journeystartdate: { $lte: newDate }, userid: decoded._id })
 
             if (upcomingtrips.length >= 1) {
-                res.json({ status: "success", data: upcomingtrips })
+                return res.json({ status: "success", data: upcomingtrips })
             } else {
-                res.json({ status: "error", message: `No Upcoming Trip's Found For Today's Booking` })
+                return res.json({ status: "error", message: `No Upcoming Trip's Found For Today's Booking` })
             }
         }
     } catch (error) {
-        res.json({ status: "error", message: `Error Found in Trip History Details ${error.message}` })
+        return res.json({ status: "error", message: `Error Found in Trip History Details ${error.message}` })
     }
 })
 
@@ -205,13 +205,13 @@ TicketRouter.get("/upcoming", UserAuthentication, async (req, res) => {
             const upcomingtrips = await BookingModel.find({ journeystartdate: { $gte: newDate }, userid: decoded._id, status: "Confirmed" })
 
             if (upcomingtrips.length >= 1) {
-                res.json({ status: "success", data: upcomingtrips })
+                return res.json({ status: "success", data: upcomingtrips })
             } else {
-                res.json({ status: "error", message: `No Upcoming Trip's Found For Today's Booking` })
+                return res.json({ status: "error", message: `No Upcoming Trip's Found For Today's Booking` })
             }
         }
     } catch (error) {
-        res.json({ status: "error", message: `Error Found in Upcoming Trip Details ${error.message}` })
+        return res.json({ status: "error", message: `Error Found in Upcoming Trip Details ${error.message}` })
     }
 })
 
@@ -222,7 +222,7 @@ TicketRouter.get("/detailone/:id", UserAuthentication, async (req, res) => {
     const booking = await BookingModel.find({ _id: id })
     const seat = await SeatModel.find({ pnr: booking[0].pnr }, { _id: 1, seatNumber: 1, details: 1 })
     booking[0].seats = seat
-    res.json({ status: "success", data: booking[0] })
+    return res.json({ status: "success", data: booking[0] })
 })
 
 TicketRouter.post("/cancel", UserAuthentication, async (req, res) => {
@@ -308,7 +308,7 @@ TicketRouter.post("/cancel", UserAuthentication, async (req, res) => {
     try {
         await SeatModel.bulkWrite(bulkwriteseat)
     } catch (error) {
-        res.json({ status: "error", message: "Bulk Update Seat Process Failed " })
+        return res.json({ status: "error", message: "Bulk Update Seat Process Failed " })
     }
 
 
@@ -321,7 +321,7 @@ TicketRouter.post("/cancel", UserAuthentication, async (req, res) => {
     try {
         await tripdetails[0].save()
     } catch (error) {
-        res.json({ status: "error", message: "Ticket Cancellation Process Failed " })
+        return res.json({ status: "error", message: "Ticket Cancellation Process Failed " })
     }
 
     // Adjusting Payment Details Of Following Ticket 
@@ -339,7 +339,7 @@ TicketRouter.post("/cancel", UserAuthentication, async (req, res) => {
             paymentdetails[0].refundreason = cancellationReason
             await paymentdetails[0].save()
         } catch (error) {
-            res.json({ status: "error", message: `Failed To Save Refund Amount For this Pnr ${error.message} ` })
+            return res.json({ status: "error", message: `Failed To Save Refund Amount For this Pnr ${error.message} ` })
         }
     }
 
@@ -356,13 +356,13 @@ TicketRouter.post("/cancel", UserAuthentication, async (req, res) => {
         bookingdetails[0].status = bookingstatus
         await bookingdetails[0].save()
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Booking Status ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Booking Status ${error.message}` })
     }
 
     let cancelTicket = path.join(__dirname, "../emailtemplate/cancelTicket.ejs")
     ejs.renderFile(cancelTicket, { user: userdetails[0], seat: cancelledSeats, trip: tripdetails[0], amount: paymentdetails[0].refundamount, pnr: pnr, reason: reasonForCancellation }, function (err, template) {
         if (err) {
-            res.json({ status: "error", message: err.message })
+            return res.json({ status: "error", message: err.message })
         } else {
             const mailOptions = {
                 from: process.env.emailuser,
@@ -431,7 +431,7 @@ TicketRouter.post("/otp/generate", async (req, res) => {
     let guestmanagebookingoptverification = path.join(__dirname, "../emailtemplate/guestmanagebookingoptverification.ejs")
     ejs.renderFile(guestmanagebookingoptverification, { otp: randomOtp }, function (err, template) {
         if (err) {
-            res.json({ status: "error", message: err.message })
+            return res.json({ status: "error", message: err.message })
         } else {
             const mailOptions = {
                 from: process.env.emailuser,
@@ -592,7 +592,7 @@ TicketRouter.post("/cancel/guest", async (req, res) => {
     try {
         await tripdetails[0].save()
     } catch (error) {
-        res.json({ status: "error", message: "Ticket Cancellation Process Failed " })
+        return res.json({ status: "error", message: "Ticket Cancellation Process Failed " })
     }
 
     // Getting Payment Details of the Pnr To Change detail's like staus & refund amount 
@@ -610,7 +610,7 @@ TicketRouter.post("/cancel/guest", async (req, res) => {
             paymentdetails[0].refundreason = cancellationReason
             await paymentdetails[0].save()
         } catch (error) {
-            res.json({ status: "error", message: `Failed To Save Refund Amount For this Pnr ${error.message} ` })
+            return res.json({ status: "error", message: `Failed To Save Refund Amount For this Pnr ${error.message} ` })
         }
     }
 
@@ -629,13 +629,13 @@ TicketRouter.post("/cancel/guest", async (req, res) => {
         bookingdetails[0].status = bookingstatus
         await bookingdetails[0].save()
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Booking Status ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Booking Status ${error.message}` })
     }
 
     let cancelTicket = path.join(__dirname, "../emailtemplate/guestcancelTicket.ejs")
     ejs.renderFile(cancelTicket, { user: "Sir/Madam", seat: cancelledSeats, trip: tripdetails[0], amount: paymentdetails[0].refundamount, pnr: pnr, reason: reasonForCancellation }, function (err, template) {
         if (err) {
-            res.json({ status: "error", message: err.message })
+            return res.json({ status: "error", message: err.message })
         } else {
             const mailOptions = {
                 from: process.env.emailuser,

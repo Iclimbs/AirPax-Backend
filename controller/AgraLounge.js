@@ -32,9 +32,9 @@ AgraLounge.post("/create-order", async (req, res) => {
         console.log(totalAmount);
         const newfood = new agraLoungeFoodOrders({ items: allItems, totalAmount: totalAmount, phoneNumber, paymentMethod })
         await newfood.save()
-        res.json({ status: "success", message: "New Food Item Added !!" })
+        return res.json({ status: "success", message: "New Food Item Added !!" })
     } catch (error) {
-        res.json({ status: "error", message: error })
+        return res.json({ status: "error", message: error })
     }
 })
 
@@ -61,9 +61,10 @@ AgraLounge.get("/get-all-orders", async (req, res) => {
         const allOrders = await agraLoungeFoodOrders.aggregate(
             pipeline
         )
-        res.send(allOrders)
+        // res.send(allOrders)
+        return res.json({ status: 'success', data: allOrders })
     } catch (error) {
-        res.json({ status: "error", message: error })
+        return res.json({ status: "error", message: error })
     }
 })
 
@@ -86,9 +87,9 @@ AgraLounge.get("/get-today-orders", async (req, res) => {
             }
         ]);
 
-        res.send({ orders: allOrders, totalOrders: allOrders.length });
+        return res.json({ status: 'success', orders: allOrders, totalOrders: allOrders.length });
     } catch (error) {
-        res.json({ status: "error", message: error.message });
+        return res.json({ status: "error", message: error.message });
     }
 });
 

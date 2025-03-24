@@ -10,18 +10,18 @@ SupervisorRouter.post("/submit-report", async (req, res) => {
         const { trip, totalPassengers, onboardingPassengers, fuelConsuptioninLiter, fuelPricePerLiter, others, food } = req?.body
 
 
-        if (!trip) return res.send({ status: "error", message: "Trip Name Required!" })
-        if (!mongoose.isValidObjectId(trip)) return res.send({ status: "error", message: "Invalid Trip Id!" })
-        if (!totalPassengers) return res.send({ status: "error", message: "Total Passengers field Required!" })
-        if (!onboardingPassengers) return res.send({ status: "error", message: "Onboarding Passengers field Required!" })
-        if (!fuelConsuptioninLiter) return res.send({ status: "error", message: "Fuel ConsuptioninLiter field Required!" })
-        if (!fuelPricePerLiter) return res.send({ status: "error", message: "Fuel Price Per Liter field Required!" })
+        if (!trip) return res.json({ status: "error", message: "Trip Name Required!" })
+        if (!mongoose.isValidObjectId(trip)) return res.json({ status: "error", message: "Invalid Trip Id!" })
+        if (!totalPassengers) return res.json({ status: "error", message: "Total Passengers field Required!" })
+        if (!onboardingPassengers) return res.json({ status: "error", message: "Onboarding Passengers field Required!" })
+        if (!fuelConsuptioninLiter) return res.json({ status: "error", message: "Fuel ConsuptioninLiter field Required!" })
+        if (!fuelPricePerLiter) return res.json({ status: "error", message: "Fuel Price Per Liter field Required!" })
 
-        if (!Array.isArray(food)) return res.send({ status: "error", message: "Food Should be an Array!" })
+        if (!Array.isArray(food)) return res.json({ status: "error", message: "Food Should be an Array!" })
         const allFoods = []
         for (const element of food) {
-            if (!element.foodName) return res.send({ status: "error", message: "Food Name Required!" })
-            if (!element.foodConsumption) return res.send({ status: "error", message: "Food Consumption unit Required!" })
+            if (!element.foodName) return res.json({ status: "error", message: "Food Name Required!" })
+            if (!element.foodConsumption) return res.json({ status: "error", message: "Food Consumption unit Required!" })
             allFoods.push({
                 foodName: element.foodName,
                 foodConsumption: Number(element.foodConsumption),
@@ -42,20 +42,18 @@ SupervisorRouter.post("/submit-report", async (req, res) => {
         }
         creatingReport.save()
 
-        res.json({ status: "success", success: true, message: "Report Submitted Successfully!" })
-
+        return res.json({ status: "success", success: true, message: "Report Submitted Successfully!" })
     } catch (error) {
-        res.send({ status: "error", message: error?.message || "something went wrong while subbmitting report!" })
+        return res.json({ status: "error", message: error?.message || "something went wrong while subbmitting report!" })
     }
 })
 
 SupervisorRouter.get("/get-all-reports", async (req, res) => {
     try {
         const allReports = await SuperviorReport.find({}).populate("trip", "name")
-
-        res.send(allReports)
+        return res.json(allReports)
     } catch (error) {
-        res.send({ status: "error", message: error?.message || "Something went wrong while fetching all reports!" })
+        return res.json({ status: "error", message: error?.message || "Something went wrong while fetching all reports!" })
     }
 })
 
@@ -63,9 +61,9 @@ SupervisorRouter.post("/allocate-food", async (req, res) => {
     try {
         const { trip, foodDetails } = req?.body
 
-        if (!trip) return res.send({ status: "error", message: "Trip Name Required!" })
-        if (!mongoose.isValidObjectId(trip)) return res.send({ status: "error", message: "Invalid Trip Id!" })
-        if (!Array.isArray(foodDetails)) return res.send({ status: "error", message: "Food details Should be an Array!" })
+        if (!trip) return res.json({ status: "error", message: "Trip Name Required!" })
+        if (!mongoose.isValidObjectId(trip)) return res.json({ status: "error", message: "Invalid Trip Id!" })
+        if (!Array.isArray(foodDetails)) return res.json({ status: "error", message: "Food details Should be an Array!" })
 
 
         const allFoods = []
@@ -85,21 +83,21 @@ SupervisorRouter.post("/allocate-food", async (req, res) => {
         const creatingFoodAllocation = await FoodAllocation.create({
             trip, foodUnit: allFoods.length > 0 ? allFoods : []
         })
-        res.send({ status: "success", message: "Food Allocated Successfully!" })
+        return res.json({ status: "success", message: "Food Allocated Successfully!" })
     } catch (error) {
-        res.send({ status: "error", message: error?.message || "Something went wrong while food allocation!" })
+        return res.json({ status: "error", message: error?.message || "Something went wrong while food allocation!" })
     }
 })
 
 SupervisorRouter.get("/get-trip-food-info", async (req, res) => {
     try {
         const { tripId } = req.query
-        if (!tripId) return res.send({ status: "error", message: "Trip Id required!" })
-        if (!mongoose.isValidObjectId(tripId)) return res.send({ status: "error", message: "Invalid Trip Id!" })
+        if (!tripId) return res.json({ status: "error", message: "Trip Id required!" })
+        if (!mongoose.isValidObjectId(tripId)) return res.json({ status: "error", message: "Invalid Trip Id!" })
         const data = await FoodAllocation.findOne({ trip: tripId }).populate("trip", "name")
-        res.send({ status: "success", data })
+        return res.json({ status: "success", data })
     } catch (error) {
-        return res.send({ status: "error", message: "Something went wrong while fetching trip food info" })
+        return res.json({ status: "error", message: "Something went wrong while fetching trip food info" })
     }
 })
 

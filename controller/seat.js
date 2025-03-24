@@ -233,12 +233,12 @@ SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
             try {
                 await BookingDetails.save()
             } catch (error) {
-                res.json({ status: "error", message: `Failed To Save Booking Detail's ${error.message}` })
+                return res.json({ status: "error", message: `Failed To Save Booking Detail's ${error.message}` })
             }
         }
         // Saving Payment Detail's In Payment Model
         try {
-            const paymentdetails = new PaymentModel({ pnr: ticketpnr, userid: decoded._id, amount: amount, paymentstatus: "Confirmed", method: "Cash",refundamount: 0 })
+            const paymentdetails = new PaymentModel({ pnr: ticketpnr, userid: decoded._id, amount: amount, paymentstatus: "Confirmed", method: "Cash", refundamount: 0 })
             await paymentdetails.save()
         } catch (error) {
             return res.json({ status: "error", message: `Failed To Added Payment Details ${error.message}` })
@@ -259,12 +259,12 @@ SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
             tripdetails[0].availableseats = tripdetails[0].totalseats - newbookedseats.length
             await tripdetails[0].save()
         } catch (error) {
-            res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
+            return res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
         }
         let confirmpayment = path.join(__dirname, "../emailtemplate/confirmpaymentAdmin.ejs")
         ejs.renderFile(confirmpayment, { user: "Sir/Madam", seat: seatdetails, trip: tripdetails[0], pnr: ticketpnr, amount: amount }, function (err, template) {
             if (err) {
-                res.json({ status: "error", message: err.message })
+                return res.json({ status: "error", message: err.message })
             } else {
                 const mailOptions = {
                     from: process.env.emailuser,
@@ -291,9 +291,9 @@ SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
 SeatRouter.get("/listall", async (req, res) => {
     try {
         const seatlist = await SeatModel.find({})
-        res.json({ status: "success", data: seatlist })
+        return res.json({ status: "success", data: seatlist })
     } catch (error) {
-        res.json({ status: "error", message: "Failed To Get Booked Ticket List" })
+        return res.json({ status: "error", message: "Failed To Get Booked Ticket List" })
     }
 })
 
@@ -303,9 +303,9 @@ SeatRouter.get("/list/booked/incoming", async (req, res) => {
     const decoded = jwt.verify(token, 'Authentication')
     try {
         const seatlist = await SeatModel.find({ isBooked: true, bookedby: decoded._id }, {})
-        res.json({ status: "success", data: seatlist })
+        return res.json({ status: "success", data: seatlist })
     } catch (error) {
-        res.json({ status: "error", message: "Failed To Get Booked Ticket List" })
+        return res.json({ status: "error", message: "Failed To Get Booked Ticket List" })
     }
 })
 
@@ -315,9 +315,9 @@ SeatRouter.get("/list/booked/history", async (req, res) => {
     const decoded = jwt.verify(token, 'Authentication')
     try {
         const seatlist = await SeatModel.find({ isBooked: true, bookedby: decoded._id }, { isBooked: 0, isLocked: 0, lockExpires: 0, bookedby: 0 })
-        res.json({ status: "success", data: seatlist })
+        return res.json({ status: "success", data: seatlist })
     } catch (error) {
-        res.json({ status: "error", message: "Failed To Get Booked Ticket List" })
+        return res.json({ status: "error", message: "Failed To Get Booked Ticket List" })
 
     }
 })
@@ -328,9 +328,9 @@ SeatRouter.get("/list/booked/history", async (req, res) => {
 SeatRouter.get("/list/booked/:id", async (req, res) => {
     try {
         const seatlist = await SeatModel.find({})
-        res.json({ status: "success", data: seatlist })
+        return res.json({ status: "success", data: seatlist })
     } catch (error) {
-        res.json({ status: "error", message: "Failed To Get Booked Ticket List" })
+        return res.json({ status: "error", message: "Failed To Get Booked Ticket List" })
 
     }
 })
@@ -339,9 +339,9 @@ SeatRouter.get("/list/passenger/:id", async (req, res) => {
     const { id } = req.params
     try {
         const seatlist = await SeatModel.find({ tripId: id, "details.status": "Confirmed" })
-        res.json({ status: "success", data: seatlist })
+        return res.json({ status: "success", data: seatlist })
     } catch (error) {
-        res.json({ status: "error", message: "Failed To Get Booked Ticket List" })
+        return res.json({ status: "error", message: "Failed To Get Booked Ticket List" })
 
     }
 })

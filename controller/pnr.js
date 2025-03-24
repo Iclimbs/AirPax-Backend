@@ -47,7 +47,7 @@ PnrRouter.get("/", async (req, res) => {
     details.endtime = tripdetails[0].endtime;
     details.totaltime = tripdetails[0].totaltime;
     details.distance = tripdetails[0].distance;
-    res.json({ status: "success", details: details })
+    return res.json({ status: "success", details: details })
 })
 
 PnrRouter.get("/guest", async (req, res) => {
@@ -95,7 +95,7 @@ PnrRouter.get("/guest", async (req, res) => {
     details.endtime = tripdetails[0].endtime;
     details.totaltime = tripdetails[0].totaltime;
     details.distance = tripdetails[0].distance;
-    res.json({ status: "success", details: details })
+    return res.json({ status: "success", details: details })
 })
 
 PnrRouter.get("/gmr/:pnr", async (req, res) => {
@@ -109,7 +109,7 @@ PnrRouter.get("/gmr/:pnr", async (req, res) => {
     details.bookedticket = ticketdetails[0].passengerdetails;
     const tripdetails = await TripModel.find({ _id: ticketdetails[0].tripId })
 
-    
+
     if (tripdetails.length == 0) {
         return res.json({ status: "error", message: "No Trip Detail's Found Related to this Pnr" })
     }
@@ -129,7 +129,7 @@ PnrRouter.get("/gmr/:pnr", async (req, res) => {
     details.endtime = tripdetails[0].endtime;
     details.totaltime = tripdetails[0].totaltime;
     details.distance = tripdetails[0].distance;
-    res.json({ status: "success", message: "Pnr Detail's", details: details })
+    return res.json({ status: "success", message: "Pnr Detail's", details: details })
 })
 
 

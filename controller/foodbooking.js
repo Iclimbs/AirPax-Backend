@@ -5,7 +5,7 @@ const { FoodBookingModel } = require('../model/foodbooking.model');
 const { AdminAuthentication } = require('../middleware/Authorization');
 const FoodBookingRouter = express.Router()
 
-FoodBookingRouter.post("/add",AdminAuthentication, async (req, res) => {
+FoodBookingRouter.post("/add", AdminAuthentication, async (req, res) => {
     const token = req.headers.authorization.split(" ")[1]
     const decoded = jwt.verify(token, 'Authorization')
 
@@ -13,9 +13,9 @@ FoodBookingRouter.post("/add",AdminAuthentication, async (req, res) => {
     try {
         const newfood = new FoodBookingModel({ foodItems, price, seatId, tripId, bookedBy: decoded._id })
         await newfood.save()
-        res.json({ status: "success", message: "Food Order Successful !!" })
+        return res.json({ status: "success", message: "Food Order Successful !!" })
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Order Food For The User ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Order Food For The User ${error.message}` })
     }
 })
 

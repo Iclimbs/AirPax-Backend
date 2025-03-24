@@ -21,7 +21,7 @@ OtherPaymentRouter.get("/success/", async (req, res) => {
     try {
         const seat = await SeatModel.updateMany(filter, update);
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Seat Status ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Seat Status ${error.message}` })
     }
 
     // Updating Detail's in Payment Model Data
@@ -32,7 +32,7 @@ OtherPaymentRouter.get("/success/", async (req, res) => {
     try {
         await paymentdetails[0].save()
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
     }
 
     // Updating Detail's in Trip Model Data
@@ -59,7 +59,7 @@ OtherPaymentRouter.get("/success/", async (req, res) => {
         tripdata[0].availableseats = tripdata[0].totalseats - newbookedseats.length
         await tripdata[0].save()
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
     }
 
     // Updating Detail's in GMR Model Data
@@ -70,7 +70,7 @@ OtherPaymentRouter.get("/success/", async (req, res) => {
         })
 
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
     }
 
     const userdetails = await OtherUserModel.find({ pnr: pnr })
@@ -78,7 +78,7 @@ OtherPaymentRouter.get("/success/", async (req, res) => {
     let Gmrconfirmpayment = path.join(__dirname, "../../emailtemplate/gmrconfirmpayment.ejs")
     ejs.renderFile(Gmrconfirmpayment, { user: userdetails[0].primaryuser, seat: userdetails[0].passengerdetails, trip: tripdetails[0], pnr: userdetails[0].pnr, amount: userdetails[0].amount }, function (err, template) {
         if (err) {
-            res.json({ status: "error", message: err.message })
+            return res.json({ status: "error", message: err.message })
         } else {
             const mailOptions = {
                 from: process.env.emailuser,
@@ -108,7 +108,7 @@ OtherPaymentRouter.get("/failure/", async (req, res) => {
     try {
         const seat = await SeatModel.updateMany(filter, update);
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Seat Booking Detail's  ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Seat Booking Detail's  ${error.message}` })
     }
 
     // Updating Detail's in GMR Model Data
@@ -118,7 +118,7 @@ OtherPaymentRouter.get("/failure/", async (req, res) => {
             arrayFilters: [{ "elem.status": "Pending" }]
         })
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
     }
 
 
@@ -130,9 +130,9 @@ OtherPaymentRouter.get("/failure/", async (req, res) => {
         await paymentdetails[0].save()
 
     } catch (error) {
-        res.json({ status: "error", message: `Failed To Update Seat Booking Detail's  ${error.message}` })
+        return res.json({ status: "error", message: `Failed To Update Seat Booking Detail's  ${error.message}` })
 
     }
-    res.json({ status: "success", message: "Ticket Booking Failed !!" })
+    return res.json({ status: "success", message: "Ticket Booking Failed !!" })
 })
 module.exports = { OtherPaymentRouter }
