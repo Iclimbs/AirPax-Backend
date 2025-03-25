@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airpax - Ticket Cancellation Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #2a9d8f;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .details-table th,
+        .details-table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .details-table th {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: black;
+            margin-top: 20px;
+        }
+
+        .footer table {
+            text-align: center;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="email-container">
+        <h2>Ticket Canellation Request</h2>
+        <p>Dear <strong>
+            <%= user.name %>
+        </strong>,</p>
+        <p>We are writing this mail to inform you that due to some unforeseen circumstances we had to cancel our Trip. But FearNot You Will Receive Complete Refund Of Your Ticket Price Within 5-7 Working Days.</p>
+
+        <h3>Trip Details:</h3>
+        <table class="details-table">
+            <tr>
+                <th>From</th>
+                <td>
+                    <%= trip.from %>
+                </td>
+            </tr>
+            <tr>
+                <th>To</th>
+                <td>
+                    <%= trip.to %>
+                </td>
+            </tr>
+            <tr>
+                <th>JourneyStartDate</th>
+                <td>
+                    <%= trip.journeystartdate %>
+                </td>
+            </tr>
+            <tr>
+                <th>JourneyEndDate</th>
+                <td>
+                    <%= trip.journeyenddate %>
+                </td>
+            </tr>
+            <tr>
+                <th>JourneyStartTime</th>
+                <td>
+                    <%= trip.starttime %>
+                </td>
+            </tr>
+            <tr>
+                <th>JourneyEndTime</th>
+                <td>
+                    <%= trip.endtime %>
+                </td>
+            </tr>
+        </table>
+        <p>If you need any further assistance, please feel free to contact us at <a
+                href="mailto:info@airpax.co">info@airpax.co</a> or call us at <a
+                href="tel:+919990301111">+919990301111</a>. You can also visit our website <a
+                href="https://airpax.co/">Airpax</a> for more information.</p>
+
+        <p>We wish you a pleasant and enjoyable trip!</p>
+
+        <p>Best regards,</p>
+        <p><strong>Airpax</strong></p>
+
+        <div class="footer">
+            <p> <strong>RIGI TRANS TECH PVT LTD</strong></p>
+            <tr>
+                <td>PERNAM INN</td>
+                <td> 837/1</td>
+            </tr><br>
+            <tr>
+                <td>MANDI ESTATE</td>
+                <td>NEW DELHI</td>
+            </tr><br>
+            <tr>
+                <td>110047</td>
+            </tr>
+
+            <p>Email: <a href="mailto:info@airpax.co">info@airpax.co</a> | Phone: <a
+                    href="tel:+919990301111">+919990301111</a></p>
+            <p><a href="https://airpax.co/">airpax.co</a></p>
+        </div>
+    </div>
+
+</body>
+
+</html>

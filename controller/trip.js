@@ -1,5 +1,8 @@
 const express = require("express")
 const jwt = require('jsonwebtoken');
+const ejs = require("ejs")
+const path = require('node:path');
+const { transporter } = require('../service/transporter');
 const { TripModel } = require("../model/trip.model");
 const { SeatModel } = require("../model/seat.model");
 const { AdminAuthentication } = require("../middleware/Authorization");
@@ -92,7 +95,42 @@ tripRouter.patch("/cancel/:id", async (req, res) => {
     try {
         const trip = await TripModel.findByIdAndUpdate(id, { cancelled: true }, { new: true })
         if (trip.length !== 0) {
-            return res.json({ status: "success", message: "Trip Cancelled Successfully !" })
+            const seats = await SeatModel.find({ tripId: trip._id, "details.status": 'Confirmed' })
+
+            let emails = [];
+            let updated_document = []
+
+            for (let index = 0; index < seats.length; index++) {
+                console.log(seats[index].details.email);
+                if (emails.includes(seats[index].details.email) === false) {
+                    emails.push(seats[index].details.email)
+                }
+            }
+            
+            let tripCancelled = path.join(__dirname, "../emailtemplate/tripCancelled.ejs")
+            ejs.renderFile(tripCancelled, { user: "Sir/Madam", trip: trip }, function (err, template) {
+                if (err) {
+                    return res.json({ status: "error", message: err.message })
+                } else {
+                    const mailOptions = {
+                        from: process.env.emailuser,
+                        to: `${emails}`,
+                        subject: `Trip Cancelled Bus: ${trip.busid}, ${trip.journeystartdate}, ${trip.from} - ${trip.to}`,
+                        html: template
+                    }
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            console.log("Error in Sending Mail ", error.message);
+                            return res.json({ status: "error", message: 'Failed to send email' });
+                        } else {
+                            console.log("Email Sent ", info);
+                            return res.json({ status: "success", message: 'Please Check Your Email', redirect: "/" });
+                        }
+                    })
+                }
+            })
+
+            // return res.json({ status: "success", message: "Trip Cancelled Successfully !" })
         } else {
             return res.json({ status: "error", message: "Failed To Cancel Trip !" })
         }
@@ -345,3 +383,8 @@ tripRouter.patch("/update/conductor/details", AdminAuthentication, async (req, r
 
 
 module.exports = { tripRouter }
+
+
+// 1. First Get All Email In Which You Need To Send Email
+// 2. Update All Document With Refund Amount & Status to be Cancelled & cancellationReasons to Trip Cancelled
+// 3. Update All The Documents & Remove All Seats & make Total Seats To default. 
