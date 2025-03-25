@@ -66,11 +66,8 @@ tripRouter.patch("/edit/:id", async (req, res) => {
 })
 tripRouter.patch("/disable/:id", async (req, res) => {
     const { id } = req.params;
-    const {status} = req.body;
-    console.log("req.body",req.body);
-    console.log("id ",req.params);
-    
-    
+    const { status } = req.body;
+
     if (!id) {
         return res.json({ status: 'error', message: 'Trip Id is Required To Disable It.' })
     }
@@ -85,6 +82,24 @@ tripRouter.patch("/disable/:id", async (req, res) => {
     } catch (error) {
         return res.json({ status: 'error', message: `Failed To Disable Trip, ${error.message}`, })
     }
+})
+
+tripRouter.patch("/cancel/:id", async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+        return res.json({ status: 'error', message: 'Trip Id is Required To Disable It.' })
+    }
+    try {
+        const trip = await TripModel.findByIdAndUpdate(id, { cancelled: true }, { new: true })
+        if (trip.length !== 0) {
+            return res.json({ status: "success", message: "Trip Cancelled Successfully !" })
+        } else {
+            return res.json({ status: "error", message: "Failed To Cancel Trip !" })
+        }
+    } catch (error) {
+        return res.json({ status: 'error', message: `Failed To cancel Trip, ${error.message}`, })
+    }
+
 })
 tripRouter.get("/listall", async (req, res) => {
     const { page, limit } = req.query;
