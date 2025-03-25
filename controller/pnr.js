@@ -7,7 +7,7 @@ const { BookingModel } = require("../model/booking.model");
 const PnrRouter = express.Router()
 
 PnrRouter.get("/", async (req, res) => {
-    const { pnr } = req.query
+    const { pnr } = req.query        
     // Creating An Object which will contain all the basic details required for the user.
     let details = {};
     details.passengerdetails = [];
@@ -28,6 +28,15 @@ PnrRouter.get("/", async (req, res) => {
 
     if (tripdetails.length == 0) {
         return res.json({ status: "error", message: "No Trip Detail's Found Related to this Pnr" })
+    }
+
+
+    if (tripdetails[0].disabled) {
+        return res.json({ status: "disabled", message: "Trip is currently on Hold Please Wait For Some Time Untill We Confirm Trip." })
+    }
+
+    if (tripdetails[0].cancelled) {
+        return res.json({ status: "cancelled", message: "Trip Cancelled due to some unforeseen circumstances" })
     }
 
     const vehicledetails = await VehicleModel.find({ name: tripdetails[0].busid })
@@ -78,6 +87,15 @@ PnrRouter.get("/guest", async (req, res) => {
     if (tripdetails.length == 0) {
         return res.json({ status: "error", message: "No Trip Detail's Found Related to this Pnr" })
     }
+
+    if (tripdetails[0].disabled) {
+        return res.json({ status: "disabled", message: "Trip is currently on Hold Please Wait For Some Time Untill We Confirm Trip." })
+    }
+
+    if (tripdetails[0].cancelled) {
+        return res.json({ status: "cancelled", message: "Trip Cancelled due to some unforeseen circumstances" })
+    }
+
     const vehicledetails = await VehicleModel.find({ name: tripdetails[0].busid })
 
     if (vehicledetails.length == 0) {
