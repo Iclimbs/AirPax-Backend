@@ -26,8 +26,8 @@ tripRouter.post("/add", async (req, res) => {
     }
 })
 
-tripRouter.post("/add/bulk", async (req, res) => {    
-    const { name, from, to, busid, journeystartdate, journeyenddate, starttime, endtime, distance, totaltime, price, totalseats } = req.body;
+tripRouter.post("/add/bulk", async (req, res) => {
+    const { name, from, to, busid, journeystartdate, journeyenddate, starttime, endtime, distance, totaltime, price, totalseats, time, foodavailability } = req.body;
     // Bulk Data Which Will be Stored in Data Base
     const data = [];
 
@@ -36,10 +36,10 @@ tripRouter.post("/add/bulk", async (req, res) => {
     let journeyEndDate = new Date(journeyenddate);
 
     // Loop to add 30 consecutive days
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < time; i++) {
         // Format and store the current date in the dates array
         data.push({
-            name, from, to, busid, journeystartdate: journeyStartDate.toISOString().split('T')[0], journeyenddate: journeyEndDate.toISOString().split('T')[0], starttime, endtime, distance, totaltime, price, bookedseats: 0, availableseats: totalseats, totalseats
+            name, from, to, busid, journeystartdate: journeyStartDate.toISOString().split('T')[0], journeyenddate: journeyEndDate.toISOString().split('T')[0], starttime, endtime, distance, totaltime, price, bookedseats: 0, availableseats: totalseats, totalseats,foodavailability
         })
         // // Move to the next day
         journeyStartDate.setDate(journeyStartDate.getDate() + 1);
@@ -47,8 +47,6 @@ tripRouter.post("/add/bulk", async (req, res) => {
     }
 
     try {
-        console.log("data ",data);
-        
         await TripModel.insertMany(data)
         return res.json({ status: "success", message: "Successfully Addeded Trip's in Bulk", })
     } catch (error) {
