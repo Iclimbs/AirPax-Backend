@@ -7,6 +7,7 @@ const connection = require("./connection/connection");
 const path = require('node:path');
 const app = express();
 
+
 app.use(express.json());
 app.use(cors());
 

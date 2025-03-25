@@ -27,7 +27,7 @@ tripRouter.post("/add", async (req, res) => {
 })
 
 tripRouter.post("/add/bulk", async (req, res) => {
-    const { name, from, to, busid, journeystartdate, journeyenddate, starttime, endtime, distance, totaltime, price, totalseats, time, foodavailability } = req.body;
+    const { name, from, to, busid, journeystartdate, journeyenddate, starttime, endtime, distance, totaltime, price, totalseats, time, foodavailability, conductor, driver, } = req.body;
     // Bulk Data Which Will be Stored in Data Base
     const data = [];
 
@@ -39,7 +39,7 @@ tripRouter.post("/add/bulk", async (req, res) => {
     for (let i = 0; i < time; i++) {
         // Format and store the current date in the dates array
         data.push({
-            name, from, to, busid, journeystartdate: journeyStartDate.toISOString().split('T')[0], journeyenddate: journeyEndDate.toISOString().split('T')[0], starttime, endtime, distance, totaltime, price, bookedseats: 0, availableseats: totalseats, totalseats,foodavailability
+            name, from, to, busid, journeystartdate: journeyStartDate.toISOString().split('T')[0], journeyenddate: journeyEndDate.toISOString().split('T')[0], starttime, endtime, distance, totaltime, price, bookedseats: 0, availableseats: totalseats, totalseats, foodavailability, conductor, driver,
         })
         // // Move to the next day
         journeyStartDate.setDate(journeyStartDate.getDate() + 1);
@@ -64,7 +64,28 @@ tripRouter.patch("/edit/:id", async (req, res) => {
         return res.json({ status: "error", message: "Failed To Update  Trip  Details" })
     }
 })
-
+tripRouter.patch("/disable/:id", async (req, res) => {
+    const { id } = req.params;
+    const {status} = req.body;
+    console.log("req.body",req.body);
+    console.log("id ",req.params);
+    
+    
+    if (!id) {
+        return res.json({ status: 'error', message: 'Trip Id is Required To Disable It.' })
+    }
+    try {
+        const trip = await TripModel.findByIdAndUpdate(id, { disabled: status }, { new: true })
+        await trip.save();
+        if (trip.length !== 0) {
+            return res.json({ status: "success", message: "Trip Disabled Successfully !" })
+        } else {
+            return res.json({ status: "error", message: "Failed To Disable Trip !" })
+        }
+    } catch (error) {
+        return res.json({ status: 'error', message: `Failed To Disable Trip, ${error.message}`, })
+    }
+})
 tripRouter.get("/listall", async (req, res) => {
     const { page, limit } = req.query;
     try {
@@ -107,7 +128,7 @@ tripRouter.get("/list", async (req, res) => {
     // const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     try {
-        const trips = await TripModel.find({ from: from, to: to, journeystartdate: date })
+        const trips = await TripModel.find({ from: from, to: to, journeystartdate: date, disabled: false, cancelled: false })
 
         // const dateObj = new Date();
         // Creating Date
@@ -218,8 +239,6 @@ tripRouter.get("/booking/:id", async (req, res) => {
         return res.json({ status: "error", message: `Get List Failed ${error.message}` })
     }
 })
-
-
 
 tripRouter.get("/assigned/conductor", AdminAuthentication, async (req, res) => {
     const token = req.headers.authorization.split(" ")[1]

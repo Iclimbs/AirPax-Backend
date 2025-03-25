@@ -12,7 +12,7 @@ const DriverSchema = new Schema({
     LogIn: { type: String, default: "00:00" },
     LogOut: { type: String, default: "00:00" },
     fuel: { type: Number, default: 0 },
-    maintenance: { type: Number,default:0 }
+    maintenance: { type: Number, default: 0 }
 })
 
 
@@ -88,6 +88,18 @@ const tripschema = mongoose.Schema({
     foodavailability: {
         type: Boolean,
         default: true
+    },
+    disabled: {
+        type: Boolean,
+        default: false
+    },
+    cancelled: {
+        type: Boolean,
+        default: false
+    },
+    cancellationReason: {
+        type: String,
+        trim: true
     },
     conductordetails: ConductorSchema,
     driverdetails: DriverSchema,
