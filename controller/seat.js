@@ -16,6 +16,7 @@ const { transporter } = require('../service/transporter');
 const { BookingModel } = require('../model/booking.model');
 const { TripModel } = require('../model/trip.model');
 const { AdminAuthentication } = require('../middleware/Authorization');
+const { FoodAllocation } = require('../model/SupervisorReport.model');
 
 const toProperCase = (word) => {
     if (!word) return ''; // Return empty string if input is falsy
@@ -394,8 +395,10 @@ SeatRouter.patch("/update/foodstatus/:id", async (req, res) => {
     }
 
     try {
-        let bulkwriteseat = []
+        let bulkwriteseat = [];
+        let ids = [];
         for (let index = 0; index < passengers.length; index++) {
+            ids.push(passengers[index]);
             bulkwriteseat.push({
                 updateOne: {
                     filter: { _id: passengers[index], tripId: id, "details.status": 'Confirmed' },
@@ -408,6 +411,74 @@ SeatRouter.patch("/update/foodstatus/:id", async (req, res) => {
             })
         }
         await SeatModel.bulkWrite(bulkwriteseat)
+
+        // Finding All Seat Details Based On Id's;
+        const records = await SeatModel.find({ '_id': { $in: ids } });
+        let foodServed = [];
+        let totalAllocatedFood;
+        if (records.length !== 0) {
+            for (let index = 0; index < records.length; index++) {
+                // const element = array[index];
+                // console.log(records[index].details.food);
+                foodServed.push(records[index].details.food[0])
+            }
+            // console.log("food server", foodServed);
+
+            const allocatedFood = await FoodAllocation.find({ trip: id })
+            totalAllocatedFood = allocatedFood[0].foodUnit;
+            // console.log("allocated food", totalAllocatedFood);
+
+
+            // for (let index = 0; index < foodServed.length; index++) {
+            //     console.log("food served", foodServed[index]);
+            //     let keyToCheck = foodServed[index].name;
+            //     let newValue = foodServed[index].quantity
+            //     // console.log("keytocheck", keyToCheck);
+            //     // console.log("newvalue", newValue);
+            //     totalAllocatedFood = totalAllocatedFood.map(item => item.hasOwnProperty(keyToCheck) ? { ...item, [keyToCheck]: item.quantity - newValue } : item);
+
+            // }
+            // console.log("total left food",totalAllocatedFood);
+            const servedMap = {};
+
+            foodServed.forEach(({ name, quantity }) => {
+                if (servedMap[name]) {
+                    servedMap[name] += quantity;
+                } else {
+                    servedMap[name] = quantity;
+                }
+            });
+
+            console.log("served mao", servedMap);
+            console.log("total allocated food", totalAllocatedFood);
+
+
+            // Subtract the served quantity from allocated food
+            // const updatedAllocatedFood = totalAllocatedFood.map(item => ({
+            //     ...item,
+            //     quantity: item.quantity - (servedMap[item.foodName] || 0)
+            // }));
+
+            // console.log("updated allowed food", updatedAllocatedFood);
+            for (let index = 0; index < totalAllocatedFood.length; index++) {
+                // const element = array[index];
+                let foodname = totalAllocatedFood[index].foodName;
+
+                console.log("value of food", servedMap[`${foodname}`]);
+
+                console.log("for loop", totalAllocatedFood[index].foodName);
+                totalAllocatedFood[index].quantity = totalAllocatedFood[index.quantity] - servedMap[`${foodname}`];
+            }
+console.log("total ",totalAllocatedFood);
+
+
+
+        } else {
+            return res.json({ status: 'success', message: `passengers Food Status Updated Successfully.` })
+        }
+        // console.log("records", records);
+
+
         return res.json({ status: 'success', message: `passengers Food Status Updated Successfully.` })
     } catch (error) {
         return res.json({ status: 'error', message: `Failed To Updated Passenger Food Status ${error.message}` })
