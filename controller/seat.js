@@ -416,6 +416,8 @@ SeatRouter.patch("/update/foodstatus/:id", async (req, res) => {
         const records = await SeatModel.find({ '_id': { $in: ids } });
         let foodServed = [];
         let totalAllocatedFood;
+        console.log("record length ",records.length);
+        
         if (records.length !== 0) {
             for (let index = 0; index < records.length; index++) {
                 // const element = array[index];
@@ -452,6 +454,14 @@ SeatRouter.patch("/update/foodstatus/:id", async (req, res) => {
             console.log("served mao", servedMap);
             console.log("total allocated food", totalAllocatedFood);
 
+            // Update quantities
+            totalAllocatedFood.forEach(foodItem => {
+                if (servedMap.hasOwnProperty(foodItem.foodName)) {
+                    foodItem.quantity -= servedMap[foodItem.foodName];
+                }
+            });
+
+
 
             // Subtract the served quantity from allocated food
             // const updatedAllocatedFood = totalAllocatedFood.map(item => ({
@@ -460,16 +470,16 @@ SeatRouter.patch("/update/foodstatus/:id", async (req, res) => {
             // }));
 
             // console.log("updated allowed food", updatedAllocatedFood);
-            for (let index = 0; index < totalAllocatedFood.length; index++) {
-                // const element = array[index];
-                let foodname = totalAllocatedFood[index].foodName;
+            //             for (let index = 0; index < totalAllocatedFood.length; index++) {
+            //                 // const element = array[index];
+            //                 let foodname = totalAllocatedFood[index].foodName;
 
-                console.log("value of food", servedMap[`${foodname}`]);
+            //                 console.log("value of food", servedMap[`${foodname}`]);
 
-                console.log("for loop", totalAllocatedFood[index].foodName);
-                totalAllocatedFood[index].quantity = totalAllocatedFood[index.quantity] - servedMap[`${foodname}`];
-            }
-console.log("total ",totalAllocatedFood);
+            //                 console.log("for loop", totalAllocatedFood[index].foodName);
+            //                 totalAllocatedFood[index].quantity = totalAllocatedFood[index.quantity] - servedMap[`${foodname}`];
+            //             }
+            console.log("new totoal allocated food ",totalAllocatedFood);
 
 
 
