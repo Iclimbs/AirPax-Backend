@@ -14,6 +14,8 @@ const SubseatSchema = new Schema({
     email: { type: String },
     refundAmount: { type: Number },
     cancellationReason: { type: String },
+    onboarded:Boolean,
+    foodaccepted:Boolean,
     food: [
         {
             name: {

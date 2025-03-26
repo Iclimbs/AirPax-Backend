@@ -346,4 +346,13 @@ SeatRouter.get("/list/passenger/:id", async (req, res) => {
     }
 })
 
+
+// Update List Of All Passengers Who Has OnBoarded The Trip 
+SeatRouter.patch("/update/onboardedstatus",async(req,res)=>{
+    try {
+        
+    } catch (error) {
+        return res.json({status:'error',message:`Failed To Updated Passenger OnBoard Status ${error.message}`})
+    }
+})
 module.exports = { SeatRouter }
