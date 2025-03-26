@@ -348,11 +348,69 @@ SeatRouter.get("/list/passenger/:id", async (req, res) => {
 
 
 // Update List Of All Passengers Who Has OnBoarded The Trip 
-SeatRouter.patch("/update/onboardedstatus",async(req,res)=>{
+SeatRouter.patch("/update/onboardedstatus/:id", async (req, res) => {
+    const { id } = req.params;
+    const { passengers } = req.body
+    if (!id) {
+        return res.json({ status: 'error', message: `Trip Id is Required To Update Passenger On Boarding Status` });
+    }
+    if (!passengers) {
+        return res.json({ status: 'error', message: 'Passengers Id Is Required To Update Their OnBoarding Status' });
+    }
+
     try {
-        
+
+        let bulkwriteseat = []
+        for (let index = 0; index < passengers.length; index++) {
+            bulkwriteseat.push({
+                updateOne: {
+                    filter: { _id: passengers[index], tripId: id, "details.status": 'Confirmed' },
+                    update: {
+                        $set: {
+                            "details.onboarded": true,
+                        }
+                    }
+                }
+            })
+        }
+        console.log("bulk write", bulkwriteseat);
+
+        let updatedSeats = await SeatModel.bulkWrite(bulkwriteseat);
+        return res.json({ status: 'success', message: `passengers OnBoarding Status Updated Successfully.` })
     } catch (error) {
-        return res.json({status:'error',message:`Failed To Updated Passenger OnBoard Status ${error.message}`})
+        return res.json({ status: 'error', message: `Failed To Updated Passenger OnBoard Status ${error.message}` })
+    }
+})
+
+SeatRouter.patch("/update/foodstatus/:id", async (req, res) => {
+    const { id } = req.params;
+    const { passengers } = req.body
+
+    if (!id) {
+        return res.json({ status: 'error', message: `Trip Id is Required To Update Passenger Food Status` });
+    }
+    if (!passengers) {
+        return res.json({ status: 'error', message: 'Passengers Id Is Required To Update Their Food Status' });
+    }
+
+    try {
+        let bulkwriteseat = []
+        for (let index = 0; index < passengers.length; index++) {
+            bulkwriteseat.push({
+                updateOne: {
+                    filter: { _id: passengers[index], tripId: id, "details.status": 'Confirmed' },
+                    update: {
+                        $set: {
+                            "details.foodaccepted": true,
+                        }
+                    }
+                }
+            })
+        }
+        await SeatModel.bulkWrite(bulkwriteseat)
+        return res.json({ status: 'success', message: `passengers Food Status Updated Successfully.` })
+    } catch (error) {
+        return res.json({ status: 'error', message: `Failed To Updated Passenger Food Status ${error.message}` })
     }
 })
 module.exports = { SeatRouter }
