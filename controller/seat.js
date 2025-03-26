@@ -413,4 +413,5 @@ SeatRouter.patch("/update/foodstatus/:id", async (req, res) => {
         return res.json({ status: 'error', message: `Failed To Updated Passenger Food Status ${error.message}` })
     }
 })
+
 module.exports = { SeatRouter }
