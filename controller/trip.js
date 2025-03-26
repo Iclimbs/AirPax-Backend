@@ -106,7 +106,7 @@ tripRouter.patch("/cancel/:id", async (req, res) => {
                     emails.push(seats[index].details.email)
                 }
             }
-            
+
             let tripCancelled = path.join(__dirname, "../emailtemplate/tripCancelled.ejs")
             ejs.renderFile(tripCancelled, { user: "Sir/Madam", trip: trip }, function (err, template) {
                 if (err) {
@@ -139,6 +139,24 @@ tripRouter.patch("/cancel/:id", async (req, res) => {
     }
 
 })
+
+tripRouter.get("/passenger/list/:id", async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+        return res.json({ status: 'error', message: 'Trip Id is Required To Get Details Of All Passengers.' })
+    }
+    try {
+        const list = await SeatModel.find({tripId:id});
+        if (list.length===0) {
+            return res.json({status:'error',message:'No Ticket Booked For This Trip'})
+        } else {
+            return res.json({status:'success',data:list})
+        }
+    } catch (error) {
+        return res.json({ status: 'error', message: `Failed To Get Passenger List, ${error.message}`, })
+    }
+})
+
 tripRouter.get("/listall", async (req, res) => {
     const { page, limit } = req.query;
     try {
@@ -296,6 +314,7 @@ tripRouter.get("/booking/:id", async (req, res) => {
 tripRouter.get("/assigned/conductor", AdminAuthentication, async (req, res) => {
     const token = req.headers.authorization.split(" ")[1]
     const decoded = jwt.verify(token, 'Authorization')
+    console.log("reached here for mtls ");
 
     const dateObj = new Date();
     // Creating Date

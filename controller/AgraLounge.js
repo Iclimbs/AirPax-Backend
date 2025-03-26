@@ -23,7 +23,6 @@ AgraLounge.post("/create-order", async (req, res) => {
             if (!i.quantity > 0) return res.json({ status: "error", message: "Minimum one Quantity required!" })
             const findingItem = await FoodModel.findById(i.itemsId)
             if (!findingItem) return res.json({ status: "error", message: "Item not Found!" })
-            // console.log(findingItem);
             if (findingItem.available == false) return res.json({ status: "error", message: `${findingItem.name} not Available!` })
             allItems.push({ itemsId: i.itemsId, quantity: i.quantity, pricePerItem: Number(findingItem.price) })
             totalAmount += Number(i.quantity * findingItem.price)

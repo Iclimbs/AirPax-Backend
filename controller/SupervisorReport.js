@@ -108,7 +108,6 @@ SupervisorRouter.patch("/allocate-food/update/:id", async (req, res) => {
             },
             { new: true }
         );
-        console.log("result ", result);
 
         return res.json({ status: "success", message: "Food Allocated Successfully!" })
     } catch (error) {
