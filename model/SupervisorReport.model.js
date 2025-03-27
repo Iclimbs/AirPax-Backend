@@ -7,6 +7,10 @@ const foodDetails = new mongoose.Schema({
         type: String,
         required: true
     },
+    allocatedFood: {
+        type: String,
+        required: true
+    },
     foodConsumption: {
         type: Number,
         required: true
@@ -38,7 +42,15 @@ const SuperviorReportSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    others: {
+    fuelTotalCost: {
+        type: Number,
+        required: true
+    },
+    currentReading: {
+        type: Number,
+        required: true
+    },
+    description: {
         type: String
     },
     food: [foodDetails]
@@ -63,6 +75,7 @@ const FoodAllocationSchema = new mongoose.Schema({
         required: true
     },
     foodUnit: [foodAllocateDetails],
+    allocatedFood: [foodAllocateDetails]
 }, { timestamps: true })
 const FoodAllocation = mongoose.model("FoodAllocation", FoodAllocationSchema)
 

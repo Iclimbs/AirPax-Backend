@@ -2,6 +2,7 @@ const express = require("express");
 const { default: mongoose } = require("mongoose");
 const { SuperviorReport, FoodAllocation } = require("../model/SupervisorReport.model");
 const { TripModel } = require("../model/trip.model");
+const { SeatModel } = require("../model/seat.model");
 const SupervisorRouter = express.Router();
 
 
@@ -48,6 +49,62 @@ SupervisorRouter.post("/submit-report", async (req, res) => {
     }
 })
 
+
+SupervisorRouter.get("/report/detail/:id", async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+        return res.json({ status: 'error', message: 'Trip Id is Required To Fetch Report Details.' })
+    }
+    try {
+        // Passenger List 
+        // Food Alloted Details
+        // Fuel Details 
+        // Current Reading 
+        // Additional Description
+
+        const tripdetails = await TripModel.find({ _id: id });
+        console.log("tripdetails", tripdetails[0]);
+
+        const seatdetails = await SeatModel.find({ tripId: id, "details.onboarded": true, "details.status": "Confirmed" });
+        console.log("seatdetails  ", seatdetails);
+
+        // Return Value
+        const totalSeats = tripdetails[0].bookedseats;
+        const onboardedPassengers = seatdetails.length
+        console.log("onboardedpassengers", onboardedPassengers);
+        console.log("total seats ", totalSeats);
+
+        // Food Details 
+        const foodDetails = await FoodAllocation.find({ trip: id })
+        console.log("food details", foodDetails[0]);
+        const foodalloted = foodDetails[0].allocatedFood;
+        const foodconsumed = foodDetails[0].foodUnit;
+
+        // Fuel & Other Details 
+        const otherdetails = await SuperviorReport.find({ trip: id })
+        console.log("other details ", otherdetails);
+        const fuelconsumption = otherdetails[0]?.fuelConsuptioninLiter || 0;
+        const fuelprice = otherdetails[0]?.fuelPricePerLiter || 0;
+        const currentReading = otherdetails[0]?.currentReading || 0;
+        const description = otherdetails[0]?.description || "";
+
+
+        const data = {
+            totalSeats,
+            onboardedPassengers,
+            foodalloted,
+            foodconsumed,
+            fuelconsumption,
+            fuelprice,
+            currentReading,
+            description
+        }
+        return res.json({ status: "success", data: data })
+    } catch (error) {
+        return res.json({ status: "error", message: `Failed To Fetch Report Details ${error.message}` })
+    }
+})
+
 SupervisorRouter.get("/get-all-reports", async (req, res) => {
     try {
         const allReports = await SuperviorReport.find({}).populate("trip", "name")
@@ -81,7 +138,8 @@ SupervisorRouter.post("/allocate-food", async (req, res) => {
 
 
         const creatingFoodAllocation = await FoodAllocation.create({
-            trip, foodUnit: allFoods.length > 0 ? allFoods : []
+            trip, foodUnit: allFoods.length > 0 ? allFoods : [],
+            allocatedFood: allFoods.length > 0 ? allFoods : []
         })
         return res.json({ status: "success", message: "Food Allocated Successfully!" })
     } catch (error) {
@@ -104,7 +162,8 @@ SupervisorRouter.patch("/allocate-food/update/:id", async (req, res) => {
                 trip: new mongoose.Types.ObjectId(trip)
             },
             {
-                foodUnit: foodDetails
+                foodUnit: foodDetails,
+                allocatedFood: foodDetails
             },
             { new: true }
         );
