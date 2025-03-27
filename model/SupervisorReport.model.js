@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-
-
 const foodDetails = new mongoose.Schema({
     foodName: {
         type: String,

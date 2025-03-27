@@ -8,7 +8,7 @@ const SupervisorRouter = express.Router();
 
 SupervisorRouter.post("/submit-report", async (req, res) => {
     try {
-        const { trip, totalPassengers, onboardingPassengers, fuelConsuptioninLiter, fuelPricePerLiter, others, food } = req?.body
+        const { trip, totalPassengers, onboardingPassengers, fuelConsuptioninLiter, fuelPricePerLiter, fuelTotalCost, currentReading, food } = req?.body
 
 
         if (!trip) return res.json({ status: "error", message: "Trip Name Required!" })
@@ -17,6 +17,9 @@ SupervisorRouter.post("/submit-report", async (req, res) => {
         if (!onboardingPassengers) return res.json({ status: "error", message: "Onboarding Passengers field Required!" })
         if (!fuelConsuptioninLiter) return res.json({ status: "error", message: "Fuel ConsuptioninLiter field Required!" })
         if (!fuelPricePerLiter) return res.json({ status: "error", message: "Fuel Price Per Liter field Required!" })
+        if (!fuelTotalCost) return res.json({ status: "error", message: "Fuel Totoal Cost field Required!" })
+        if (!currentReading) return res.json({ status: "error", message: "Current Reading field Required!" })
+
 
         if (!Array.isArray(food)) return res.json({ status: "error", message: "Food Should be an Array!" })
         const allFoods = []
@@ -26,6 +29,7 @@ SupervisorRouter.post("/submit-report", async (req, res) => {
             allFoods.push({
                 foodName: element.foodName,
                 foodConsumption: Number(element.foodConsumption),
+                allocatedFood:Number(element.allocatedFood),
                 pricePerFood: Number(element.foodConsumption) || null
             })
         }
@@ -35,6 +39,9 @@ SupervisorRouter.post("/submit-report", async (req, res) => {
             onboardingPassengers: Number(onboardingPassengers),
             fuelConsuptioninLiter: Number(fuelConsuptioninLiter),
             fuelPricePerLiter: Number(fuelPricePerLiter),
+            fuelTotalCost: Number(fuelTotalCost),
+            currentReading: Number(currentReading),
+            description: req.body?.description || "No Description Provided",
             food: allFoods
         })
 
@@ -56,11 +63,6 @@ SupervisorRouter.get("/report/detail/:id", async (req, res) => {
         return res.json({ status: 'error', message: 'Trip Id is Required To Fetch Report Details.' })
     }
     try {
-        // Passenger List 
-        // Food Alloted Details
-        // Fuel Details 
-        // Current Reading 
-        // Additional Description
 
         const tripdetails = await TripModel.find({ _id: id });
         console.log("tripdetails", tripdetails[0]);
