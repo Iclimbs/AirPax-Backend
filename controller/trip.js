@@ -146,11 +146,11 @@ tripRouter.get("/passenger/list/:id", async (req, res) => {
         return res.json({ status: 'error', message: 'Trip Id is Required To Get Details Of All Passengers.' })
     }
     try {
-        const list = await SeatModel.find({tripId:id});
-        if (list.length===0) {
-            return res.json({status:'error',message:'No Ticket Booked For This Trip'})
+        const list = await SeatModel.find({ tripId: id });
+        if (list.length === 0) {
+            return res.json({ status: 'error', message: 'No Ticket Booked For This Trip' })
         } else {
-            return res.json({status:'success',data:list})
+            return res.json({ status: 'success', data: list })
         }
     } catch (error) {
         return res.json({ status: 'error', message: `Failed To Get Passenger List, ${error.message}`, })
@@ -224,6 +224,37 @@ tripRouter.get("/list", async (req, res) => {
                 return res.json({ status: "error", message: "No Upcoming Trips Found" })
             }
         }
+    } catch (error) {
+        return res.json({ status: "error", message: `Failed To Get List Of Today's Trip's ${error.message}` })
+    }
+})
+
+// Trip Filter For HR 
+tripRouter.get("/list/hr", async (req, res) => {
+    const { filter } = req.query;
+
+    try {
+        let condition ;
+        const trips = await TripModel.find({})
+
+
+        // if (todayDate == date) {
+        //     // const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > currentMinutes);
+        //     const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > timeToMinutes(currenttime));
+        //     if (upcomingEvents.length >= 1) {
+        //         return res.json({ status: "success", data: upcomingEvents })
+        //     } else {
+        //         return res.json({ status: "error", message: "No Upcoming Trips Found" })
+        //     }
+        // } else {
+        //     if (trips.length >= 1) {
+        //         return res.json({ status: "success", data: trips })
+        //     } else {
+        //         return res.json({ status: "error", message: "No Upcoming Trips Found" })
+        //     }
+        // }
+        return res.json({ status: "status", message: `Working On Trip List's`, data: trips })
+
     } catch (error) {
         return res.json({ status: "error", message: `Failed To Get List Of Today's Trip's ${error.message}` })
     }
@@ -402,8 +433,3 @@ tripRouter.patch("/update/conductor/details", AdminAuthentication, async (req, r
 
 
 module.exports = { tripRouter }
-
-
-// 1. First Get All Email In Which You Need To Send Email
-// 2. Update All Document With Refund Amount & Status to be Cancelled & cancellationReasons to Trip Cancelled
-// 3. Update All The Documents & Remove All Seats & make Total Seats To default. 
