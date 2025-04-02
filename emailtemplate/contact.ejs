@@ -1,141 +1,237 @@
 <!DOCTYPE html>
 <html lang="en-US">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airpax - Contact Email</title>
-    <style>
+    <style type="text/css">
+        /* Client-specific resets */
+        body, table, td, p, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        
+        /* Reset styles */
+        body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+        
+        /* iOS blue links fix */
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+        
+        /* Main styles */
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-
-        .email-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            color: #2a9d8f;
-        }
-
-        p {
-            font-size: 16px;
+            color: #333333;
             line-height: 1.5;
         }
-
+        
+        .email-wrapper {
+            width: 100%;
+            table-layout: fixed;
+            background-color: #f4f4f4;
+            padding: 20px 10px;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .email-content {
+            padding: 30px;
+            font-size: 16px;
+            line-height: 1.5;
+            text-align: center;
+        }
+        
+        .text-left {
+            text-align: left;
+        }
+        
+        h2 {
+            color: #2a9d8f;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+            line-height: 1.3;
+        }
+        
+        h3 {
+            color: #2a9d8f;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-align: left;
+        }
+        
         .details-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 15px 0;
+            font-size: 14px;
+            text-align: left;
         }
-
+        
         .details-table th,
         .details-table td {
-            text-align: left;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
         }
-
+        
         .details-table th {
-            background-color: #f0f0f0;
+            background-color: #f8f8f8;
             color: #333;
+            width: 35%;
+            font-weight: 600;
         }
-
+        
         .footer {
             text-align: center;
-            font-size: 14px;
-            color: black;
-            margin-top: 20px;
+            font-size: 12px;
+            color: #666666;
+            padding: 25px;
+            background-color: #f9f9f9;
+            line-height: 1.6;
         }
-
-        .footer table {
+        
+        a {
+            color: #2a9d8f;
+            text-decoration: none;
+        }
+        
+        .footer-address {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        
+        .closing-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
             text-align: center;
-
+        }
+        
+        /* Responsive styles */
+        @media screen and (max-width: 600px) {
+            .email-content {
+                padding: 20px !important;
+            }
+            
+            .details-table th,
+            .details-table td {
+                display: block;
+                width: 100% !important;
+                box-sizing: border-box;
+                padding: 10px 15px !important;
+            }
+            
+            .details-table th {
+                background-color: #f8f8f8;
+                padding-bottom: 5px !important;
+            }
+            
+            .details-table td {
+                padding-top: 5px !important;
+                padding-bottom: 15px !important;
+            }
+            
+            .details-table tr {
+                margin-bottom: 10px;
+                display: block;
+            }
+            
+            h2 {
+                font-size: 20px !important;
+            }
+            
+            h3 {
+                font-size: 16px !important;
+            }
         }
     </style>
 </head>
+<body style="margin: 0; padding: 0;">
+    <!--[if mso]>
+    <style type="text/css">
+        .details-table th,
+        .details-table td {
+            padding: 8px 10px !important;
+        }
+    </style>
+    <![endif]-->
+    
+    <!-- Email wrapper -->
+    <table class="email-wrapper" cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td align="center" valign="top">
+                <!-- Email container -->
+                <table class="email-container" cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <!-- Content -->
+                    <tr>
+                        <td class="email-content">
+                            <h2>User Contact Request</h2>
+                            <p class="text-left">Dear <strong>Admin</strong>,</p>
+                            <p class="text-left">The following person has tried to contact you through your website:</p>
 
-<body>
+                            <h3>Contact Details:</h3>
+                            <table class="details-table">
+                                <tr>
+                                    <th>First Name</th>
+                                    <td><%= list.fname %></td>
+                                </tr>
+                                <tr>
+                                    <th>Last Name</th>
+                                    <td><%= list.lname %></td>
+                                </tr>
+                                <tr>
+                                    <th>Email</th>
+                                    <td><%= list.email %></td>
+                                </tr>
+                                <tr>
+                                    <th>Phone No</th>
+                                    <td><%= list.phoneno %></td>
+                                </tr>
+                                <tr>
+                                    <th>Message</th>
+                                    <td><%= list.message %></td>
+                                </tr>
+                            </table>
 
-    <div class="email-container">
-        <h2>User Contact Request</h2>
-        <p>Dear <strong>
-                Admin
-            </strong>,</p>
-        <p> The Following Person has tried to Contact You On Your Website.</p>
-
-        <h3>Contact Details:</h3>
-        <table class="details-table">
-            <tr>
-                <th>First Name</th>
-                <td>
-                    <%= list.fname %>
-                </td>
-            </tr>
-            <tr>
-                <th>Last Name</th>
-                <td>
-                    <%= list.lname %>
-                </td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>
-                    <%= list.email %>
-                </td>
-            </tr>
-            <tr>
-                <th>Phone No</th>
-                <td>
-                    <%= list.phoneno %>
-                </td>
-            </tr>
-            <tr>
-                <th>Message</th>
-                <td>
-                    <%= list.message %>
-                </td>
-            </tr>
-        </table>
-
-        <h3>Ticket Information:</h3>
-
-        <p>We wish you a pleasant and enjoyable trip!</p>
-
-        <p>Best regards,</p>
-        <p><strong>Airpax</strong></p>
-
-        <div class="footer">
-            <p> <strong>RIGI TRANS TECH PVT LTD</strong></p>
-            <tr>
-                <td>PERNAM INN</td>
-                <td> 837/1</td>
-            </tr><br>
-            <tr>
-                <td>MANDI ESTATE</td>
-                <td>NEW DELHI</td>
-            </tr><br>
-            <tr>
-                <td>110047</td>
-            </tr>
-
-            <p>Email: <a href="mailto:info@airpax.co">info@airpax.co</a> | Phone: <a
-                    href="tel:+919990301111">+919990301111</a></p>
-            <p><a href="https://airpax.co/">airpax.co</a></p>
-        </div>
-    </div>
-
+                            <div class="closing-section">
+                                <p>Please respond to this inquiry at your earliest convenience.</p>
+                                <p>Best regards,</p>
+                                <p><strong>Airpax Team</strong></p>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td class="footer">
+                            <p><strong>RIGI TRANS TECH PVT LTD</strong></p>
+                            <div class="footer-address">
+                                PERNAM INN, 837/1<br>
+                                MANDI ESTATE, NEW DELHI<br>
+                                110047
+                            </div>
+                            <p>Email: <a href="mailto:info@airpax.co">info@airpax.co</a> | Phone: <a href="tel:+919990301111">+919990301111</a></p>
+                            <p><a href="https://airpax.co/">airpax.co</a></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
-
 </html>
