@@ -12,20 +12,23 @@
             margin: 0;
             padding: 0;
             color: #333;
+            text-align: center;
         }
 
         .email-container {
             width: 100%;
             max-width: 600px;
-            margin: 0 auto;
+            margin: 20px auto;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
 
         h2 {
             color: #2a9d8f;
+            text-align: center;
         }
 
         p {
@@ -61,7 +64,7 @@
         /* Responsive Styles */
         @media screen and (max-width: 600px) {
             .email-container {
-                width: 100% !important;
+                width: 90% !important;
                 padding: 15px;
             }
 
@@ -81,7 +84,6 @@
 </head>
 
 <body>
-
     <div class="email-container">
         <h2>Payment Confirmed – Your Trip Details</h2>
         <p>Dear <strong><%= user.name %></strong>,</p>
@@ -128,7 +130,5 @@
             <p><a href="https://airpax.co/">airpax.co</a></p>
         </div>
     </div>
-
 </body>
-
 </html>
