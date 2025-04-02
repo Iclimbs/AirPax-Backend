@@ -1,20 +1,43 @@
 <!DOCTYPE html>
 <html lang="en-US">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airpax - Trip Confirmation Email</title>
-    <style>
+    <style type="text/css">
+        /* Client-specific resets */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        
+        /* Reset styles */
+        body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+        
+        /* iOS blue links fix */
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+        
+        /* Main styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
             color: #333;
+            line-height: 1.5;
         }
-
+        
+        .email-wrapper {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
         .email-container {
             width: 100%;
             max-width: 600px;
@@ -24,198 +47,204 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
+        
         h2 {
             color: #2a9d8f;
+            margin-top: 0;
+            text-align: center;
         }
-
+        
         p {
             font-size: 16px;
-            line-height: 1.5;
+            margin-bottom: 16px;
         }
-
+        
         .details-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            font-size: 14px;
         }
-
+        
         .details-table th,
         .details-table td {
             text-align: left;
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
-
+        
         .details-table th {
             background-color: #f0f0f0;
             color: #333;
+            width: 30%;
         }
-
+        
         .footer {
             text-align: center;
-            font-size: 14px;
-            color: black;
-            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
-
-        .footer table {
-            text-align: center;
-
+        
+        .footer p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        
+        /* Responsive styles */
+        @media screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                padding: 10px !important;
+                border-radius: 0 !important;
+            }
+            .details-table th,
+            .details-table td {
+                display: block;
+                width: 100% !important;
+                box-sizing: border-box;
+            }
+            .details-table th {
+                background-color: transparent;
+                padding-bottom: 0;
+            }
+            .details-table tr {
+                margin-bottom: 15px;
+                display: block;
+            }
+            h2 {
+                font-size: 24px !important;
+            }
         }
     </style>
 </head>
 
-<body>
-
-    <div class="email-container">
-        <h2>Payment Confirmed – Your Trip Details</h2>
-        <p>Dear <strong>
-                <%= user.name %>
-            </strong>,</p>
-        <p>We are excited to inform you that your payment has been successfully processed! Please find the details of
-            your upcoming trip below. If you have any questions, feel free to reach out to our support team.</p>
-
-        <h3>Trip Details:</h3>
-        <table class="details-table">
-            <tr>
-                <th>From</th>
+<body style="margin: 0; padding: 0;">
+    <!--[if mso]>
+    <style type="text/css">
+        body, table, td {font-family: Arial, sans-serif !important;}
+    </style>
+    <![endif]-->
+    
+    <!-- Email wrapper -->
+    <table role="presentation" class="email-wrapper" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+        <tr>
+            <td style="padding: 20px 0;">
+                <!--[if mso]>
+                <table role="presentation" align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+                <tr>
                 <td>
-                    <%= trip.from %>
-                </td>
-            </tr>
-            <tr>
-                <th>To</th>
-                <td>
-                    <%= trip.to %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyStartDate</th>
-                <td>
-                    <%= trip.journeystartdate %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyEndDate</th>
-                <td>
-                    <%= trip.journeyenddate %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyStartTime</th>
-                <td>
-                    <%= trip.starttime %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyEndTime</th>
-                <td>
-                    <%= trip.endtime %>
-                </td>
-            </tr>
-        </table>
+                <![endif]-->
+                
+                <div class="email-container">
+                    <h2>Payment Confirmed – Your Trip Details</h2>
+                    <p>Dear <strong><%= user.name %></strong>,</p>
+                    <p>We are excited to inform you that your payment has been successfully processed! Please find the details of your upcoming trip below. If you have any questions, feel free to reach out to our support team.</p>
 
-        <h3>Ticket Information:</h3>
-        <table class="details-table">
-            <tr>
-                <th>PNR Number</th>
-                <td><strong>
-                        <%= pnr %>
-                    </strong></td>
-            </tr>
-            <tr>
-                <th>Total Amount</th>
-                <td>
-                    <%= amount %>
-                </td>
-            </tr>
-        </table>
+                    <h3>Trip Details:</h3>
+                    <table class="details-table">
+                        <tr>
+                            <th>From</th>
+                            <td><%= trip.from %></td>
+                        </tr>
+                        <tr>
+                            <th>To</th>
+                            <td><%= trip.to %></td>
+                        </tr>
+                        <tr>
+                            <th>Journey Start Date</th>
+                            <td><%= trip.journeystartdate %></td>
+                        </tr>
+                        <tr>
+                            <th>Journey End Date</th>
+                            <td><%= trip.journeyenddate %></td>
+                        </tr>
+                        <tr>
+                            <th>Journey Start Time</th>
+                            <td><%= trip.starttime %></td>
+                        </tr>
+                        <tr>
+                            <th>Journey End Time</th>
+                            <td><%= trip.endtime %></td>
+                        </tr>
+                    </table>
 
-        <h3>Passenger Details :</h3>
-        <% seat.forEach(function(seat) { %>
-            <table class="details-table">
-                <tr>
-                    <th>First Name</th>
-                    <td>
-                        <%=seat.Fname %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Last Name</th>
-                    <td>
-                        <%=seat.Lname %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Age</th>
-                    <td>
-                        <%=seat.Age %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Gender</th>
-                    <td>
-                        <%=seat.Gender %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Seat No</th>
-                    <td>
-                        <%=seat.SeatNo %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Phone No</th>
-                    <td>
-                        <%=seat.PhoneNo %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Email No</th>
-                    <td>
-                        <%=seat.Email %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Country</th>
-                    <td>
-                        <%=seat.Country %>
-                    </td>
-                </tr>
-            </table>
-            <% }); %>
+                    <h3>Ticket Information:</h3>
+                    <table class="details-table">
+                        <tr>
+                            <th>PNR Number</th>
+                            <td><strong><%= pnr %></strong></td>
+                        </tr>
+                        <tr>
+                            <th>Total Amount</th>
+                            <td><%= amount %></td>
+                        </tr>
+                    </table>
 
-                <p>If you need any further assistance, please feel free to contact us at <a
-                        href="mailto:info@airpax.co">info@airpax.co</a> or call us at <a
-                        href="tel:+919990301111">+919990301111</a>. You can also visit our website <a
-                        href="https://airpax.co/">Airpax</a> for more information.</p>
+                    <h3>Passenger Details:</h3>
+                    <% seat.forEach(function(seat) { %>
+                    <table class="details-table" style="margin-bottom: 20px;">
+                        <tr>
+                            <th>First Name</th>
+                            <td><%=seat.Fname %></td>
+                        </tr>
+                        <tr>
+                            <th>Last Name</th>
+                            <td><%=seat.Lname %></td>
+                        </tr>
+                        <tr>
+                            <th>Age</th>
+                            <td><%=seat.Age %></td>
+                        </tr>
+                        <tr>
+                            <th>Gender</th>
+                            <td><%=seat.Gender %></td>
+                        </tr>
+                        <tr>
+                            <th>Seat No</th>
+                            <td><%=seat.SeatNo %></td>
+                        </tr>
+                        <tr>
+                            <th>Phone No</th>
+                            <td><%=seat.PhoneNo %></td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td><%=seat.Email %></td>
+                        </tr>
+                        <tr>
+                            <th>Country</th>
+                            <td><%=seat.Country %></td>
+                        </tr>
+                    </table>
+                    <% }); %>
 
-                <p>We wish you a pleasant and enjoyable trip!</p>
+                    <p>If you need any further assistance, please feel free to contact us at <a href="mailto:info@airpax.co">info@airpax.co</a> or call us at <a href="tel:+919990301111">+919990301111</a>. You can also visit our website <a href="https://airpax.co/">Airpax</a> for more information.</p>
 
-                <p>Best regards,</p>
-                <p><strong>Airpax</strong></p>
+                    <p>We wish you a pleasant and enjoyable trip!</p>
 
-                <div class="footer">
-                    <p> <strong>RIGI TRANS TECH PVT LTD</strong></p>
-                    <tr>
-                        <td>PERNAM INN</td>
-                        <td> 837/1</td>
-                    </tr><br>
-                    <tr>
-                        <td>MANDI ESTATE</td>
-                        <td>NEW DELHI</td>
-                    </tr><br>
-                    <tr>
-                        <td>110047</td>
-                    </tr>
+                    <p>Best regards,</p>
+                    <p><strong>Airpax</strong></p>
 
-                    <p>Email: <a href="mailto:info@airpax.co">info@airpax.co</a> | Phone: <a
-                            href="tel:+919990301111">+919990301111</a></p>
-                    <p><a href="https://airpax.co/">airpax.co</a></p>
+                    <div class="footer">
+                        <p><strong>RIGI TRANS TECH PVT LTD</strong></p>
+                        <p>PERNAM INN 837/1</p>
+                        <p>MANDI ESTATE, NEW DELHI</p>
+                        <p>110047</p>
+                        <p>Email: <a href="mailto:info@airpax.co">info@airpax.co</a> | Phone: <a href="tel:+919990301111">+919990301111</a></p>
+                        <p><a href="https://airpax.co/">airpax.co</a></p>
+                    </div>
                 </div>
-    </div>
-
+                
+                <!--[if mso]>
+                </td>
+                </tr>
+                </table>
+                <![endif]-->
+            </td>
+        </tr>
+    </table>
 </body>
-
 </html>

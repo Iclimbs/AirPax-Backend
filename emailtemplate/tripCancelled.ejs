@@ -1,149 +1,221 @@
 <!DOCTYPE html>
 <html lang="en-US">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Airpax - Ticket Cancellation Email</title>
-    <style>
+    <title>Airpax - Trip Cancellation Notification</title>
+    <style type="text/css">
+        /* Client-specific resets */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        
+        /* Reset styles */
+        body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+        
+        /* iOS blue links fix */
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+        
+        /* Main styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
             color: #333;
+            line-height: 1.5;
         }
-
+        
+        .email-wrapper {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+        
         .email-container {
             width: 100%;
             max-width: 600px;
             margin: 0 auto;
             background-color: #fff;
-            padding: 20px;
+            padding: 25px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
+        
         h2 {
             color: #2a9d8f;
+            margin-top: 0;
+            text-align: center;
+            font-size: 24px;
         }
-
+        
         p {
             font-size: 16px;
-            line-height: 1.5;
+            margin-bottom: 16px;
         }
-
+        
+        .notice-box {
+            background-color: #fff3f3;
+            border-left: 4px solid #ff6b6b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
         .details-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            font-size: 14px;
         }
-
+        
         .details-table th,
         .details-table td {
             text-align: left;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
         }
-
+        
         .details-table th {
-            background-color: #f0f0f0;
+            background-color: #f7f7f7;
             color: #333;
+            width: 35%;
         }
-
+        
         .footer {
             text-align: center;
-            font-size: 14px;
-            color: black;
-            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
-
-        .footer table {
-            text-align: center;
-
+        
+        .footer p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        
+        /* Responsive styles */
+        @media screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                padding: 15px !important;
+                border-radius: 0 !important;
+            }
+            .details-table th,
+            .details-table td {
+                display: block;
+                width: 100% !important;
+                padding: 8px !important;
+            }
+            .details-table th {
+                background-color: transparent;
+                padding-bottom: 0 !important;
+                font-weight: bold;
+            }
+            .details-table tr {
+                margin-bottom: 15px;
+                display: block;
+                border-bottom: 1px solid #ddd;
+            }
+            h2 {
+                font-size: 22px !important;
+            }
         }
     </style>
 </head>
 
-<body>
-
-    <div class="email-container">
-        <h2>Ticket Canellation Request</h2>
-        <p>Dear <strong>
-            <%= user.name %>
-        </strong>,</p>
-        <p>We are writing this mail to inform you that due to some unforeseen circumstances we had to cancel our Trip. But FearNot You Will Receive Complete Refund Of Your Ticket Price Within 5-7 Working Days.</p>
-
-        <h3>Trip Details:</h3>
-        <table class="details-table">
-            <tr>
-                <th>From</th>
+<body style="margin: 0; padding: 0;">
+    <!--[if mso]>
+    <style type="text/css">
+        body, table, td {font-family: Arial, sans-serif !important;}
+    </style>
+    <![endif]-->
+    
+    <table role="presentation" class="email-wrapper" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+        <tr>
+            <td>
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+                <tr>
                 <td>
-                    <%= trip.from %>
-                </td>
-            </tr>
-            <tr>
-                <th>To</th>
-                <td>
-                    <%= trip.to %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyStartDate</th>
-                <td>
-                    <%= trip.journeystartdate %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyEndDate</th>
-                <td>
-                    <%= trip.journeyenddate %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyStartTime</th>
-                <td>
-                    <%= trip.starttime %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyEndTime</th>
-                <td>
-                    <%= trip.endtime %>
-                </td>
-            </tr>
-        </table>
-        <p>If you need any further assistance, please feel free to contact us at <a
-                href="mailto:info@airpax.co">info@airpax.co</a> or call us at <a
-                href="tel:+919990301111">+919990301111</a>. You can also visit our website <a
-                href="https://airpax.co/">Airpax</a> for more information.</p>
+                <![endif]-->
+                
+                <div class="email-container">
+                    <h2>Trip Cancellation Notification</h2>
+                    <p>Dear <strong><%= user.name %></strong>,</p>
+                    
+                    <div class="notice-box">
+                        <p>We regret to inform you that due to unforeseen circumstances, we've had to cancel your trip. Please rest assured that you will receive a full refund of your ticket amount within 5-7 working days.</p>
+                    </div>
 
-        <p>We wish you a pleasant and enjoyable trip!</p>
+                    <h3>Trip Details:</h3>
+                    <table class="details-table">
+                        <tr>
+                            <th>From</th>
+                            <td><%= trip.from %></td>
+                        </tr>
+                        <tr>
+                            <th>To</th>
+                            <td><%= trip.to %></td>
+                        </tr>
+                        <tr>
+                            <th>Journey Date</th>
+                            <td><%= trip.journeystartdate %></td>
+                        </tr>
+                        <tr>
+                            <th>Departure Time</th>
+                            <td><%= trip.starttime %></td>
+                        </tr>
+                    </table>
 
-        <p>Best regards,</p>
-        <p><strong>Airpax</strong></p>
+                    <h3>Refund Information:</h3>
+                    <table class="details-table">
+                        <tr>
+                            <th>Refund Amount</th>
+                            <td>Full amount paid</td>
+                        </tr>
+                        <tr>
+                            <th>Processing Time</th>
+                            <td>5-7 working days</td>
+                        </tr>
+                        <tr>
+                            <th>Refund Method</th>
+                            <td>Original payment method</td>
+                        </tr>
+                    </table>
 
-        <div class="footer">
-            <p> <strong>RIGI TRANS TECH PVT LTD</strong></p>
-            <tr>
-                <td>PERNAM INN</td>
-                <td> 837/1</td>
-            </tr><br>
-            <tr>
-                <td>MANDI ESTATE</td>
-                <td>NEW DELHI</td>
-            </tr><br>
-            <tr>
-                <td>110047</td>
-            </tr>
+                    <p>We sincerely apologize for any inconvenience caused. If you need any assistance or wish to book an alternative trip, our customer support team is happy to help.</p>
+                    
+                    <p>
+                        <strong>Contact us:</strong><br>
+                        <a href="mailto:info@airpax.co">info@airpax.co</a> | 
+                        <a href="tel:+919990301111">+91 99903 01111</a>
+                    </p>
 
-            <p>Email: <a href="mailto:info@airpax.co">info@airpax.co</a> | Phone: <a
-                    href="tel:+919990301111">+919990301111</a></p>
-            <p><a href="https://airpax.co/">airpax.co</a></p>
-        </div>
-    </div>
+                    <p>Thank you for your understanding.</p>
 
+                    <p>Best regards,<br>
+                    <strong>Airpax Customer Care Team</strong></p>
+
+                    <div class="footer">
+                        <p><strong>RIGI TRANS TECH PVT LTD</strong></p>
+                        <p>PERNAM INN 837/1, MANDI ESTATE, NEW DELHI - 110047</p>
+                        <p>Email: <a href="mailto:info@airpax.co">info@airpax.co</a> | Phone: <a href="tel:+919990301111">+91 99903 01111</a></p>
+                        <p><a href="https://airpax.co/">airpax.co</a></p>
+                    </div>
+                </div>
+                
+                <!--[if mso]>
+                </td>
+                </tr>
+                </table>
+                <![endif]-->
+            </td>
+        </tr>
+    </table>
 </body>
-
 </html>

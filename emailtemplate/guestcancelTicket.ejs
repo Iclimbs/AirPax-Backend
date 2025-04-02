@@ -1,20 +1,39 @@
 <!DOCTYPE html>
 <html lang="en-US">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Airpax - Ticket Cancellation Email</title>
-    <style>
+    <title>Airpax - Ticket Cancellation Confirmation</title>
+    <style type="text/css">
+        /* Client-specific resets */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        
+        /* Reset styles */
+        body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+        
+        /* iOS blue links fix */
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+        
+        /* Main styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
             color: #333;
+            line-height: 1.5;
         }
-
+        
+        .email-wrapper {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+        
         .email-container {
             width: 100%;
             max-width: 600px;
@@ -24,192 +43,200 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
+        
         h2 {
             color: #2a9d8f;
+            margin-top: 0;
+            text-align: center;
         }
-
+        
         p {
             font-size: 16px;
-            line-height: 1.5;
+            margin-bottom: 16px;
         }
-
+        
+        .notice-box {
+            background-color: #fff3f3;
+            border-left: 4px solid #ff6b6b;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
         .details-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            font-size: 14px;
         }
-
+        
         .details-table th,
         .details-table td {
             text-align: left;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
         }
-
+        
         .details-table th {
-            background-color: #f0f0f0;
+            background-color: #f7f7f7;
             color: #333;
+            width: 35%;
         }
-
+        
         .footer {
             text-align: center;
-            font-size: 14px;
-            color: black;
-            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
-
-        .footer table {
-            text-align: center;
-
+        
+        .footer p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        
+        /* Responsive styles */
+        @media screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                padding: 15px !important;
+                border-radius: 0 !important;
+            }
+            .details-table th,
+            .details-table td {
+                display: block;
+                width: 100% !important;
+                padding: 8px !important;
+            }
+            .details-table th {
+                background-color: transparent;
+                padding-bottom: 0 !important;
+                font-weight: bold;
+            }
+            .details-table tr {
+                margin-bottom: 15px;
+                display: block;
+                border-bottom: 1px solid #ddd;
+            }
+            h2 {
+                font-size: 22px !important;
+            }
         }
     </style>
 </head>
 
-<body>
-
-    <div class="email-container">
-        <h2>Ticket Canellation Request</h2>
-        <p>Dear <strong>
-                <%= user %>
-            </strong>,</p>
-        <p>We are writing to inform you that your cancellation request for the following ticket has been successfully
-            confirmed.</p>
-
-        <h3>Trip Details:</h3>
-        <table class="details-table">
-            <tr>
-                <th>From</th>
-                <td>
-                    <%= trip.from %>
-                </td>
-            </tr>
-            <tr>
-                <th>To</th>
-                <td>
-                    <%= trip.to %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyStartDate</th>
-                <td>
-                    <%= trip.journeystartdate %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyEndDate</th>
-                <td>
-                    <%= trip.journeyenddate %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyStartTime</th>
-                <td>
-                    <%= trip.starttime %>
-                </td>
-            </tr>
-            <tr>
-                <th>JourneyEndTime</th>
-                <td>
-                    <%= trip.endtime %>
-                </td>
-            </tr>
-        </table>
-
-        <h3>Ticket Information:</h3>
-        <table class="details-table">
-            <tr>
-                <th>PNR Number</th>
-                <td><strong>
-                        <%= pnr %>
-                    </strong></td>
-            </tr>
-            <tr>
-                <th>Refund Amount</th>
-                <td>
-                    <%= amount %>
-                </td>
-            </tr>
-            <tr>
-                <th>Cancellation Reason </th>
-                <td>
-                    <%= reason %>
-                </td>
-            </tr>
-        </table>
-
-        <h3>Passenger Details :</h3>
-        <% seat.forEach(function(seat) { %>
-            <table class="details-table">
+<body style="margin: 0; padding: 0;">
+    <!--[if mso]>
+    <style type="text/css">
+        body, table, td {font-family: Arial, sans-serif !important;}
+    </style>
+    <![endif]-->
+    
+    <table role="presentation" class="email-wrapper" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+        <tr>
+            <td>
+                <!--[if mso]>
+                <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
                 <tr>
-                    <th>First Name</th>
-                    <td>
-                        <%=seat.details.fname %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Last Name</th>
-                    <td>
-                        <%=seat.details.lname %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Age</th>
-                    <td>
-                        <%=seat.details.age %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Gender</th>
-                    <td>
-                        <%=seat.details.gender %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Seat No</th>
-                    <td>
-                        <%=seat.details.seatNo %>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Amount</th>
-                    <td>
-                        <%=seat.details.amount %>
-                    </td>
-                </tr>
-            </table>
-            <% }); %>
+                <td>
+                <![endif]-->
+                
+                <div class="email-container">
+                    <h2>Ticket Cancellation Confirmation</h2>
+                    <p>Dear <strong><%= user %></strong>,</p>
+                    
+                    <div class="notice-box">
+                        <p>Your cancellation request has been successfully processed. Below are the details of your cancelled booking.</p>
+                    </div>
 
-                <p>If you need any further assistance, please feel free to contact us at <a
-                        href="mailto:info@airpax.co">info@airpax.co</a> or call us at <a
-                        href="tel:+919990301111">+919990301111</a>. You can also visit our website <a
-                        href="https://airpax.co/">Airpax</a> for more information.</p>
+                    <h3>Trip Details:</h3>
+                    <table class="details-table">
+                        <tr>
+                            <th>From</th>
+                            <td><%= trip.from %></td>
+                        </tr>
+                        <tr>
+                            <th>To</th>
+                            <td><%= trip.to %></td>
+                        </tr>
+                        <tr>
+                            <th>Journey Date</th>
+                            <td><%= trip.journeystartdate %></td>
+                        </tr>
+                        <tr>
+                            <th>Departure Time</th>
+                            <td><%= trip.starttime %></td>
+                        </tr>
+                    </table>
 
-                <p>We wish you a pleasant and enjoyable trip!</p>
+                    <h3>Cancellation Details:</h3>
+                    <table class="details-table">
+                        <tr>
+                            <th>PNR Number</th>
+                            <td><strong><%= pnr %></strong></td>
+                        </tr>
+                        <tr>
+                            <th>Refund Amount</th>
+                            <td>₹<%= amount %></td>
+                        </tr>
+                        <tr>
+                            <th>Cancellation Reason</th>
+                            <td><%= reason %></td>
+                        </tr>
+                    </table>
 
-                <p>Best regards,</p>
-                <p><strong>Airpax</strong></p>
+                    <h3>Passenger Details:</h3>
+                    <% seat.forEach(function(seat) { %>
+                    <table class="details-table" style="margin-bottom: 25px;">
+                        <tr>
+                            <th>Passenger Name</th>
+                            <td><%= seat.details.fname %> <%= seat.details.lname %></td>
+                        </tr>
+                        <tr>
+                            <th>Age/Gender</th>
+                            <td><%= seat.details.age %> years / <%= seat.details.gender %></td>
+                        </tr>
+                        <tr>
+                            <th>Seat Number</th>
+                            <td><%= seat.details.seatNo %></td>
+                        </tr>
+                        <tr>
+                            <th>Ticket Amount</th>
+                            <td>₹<%= seat.details.amount %></td>
+                        </tr>
+                    </table>
+                    <% }); %>
 
-                <div class="footer">
-                    <p> <strong>RIGI TRANS TECH PVT LTD</strong></p>
-                    <tr>
-                        <td>PERNAM INN</td>
-                        <td> 837/1</td>
-                    </tr><br>
-                    <tr>
-                        <td>MANDI ESTATE</td>
-                        <td>NEW DELHI</td>
-                    </tr><br>
-                    <tr>
-                        <td>110047</td>
-                    </tr>
+                    <p>Your refund will be processed within 5-7 business days to your original payment method.</p>
+                    
+                    <p>For any queries regarding your cancellation, please contact our customer support:</p>
+                    <p>
+                        <a href="mailto:info@airpax.co">info@airpax.co</a> | 
+                        <a href="tel:+919990301111">+91 99903 01111</a> | 
+                        <a href="https://airpax.co/">airpax.co</a>
+                    </p>
 
-                    <p>Email: <a href="mailto:info@airpax.co">info@airpax.co</a> | Phone: <a
-                            href="tel:+919990301111">+919990301111</a></p>
-                    <p><a href="https://airpax.co/">airpax.co</a></p>
+                    <p>We hope to serve you again in the future!</p>
+
+                    <p>Best regards,<br>
+                    <strong>Airpax Customer Care</strong></p>
+
+                    <div class="footer">
+                        <p><strong>RIGI TRANS TECH PVT LTD</strong></p>
+                        <p>PERNAM INN 837/1, MANDI ESTATE</p>
+                        <p>NEW DELHI - 110047</p>
+                        <p>© 2023 Airpax. All rights reserved.</p>
+                    </div>
                 </div>
-    </div>
-
+                
+                <!--[if mso]>
+                </td>
+                </tr>
+                </table>
+                <![endif]-->
+            </td>
+        </tr>
+    </table>
 </body>
-
 </html>
