@@ -1,134 +1,209 @@
 <!DOCTYPE html>
 <html lang="en-US">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airpax - Trip Confirmation Email</title>
-    <style>
+    <style type="text/css">
+        /* Client-specific styles */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        
+        /* Reset styles */
+        body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+        
+        /* iOS BLUE LINKS */
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+        
+        /* Main styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
             color: #333;
-            text-align: center;
+            line-height: 1.5;
         }
-
+        
         .email-container {
-            width: 100%;
             max-width: 600px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
+            margin: 0 auto;
+            background-color: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
+            overflow: hidden;
         }
-
-        h2 {
-            color: #2a9d8f;
-            text-align: center;
-        }
-
-        p {
+        
+        .email-content {
+            padding: 20px;
             font-size: 16px;
             line-height: 1.5;
         }
-
+        
+        h2 {
+            color: #2a9d8f;
+            text-align: center;
+            margin-top: 0;
+            font-size: 24px;
+        }
+        
+        h3 {
+            color: #2a9d8f;
+            margin-top: 25px;
+            font-size: 18px;
+        }
+        
         .details-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 15px 0;
+            font-size: 14px;
         }
-
+        
         .details-table th,
         .details-table td {
             text-align: left;
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
-
+        
         .details-table th {
             background-color: #f0f0f0;
             color: #333;
+            width: 30%;
         }
-
+        
+        .centered-content {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
         .footer {
             text-align: center;
-            font-size: 14px;
-            color: black;
-            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            padding: 20px;
+            background-color: #f9f9f9;
         }
-
-        /* Responsive Styles */
+        
+        .footer a {
+            color: #2a9d8f;
+            text-decoration: none;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+        
+        /* Responsive styles */
         @media screen and (max-width: 600px) {
-            .email-container {
-                width: 90% !important;
-                padding: 15px;
+            .email-content {
+                padding: 15px !important;
             }
-
+            
             .details-table th,
             .details-table td {
                 display: block;
-                width: 100%;
-                text-align: left;
-                padding: 8px;
+                width: 100% !important;
+                box-sizing: border-box;
             }
-
+            
             .details-table th {
-                background-color: transparent;
+                background-color: #f0f0f0;
+                padding-bottom: 5px;
+            }
+            
+            .details-table td {
+                padding-top: 5px;
+                padding-bottom: 15px;
+            }
+            
+            .details-table tr {
+                margin-bottom: 10px;
+                display: block;
             }
         }
     </style>
 </head>
+<body style="margin: 0; padding: 0;">
+    <!-- Email wrapper -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td align="center" bgcolor="#f4f4f4">
+                <!-- Email container -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" class="email-container">
+                    <!-- Header spacing -->
+                    <tr>
+                        <td height="20" style="font-size: 0; line-height: 0;">&nbsp;</td>
+                    </tr>
+                    
+                    <!-- Content -->
+                    <tr>
+                        <td bgcolor="#ffffff" class="email-content">
+                            <h2>Payment Confirmed – Your Trip Details</h2>
+                            <p>Dear <strong><%= user.name %></strong>,</p>
+                            <p>Your payment has been successfully processed! Here are your trip details:</p>
 
-<body>
-    <div class="email-container">
-        <h2>Payment Confirmed – Your Trip Details</h2>
-        <p>Dear <strong><%= user.name %></strong>,</p>
-        <p>Your payment has been successfully processed! Here are your trip details:</p>
+                            <h3>Trip Details:</h3>
+                            <table class="details-table">
+                                <tr><th>From</th><td><%= trip.from %></td></tr>
+                                <tr><th>To</th><td><%= trip.to %></td></tr>
+                                <tr><th>Journey Start Date</th><td><%= trip.journeystartdate %></td></tr>
+                                <tr><th>Journey End Date</th><td><%= trip.journeyenddate %></td></tr>
+                                <tr><th>Start Time</th><td><%= trip.starttime %></td></tr>
+                                <tr><th>End Time</th><td><%= trip.endtime %></td></tr>
+                            </table>
 
-        <h3>Trip Details:</h3>
-        <table class="details-table">
-            <tr><th>From</th><td><%= trip.from %></td></tr>
-            <tr><th>To</th><td><%= trip.to %></td></tr>
-            <tr><th>Journey Start Date</th><td><%= trip.journeystartdate %></td></tr>
-            <tr><th>Journey End Date</th><td><%= trip.journeyenddate %></td></tr>
-            <tr><th>Start Time</th><td><%= trip.starttime %></td></tr>
-            <tr><th>End Time</th><td><%= trip.endtime %></td></tr>
-        </table>
+                            <h3>Ticket Information:</h3>
+                            <table class="details-table">
+                                <tr><th>PNR Number</th><td><strong><%= payment.pnr %></strong></td></tr>
+                                <tr><th>Total Amount</th><td><%= payment.amount %></td></tr>
+                            </table>
 
-        <h3>Ticket Information:</h3>
-        <table class="details-table">
-            <tr><th>PNR Number</th><td><strong><%= payment.pnr %></strong></td></tr>
-            <tr><th>Total Amount</th><td><%= payment.amount %></td></tr>
-        </table>
+                            <h3>Passenger Details:</h3>
+                            <% seat.forEach(function(seat) { %>
+                                <table class="details-table">
+                                    <tr><th>First Name</th><td><%= seat.details.fname %></td></tr>
+                                    <tr><th>Last Name</th><td><%= seat.details.lname %></td></tr>
+                                    <tr><th>Age</th><td><%= seat.details.age %></td></tr>
+                                    <tr><th>Gender</th><td><%= seat.details.gender %></td></tr>
+                                    <tr><th>Email</th><td><%= seat.details.email %></td></tr>
+                                    <tr><th>Phone No</th><td><%= seat.details.mobileno %></td></tr>
+                                    <tr><th>Seat No</th><td><%= seat.seatNumber %></td></tr>
+                                </table>
+                            <% }); %>
 
-        <h3>Passenger Details:</h3>
-        <% seat.forEach(function(seat) { %>
-            <table class="details-table">
-                <tr><th>First Name</th><td><%= seat.details.fname %></td></tr>
-                <tr><th>Last Name</th><td><%= seat.details.lname %></td></tr>
-                <tr><th>Age</th><td><%= seat.details.age %></td></tr>
-                <tr><th>Gender</th><td><%= seat.details.gender %></td></tr>
-                <tr><th>Email</th><td><%= seat.details.email %></td></tr>
-                <tr><th>Phone No</th><td><%= seat.details.mobileno %></td></tr>
-                <tr><th>Seat No</th><td><%= seat.seatNumber %></td></tr>
-            </table>
-        <% }); %>
-
-        <p>If you need assistance, contact us at <a href="mailto:info@airpax.co">info@airpax.co</a> or call <a href="tel:+919990301111">+919990301111</a>. Visit <a href="https://airpax.co/">Airpax</a> for more details.</p>
-
-        <p>Safe travels!</p>
-        <p><strong>Airpax Team</strong></p>
-
-        <div class="footer">
-            <p><strong>RIGI TRANS TECH PVT LTD</strong></p>
-            <p>PERNAM INN, 837/1, MANDI ESTATE, NEW DELHI, 110047</p>
-            <p>Email: <a href="mailto:info@airpax.co">info@airpax.co</a> | Phone: <a href="tel:+919990301111">+919990301111</a></p>
-            <p><a href="https://airpax.co/">airpax.co</a></p>
-        </div>
-    </div>
+                            <!-- Centered contact information and closing -->
+                            <div class="centered-content">
+                                <p>If you need assistance, contact us at <a href="mailto:info@airpax.co">info@airpax.co</a> or call <a href="tel:+919990301111">+919990301111</a>.<br>Visit <a href="https://airpax.co/">Airpax</a> for more details.</p>
+                                <p>Safe travels!</p>
+                                <p><strong>Airpax Team</strong></p>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td class="footer">
+                            <p><strong>RIGI TRANS TECH PVT LTD</strong></p>
+                            <p>PERNAM INN, 837/1, MANDI ESTATE, NEW DELHI, 110047</p>
+                            <p>Email: <a href="mailto:info@airpax.co">info@airpax.co</a> | Phone: <a href="tel:+919990301111">+919990301111</a></p>
+                            <p><a href="https://airpax.co/">airpax.co</a></p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer spacing -->
+                    <tr>
+                        <td height="20" style="font-size: 0; line-height: 0;">&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
