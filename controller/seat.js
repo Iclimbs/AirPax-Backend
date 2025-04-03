@@ -10,6 +10,8 @@ const jwt = require('jsonwebtoken');
 const path = require('node:path');
 const ejs = require("ejs")
 const { transporter } = require('../service/transporter');
+const { DateTime } = require('luxon')
+
 
 
 
@@ -323,6 +325,29 @@ SeatRouter.get("/list/booked/history", async (req, res) => {
     }
 })
 
+
+
+// Get List of All the Passenger Who have booked Ticket Today;
+SeatRouter.get("/booked/today", async (req, res) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    try {
+        // const seatlist = await SeatModel.find({ CreatedAt: { $gte: today, $lt: tomorrow } });
+        const seatlist = await SeatModel.aggregate([{ $match: { CreatedAt: { $gte: today, $lt: tomorrow } } }, { $lookup: { from: "trips", localField: "tripId", foreignField: "_id", as: "trip" } }]);
+
+        if (seatlist.length == 0) {
+            return res.json({ status: 'error', message: 'No Ticket Booked Today' })
+        } else {
+            return res.json({ status: "success", data: seatlist })
+        }
+    } catch (error) {
+        return res.json({ status: "error", message: "Failed To Get Details Of Ticket's Booked Today!" })
+
+    }
+})
 
 
 // Get List of All the Detail's Of a particular Seat's Booked By the User

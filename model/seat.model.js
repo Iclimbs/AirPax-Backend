@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const { ObjectId } = mongoose.Schema.Types;
 
 
 const SubseatSchema = new Schema({
@@ -45,7 +46,7 @@ const seatSchema = mongoose.Schema({
     totalamount: Number,
     platform: String,
     tripId: {
-        type: String,
+        type: ObjectId,
         required: true
     },
     bookedby: {
