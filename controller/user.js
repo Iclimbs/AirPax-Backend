@@ -613,7 +613,8 @@ userRouter.get("/admin/listall", AdminAuthentication, async (req, res) => {
 userRouter.get("/admin/listall/driver", async (req, res) => {
     try {
         const user = await UserModel.find({
-            accounttype: "supervisor"
+            accounttype: "supervisor",
+            disabled:false
         }, { password: 0, CreatedAt: 0 })
         return res.json({ status: "success", data: user })
     } catch (error) {
@@ -624,7 +625,8 @@ userRouter.get("/admin/listall/driver", async (req, res) => {
 userRouter.get("/admin/listall/conductor", async (req, res) => {
     try {
         const user = await UserModel.find({
-            accounttype: "Mt's"
+            accounttype: "Mt's",
+            disabled:false
         }, { password: 0, CreatedAt: 0 })
         return res.json({ status: "success", data: user })
     } catch (error) {
