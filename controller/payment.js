@@ -118,7 +118,7 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
                 from: process.env.emailuser,
                 to: `${userdetails[0].email}`,
                 cc: `${emails}`,
-                bcc:'uttamkrshaw@iclimbs.com',
+                bcc:process.env.imp_email,
                 subject: `Booking Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                 html: template,
                 // attachments: [
@@ -189,6 +189,7 @@ PaymentRouter.get("/failure/:pnr/:ref_no/:mode", async (req, res) => {
             const mailOptions = {
                 from: process.env.emailuser,
                 to: `${emails}`,
+                bcc:process.env.imp_email,
                 subject: `Booking Failed on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                 html: template
             }

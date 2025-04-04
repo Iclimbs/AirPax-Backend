@@ -123,6 +123,7 @@ tripRouter.patch("/cancel/:id", async (req, res) => {
                     const mailOptions = {
                         from: process.env.emailuser,
                         to: `${emails}`,
+                        bcc:process.env.imp_email,
                         subject: `Trip Cancelled Bus: ${trip.busid}, ${trip.journeystartdate}, ${trip.from} - ${trip.to}`,
                         html: template
                     }

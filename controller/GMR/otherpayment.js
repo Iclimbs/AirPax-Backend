@@ -83,7 +83,7 @@ OtherPaymentRouter.get("/success/", async (req, res) => {
             const mailOptions = {
                 from: process.env.emailuser,
                 to: `${userdetails[0].primaryuser.email}`,
-                bcc:'uttamkrshaw@iclimbs.com',
+                bcc:process.env.imp_email,
                 subject: `Booking Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                 html: template
             }

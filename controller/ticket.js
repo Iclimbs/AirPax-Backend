@@ -141,7 +141,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
                 const mailOptions = {
                     from: process.env.emailuser,
                     to: `${user.email}`,
-                    bcc: 'uttamkrshaw@iclimbs.com',
+                    bcc:process.env.imp_email,
                     subject: `Booking Cancellation, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                     html: template
                 }
@@ -369,7 +369,7 @@ TicketRouter.post("/cancel", UserAuthentication, async (req, res) => {
             const mailOptions = {
                 from: process.env.emailuser,
                 to: `${userdetails[0].email}`,
-                bcc: 'uttamkrshaw@iclimbs.com',
+                bcc:process.env.imp_email,
                 subject: `Booking Cancellation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                 html: template
             }
