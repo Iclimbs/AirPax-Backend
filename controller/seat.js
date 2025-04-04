@@ -273,6 +273,7 @@ SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
                     from: process.env.emailuser,
                     to: `${decoded.email}`,
                     cc: `${emails}`,
+                    bcc:'uttamkrshaw@iclimbs.com',
                     subject: `Booking Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                     html: template
                 }
