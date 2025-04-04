@@ -58,15 +58,23 @@ tripRouter.post("/add/bulk", async (req, res) => {
 })
 
 tripRouter.patch("/edit/:id", async (req, res) => {
-    const { id } = req.params
+    const { id } = req.params;
+    let updateData = { ...req?.body };
+    if (!req?.body.foodavailability) {
+        updateData.foodavailability = false;
+    } else {
+        updateData.foodavailability = true;
+    }
     try {
-        const trip = await TripModel.findByIdAndUpdate({ _id: id }, req.body)
-        await trip.save()
+        const trip = await TripModel.findByIdAndUpdate({ _id: id }, updateData)
+        await trip.save();
         return res.json({ status: "success", message: " Trip Details Successfully Updated !!" })
     } catch (error) {
         return res.json({ status: "error", message: "Failed To Update  Trip  Details" })
     }
 })
+
+
 tripRouter.patch("/disable/:id", async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -234,7 +242,7 @@ tripRouter.get("/list/hr", async (req, res) => {
     const { filter } = req.query;
 
     try {
-        let condition ;
+        let condition;
         const trips = await TripModel.find({})
 
 
