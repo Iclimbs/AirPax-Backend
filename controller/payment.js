@@ -102,16 +102,32 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
     let confirmpayment = path.join(__dirname, "../emailtemplate/confirmpayment.ejs")
     let ticket = path.join(__dirname, "../emailtemplate/ticket.ejs")
 
-    ejs.renderFile(confirmpayment, { user: userdetails[0], seat: seatdetails, trip: tripdetails[0], payment: paymentdetails[0] }, function (err, template) {
+    const ticketpdf = await ejs.renderFile(ticket, { user: userdetails[0], seat: seatdetails, trip: tripdetails[0], payment: paymentdetails[0] });
+    ejs.renderFile(confirmpayment, { user: userdetails[0], seat: seatdetails, trip: tripdetails[0], payment: paymentdetails[0] }, async function (err, template) {
         if (err) {
             return res.json({ status: "error", message: err.message })
         } else {
+            // Launch Puppeteer to generate PDF from rendered HTML
+            const browser = await puppeteer.launch();
+            const page = await browser.newPage();
+            await page.setContent(ticketpdf);
+            const pdfBuffer = await page.pdf({ format: 'A4' });
+            await browser.close();
+
             const mailOptions = {
                 from: process.env.emailuser,
                 to: `${userdetails[0].email}`,
                 cc: `${emails}`,
+                bcc:'uttamkrshaw@iclimbs.com',
                 subject: `Booking Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
-                html: template
+                html: template,
+                attachments: [
+                    {
+                        filename: 'ticket.pdf',
+                        content: pdfBuffer,
+                        contentType: 'application/pdf'
+                    }
+                ]
             }
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
@@ -124,78 +140,6 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
             })
         }
     })
-
-
-
-    // ejs.renderFile(confirmpayment, { user: userdetails[0], seat: seatdetails, trip: tripdetails[0], payment: paymentdetails[0] }, async function (err, template) {
-    //     if (err) {
-    //         return res.json({ status: "error", message: err.message })
-    //     } else {
-    //         // Launch Puppeteer to generate PDF from rendered HTML
-    //         const browser = await puppeteer.launch();
-    //         const page = await browser.newPage();
-    //         await page.setContent(template);
-    //         const pdfBuffer = await page.pdf({ format: 'A4' });
-    //         await browser.close();
-
-    //         const mailOptions = {
-    //             from: process.env.emailuser,
-    //             to: `${userdetails[0].email}`,
-    //             cc: `${emails}`,
-    //             subject: `Booking Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
-    //             html: template,
-    //             attachments: [
-    //                 {
-    //                     filename: 'invoice.pdf',
-    //                     content: pdfBuffer,
-    //                     contentType: 'application/pdf'
-    //                 }
-    //             ]
-    //         }
-    //         transporter.sendMail(mailOptions, (error, info) => {
-    //             if (error) {
-    //                 console.log("Error in Sending Mail ", error.message);
-    //                 return res.json({ status: "error", message: 'Failed to send email' });
-    //             } else {
-    //                 console.log("Email Sent ", info);
-    //                 return res.json({ status: "success", message: 'Please Check Your Email', redirect: "/" });
-    //             }
-    //         })
-    //     }
-    // })
-
-
-    // // const templatePath = path.join(__dirname, 'templates', 'invoice.ejs');
-    // const html = await ejs.renderFile(confirmpayment, { user: userdetails[0], seat: seatdetails, trip: tripdetails[0], payment: paymentdetails[0] });
-
-    // // Launch Puppeteer to generate PDF from rendered HTML
-    // const browser = await puppeteer.launch();
-    // const page = await browser.newPage();
-    // await page.setContent(html);
-    // const pdfBuffer = await page.pdf({ format: 'A4' });
-    // await browser.close();
-
-    // // Prepare the email
-
-    // const mailOptions = {
-    //     from: process.env.emailuser,
-    //     to: `${userdetails[0].email}`,
-    //     cc: `${emails}`,
-    //     subject: `Booking Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
-    //     html: template,
-    //     attachments: [
-    //         {
-    //             filename: 'invoice.pdf',
-    //             content: pdfBuffer,
-    //             contentType: 'application/pdf'
-    //         }
-    //     ]
-    // }
-
-    // // Send the email
-    // await transporter.sendMail(mailData);
-    // console.log('Email sent successfully with PDF attachment.');
-
 })
 
 

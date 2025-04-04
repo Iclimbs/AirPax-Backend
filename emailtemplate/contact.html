@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Airpax - Payment Failed Email</title>
+    <style type="text/css">
+        /* Reset all elements */
+        body,
+        div,
+        p,
+        a,
+        span,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        table,
+        td,
+        th {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+        }
+
+        /* Prevent Yahoo Mail from changing font sizes */
+        body,
+        table,
+        td,
+        p,
+        a,
+        li,
+        blockquote {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            mso-line-height-rule: exactly;
+        }
+
+        /* Fix for Outlook */
+        table {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+            border-collapse: collapse !important;
+        }
+
+        /* Fix for Outlook.com */
+        .ExternalClass {
+            width: 100%;
+        }
+
+        .ExternalClass,
+        .ExternalClass p,
+        .ExternalClass span,
+        .ExternalClass font,
+        .ExternalClass td,
+        .ExternalClass div {
+            line-height: 100%;
+        }
+
+        /* iOS BLUE LINKS */
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+
+        /* Main styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333333;
+            line-height: 1.5;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .email-wrapper {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .email-content {
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        h2 {
+            color: #2a9d8f;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        h3 {
+            color: #2a9d8f;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+            table-layout: fixed;
+        }
+
+        .details-table th,
+        .details-table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #dddddd;
+            vertical-align: top;
+        }
+
+        .details-table th {
+            background-color: #f0f0f0;
+            color: #333333;
+            width: 30%;
+            font-weight: bold;
+        }
+
+        .centered-content {
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666666;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eeeeee;
+        }
+
+        .footer a {
+            color: #2a9d8f;
+            text-decoration: none;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .logo-container {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .logo-img {
+            height: 20px;
+            width: auto;
+            vertical-align: middle;
+            margin-right: 5px;
+            border: 0;
+            outline: none;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 600px) {
+            .email-wrapper {
+                width: 100% !important;
+            }
+
+            .email-content {
+                padding: 15px !important;
+            }
+
+            .details-table th,
+            .details-table td {
+                display: block;
+                width: 100% !important;
+                box-sizing: border-box;
+            }
+
+            .details-table th {
+                background-color: #f0f0f0;
+                padding-bottom: 5px;
+            }
+
+            .details-table td {
+                padding-top: 5px;
+                padding-bottom: 15px;
+            }
+
+            .details-table tr {
+                margin-bottom: 10px;
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body style="
+      margin: 0;
+      padding: 0;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    ">
+    <!-- Email wrapper -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td align="center" bgcolor="#f4f4f4">
+                <!--[if (gte mso 9)|(IE)]>
+                <table width="600" align="center" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td>
+                <![endif]-->
+
+                <div class="email-wrapper" style="
+              width: 100%;
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: #ffffff;
+              border-radius: 8px;
+              overflow: hidden;
+            ">
+                    <!-- Header spacing -->
+                    <div style="font-size: 0; line-height: 0; height: 20px">&nbsp;</div>
+
+                    <!-- Content -->
+                    <div class="email-content" style="padding: 20px; font-size: 16px; line-height: 1.5">
+                        <h2 style="
+                  color: #2a9d8f;
+                  text-align: center;
+                  margin-top: 0;
+                  margin-bottom: 20px;
+                  font-size: 24px;
+                  font-weight: bold;
+                ">
+                            User Contact Request
+                        </h2>
+                        <p style="margin-bottom: 15px">Dear <strong> Admin </strong>,</p>
+                        <p style="margin-bottom: 15px">
+                            The following person has tried to contact you through your
+                            website:
+                        </p>
+
+                        <!-- Trip Details Table -->
+                        <h3 style="
+                  color: #2a9d8f;
+                  margin-top: 25px;
+                  margin-bottom: 10px;
+                  font-size: 18px;
+                  font-weight: bold;
+                ">
+                            Contact Details:
+                        </h3>
+                        <table class="details-table" style="
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin: 15px 0;
+                  font-size: 14px;
+                  table-layout: fixed;
+                ">
+                            <tr>
+                                <th style="
+                      text-align: left;
+                      padding: 10px;
+                      border-bottom: 1px solid #dddddd;
+                      background-color: #f0f0f0;
+                      color: #333333;
+                      width: 30%;
+                      font-weight: bold;
+                    ">
+                                    First Name
+                                </th>
+                                <td style="
+                      text-align: left;
+                      padding: 10px;
+                      border-bottom: 1px solid #dddddd;
+                    ">
+                                    <%= list.fname %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="
+                      text-align: left;
+                      padding: 10px;
+                      border-bottom: 1px solid #dddddd;
+                      background-color: #f0f0f0;
+                      color: #333333;
+                      width: 30%;
+                      font-weight: bold;
+                    ">
+                                    Last Name
+                                </th>
+                                <td style="
+                      text-align: left;
+                      padding: 10px;
+                      border-bottom: 1px solid #dddddd;
+                    ">
+                                    <%= list.lname %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="
+                      text-align: left;
+                      padding: 10px;
+                      border-bottom: 1px solid #dddddd;
+                      background-color: #f0f0f0;
+                      color: #333333;
+                      width: 30%;
+                      font-weight: bold;
+                    ">
+                                    Email
+                                </th>
+                                <td style="
+                      text-align: left;
+                      padding: 10px;
+                      border-bottom: 1px solid #dddddd;
+                    ">
+                                    <%= list.email %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="
+                      text-align: left;
+                      padding: 10px;
+                      border-bottom: 1px solid #dddddd;
+                      background-color: #f0f0f0;
+                      color: #333333;
+                      width: 30%;
+                      font-weight: bold;
+                    ">
+                                    Phone No
+                                </th>
+                                <td style="
+                      text-align: left;
+                      padding: 10px;
+                      border-bottom: 1px solid #dddddd;
+                    ">
+                                    <%= list.phoneno %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="
+                      text-align: left;
+                      padding: 10px;
+                      border-bottom: 1px solid #dddddd;
+                      background-color: #f0f0f0;
+                      color: #333333;
+                      width: 30%;
+                      font-weight: bold;
+                    ">
+                                    Message
+                                </th>
+                                <td style="
+                      text-align: left;
+                      padding: 10px;
+                      border-bottom: 1px solid #dddddd;
+                    ">
+                                    <%= list.message %>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Contact Information -->
+                        <div class="centered-content" style="text-align: center; margin: 25px 0">
+                            <p style="margin-bottom: 15px">
+                                Please respond to this inquiry at your earliest convenience.  
+                            </p>
+                            <p style="margin-bottom: 15px">Best regards,</p>
+                            <p style="font-weight: bold">Airpax Team</p>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="footer" style="
+                text-align: center;
+                font-size: 12px;
+                color: #666666;
+                padding: 20px;
+                background-color: #f9f9f9;
+                border-top: 1px solid #eeeeee;
+              ">
+                        <p style="margin: 5px 0; font-weight: bold">
+                            RIGI TRANS TECH PVT LTD
+                        </p>
+                        <p style="margin: 5px 0">
+                            PERNAM INN, 837/1, MANDI ESTATE, NEW DELHI, 110047
+                        </p>
+                        <p style="margin: 5px 0">
+                            Email:
+                            <a href="mailto:info@airpax.co"
+                                style="color: #2a9d8f; text-decoration: none">info@airpax.co</a>
+                            | Phone:
+                            <a href="tel:+919990301111" style="color: #2a9d8f; text-decoration: none">+919990301111</a>
+                        </p>
+                        <p style="margin: 5px 0">
+                            <span class="logo-container" style="display: inline-block; vertical-align: middle">
+                                <a href="https://airpax.co/" style="color: #2a9d8f; text-decoration: none">
+                                    <img src="https://www.airpax.co/assets/logo3.png" alt="Airpax Logo" class="logo-img"
+                                        style="
+                        height: 20px;
+                        width: auto;
+                        vertical-align: middle;
+                        margin-right: 5px;
+                        border: 0;
+                        outline: none;
+                        text-decoration: none;
+                        display: block;
+                      " />
+                                </a>
+                            </span>
+                        </p>
+                    </div>
+
+                    <!-- Footer spacing -->
+                    <div style="font-size: 0; line-height: 0; height: 20px">&nbsp;</div>
+                </div>
+
+                <!--[if (gte mso 9)|(IE)]>
+                        </td>
+                    </tr>
+                </table>
+                <![endif]-->
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
