@@ -51,13 +51,16 @@ AgraLounge.get("/get-all-orders", async (req, res) => {
             pipeline.push({
                 $match: {
                     paymentMethod: { $regex: payment, "$options": "i" }
-                }
+                },
+                $sort: { createdAt: - 1 }
             })
         }
 
-        const allOrders = await agraLoungeFoodOrders.aggregate(
-            pipeline
-        )
+        // const allOrders = await agraLoungeFoodOrders.aggregate(
+        //     pipeline
+        // )
+
+        const allOrders = await agraLoungeFoodOrders.aggregate([{$match:{paymentMethod: { $regex: payment, "$options": "i" }}},{$sort:{createdAt:-1}}])
         // res.send(allOrders)
         return res.json({ status: 'success', data: allOrders })
     } catch (error) {
