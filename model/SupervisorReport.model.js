@@ -28,7 +28,7 @@ const SuperviorReportSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    onboardingPassengers: {
+    onboardedPassengers: {
         type: Number,
         required: true
     },

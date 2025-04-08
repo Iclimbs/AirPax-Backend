@@ -8,16 +8,15 @@ const SupervisorRouter = express.Router();
 
 SupervisorRouter.post("/submit-report", async (req, res) => {
     try {
-        const { trip, totalPassengers, onboardingPassengers, fuelConsuptioninLiter, fuelPricePerLiter, fuelTotalCost, currentReading, food } = req?.body
+        const { trip, totalPassengers, onboardedPassengers, fuelConsuptioninLiter, fuelPricePerLiter, currentReading, food } = req?.body
 
 
         if (!trip) return res.json({ status: "error", message: "Trip Name Required!" })
         if (!mongoose.isValidObjectId(trip)) return res.json({ status: "error", message: "Invalid Trip Id!" })
         if (!totalPassengers) return res.json({ status: "error", message: "Total Passengers field Required!" })
-        if (!onboardingPassengers) return res.json({ status: "error", message: "Onboarding Passengers field Required!" })
+        if (!onboardedPassengers) return res.json({ status: "error", message: "Onboarding Passengers field Required!" })
         if (!fuelConsuptioninLiter) return res.json({ status: "error", message: "Fuel ConsuptioninLiter field Required!" })
         if (!fuelPricePerLiter) return res.json({ status: "error", message: "Fuel Price Per Liter field Required!" })
-        if (!fuelTotalCost) return res.json({ status: "error", message: "Fuel Totoal Cost field Required!" })
         if (!currentReading) return res.json({ status: "error", message: "Current Reading field Required!" })
 
 
@@ -25,32 +24,37 @@ SupervisorRouter.post("/submit-report", async (req, res) => {
         const allFoods = []
         for (const element of food) {
             if (!element.foodName) return res.json({ status: "error", message: "Food Name Required!" })
-            if (!element.foodConsumption) return res.json({ status: "error", message: "Food Consumption unit Required!" })
+            if (!element.consumed) return res.json({ status: "error", message: "Food Consumption unit Required!" })
             allFoods.push({
-                foodName: element.foodName,
-                foodConsumption: Number(element.foodConsumption),
-                allocatedFood:Number(element.allocatedFood),
-                pricePerFood: Number(element.foodConsumption) || null
+                foodName: element?.foodName,
+                foodConsumption: Number(element?.consumed),
+                allocatedFood: Number(element?.allocated),
+                pricePerFood: Number(element?.foodConsumption) || null
             })
         }
-        const creatingReport = new SuperviorReport({
-            trip: trip,
-            totalPassengers: Number(totalPassengers),
-            onboardingPassengers: Number(onboardingPassengers),
-            fuelConsuptioninLiter: Number(fuelConsuptioninLiter),
-            fuelPricePerLiter: Number(fuelPricePerLiter),
-            fuelTotalCost: Number(fuelTotalCost),
-            currentReading: Number(currentReading),
-            description: req.body?.description || "No Description Provided",
-            food: allFoods
-        })
 
-        if (others) {
-            creatingReport.others = others
+        const reportSubmitted = await SuperviorReport.find({ trip: trip });
+
+        if (reportSubmitted.length === 0) {
+            const creatingReport = new SuperviorReport({
+                trip: trip,
+                totalPassengers: Number(totalPassengers),
+                onboardedPassengers: Number(onboardedPassengers),
+                fuelConsuptioninLiter: Number(fuelConsuptioninLiter),
+                fuelPricePerLiter: Number(fuelPricePerLiter),
+                fuelTotalCost: Number(fuelPricePerLiter * fuelConsuptioninLiter),
+                currentReading: Number(currentReading),
+                description: req.body?.description || "No Description Provided",
+                food: allFoods
+            })
+            await creatingReport.save()
+            return res.json({ status: "success", success: true, message: "Report Submitted Successfully!" })
+        } else {
+            return res.json({ status: 'error', message: 'Report Already Submitted!' })
         }
-        creatingReport.save()
 
-        return res.json({ status: "success", success: true, message: "Report Submitted Successfully!" })
+
+
     } catch (error) {
         return res.json({ status: "error", message: error?.message || "something went wrong while subbmitting report!" })
     }
@@ -65,30 +69,30 @@ SupervisorRouter.get("/report/detail/:id", async (req, res) => {
     try {
 
         const tripdetails = await TripModel.find({ _id: id });
-        console.log("tripdetails", tripdetails[0]);
+        // console.log("tripdetails", tripdetails[0]);
 
         const seatdetails = await SeatModel.find({ tripId: id, "details.onboarded": true, "details.status": "Confirmed" });
-        console.log("seatdetails  ", seatdetails);
+        // console.log("seatdetails  ", seatdetails);
 
         // Return Value
         const totalSeats = tripdetails[0].bookedseats;
-        const onboardedPassengers = seatdetails.length
-        console.log("onboardedpassengers", onboardedPassengers);
-        console.log("total seats ", totalSeats);
+        // console.log("onboardedpassengers", onboardedPassengers);
+        // console.log("total seats ", totalSeats);
 
         // Food Details 
         const foodDetails = await FoodAllocation.find({ trip: id })
-        console.log("food details", foodDetails[0]);
+        // console.log("food details", foodDetails[0]);
         const foodalloted = foodDetails[0].allocatedFood;
         const foodconsumed = foodDetails[0].foodUnit;
 
         // Fuel & Other Details 
         const otherdetails = await SuperviorReport.find({ trip: id })
-        console.log("other details ", otherdetails);
         const fuelconsumption = otherdetails[0]?.fuelConsuptioninLiter || 0;
         const fuelprice = otherdetails[0]?.fuelPricePerLiter || 0;
         const currentReading = otherdetails[0]?.currentReading || 0;
         const description = otherdetails[0]?.description || "";
+        const onboardedPassengers = otherdetails[0]?.onboardedPassengers || ""
+
 
 
         const data = {
