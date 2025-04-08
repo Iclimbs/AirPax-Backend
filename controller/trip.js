@@ -8,7 +8,8 @@ const { SeatModel } = require("../model/seat.model");
 const { AdminAuthentication } = require("../middleware/Authorization");
 const { VehicleModel } = require("../model/vehicle.model");
 const tripRouter = express.Router()
-const { DateTime } = require('luxon')
+const { DateTime } = require('luxon');
+const { default: mongoose } = require("mongoose");
 
 
 
@@ -123,7 +124,7 @@ tripRouter.patch("/cancel/:id", async (req, res) => {
                     const mailOptions = {
                         from: process.env.emailuser,
                         to: `${emails}`,
-                        bcc:process.env.imp_email,
+                        bcc: process.env.imp_email,
                         subject: `Trip Cancelled Bus: ${trip.busid}, ${trip.journeystartdate}, ${trip.from} - ${trip.to}`,
                         html: template
                     }
@@ -155,7 +156,8 @@ tripRouter.get("/passenger/list/:id", async (req, res) => {
         return res.json({ status: 'error', message: 'Trip Id is Required To Get Details Of All Passengers.' })
     }
     try {
-        const list = await SeatModel.find({ tripId: id });
+        // const list = await SeatModel.find({ tripId: id });
+        const list = await SeatModel.aggregate([{ $match: { tripId: new mongoose.Types.ObjectId(id) } }, { $lookup: { from: 'trips', localField: 'tripId', foreignField: '_id', pipeline: [{ $project: { from: 1, to: 1, journeystartdate: 1, journeyenddate: 1, starttime: 1, endtime: 1 } }], as: 'tripdetails' } }])
         if (list.length === 0) {
             return res.json({ status: 'error', message: 'No Ticket Booked For This Trip' })
         } else {

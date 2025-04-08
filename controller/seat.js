@@ -265,8 +265,10 @@ SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
             return res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
         }
         let confirmpayment = path.join(__dirname, "../emailtemplate/confirmpaymentAdmin.ejs")
+        
         ejs.renderFile(confirmpayment, { user: "Sir/Madam", seat: seatdetails, trip: tripdetails[0], pnr: ticketpnr, amount: amount }, function (err, template) {
             if (err) {
+                console.log("email temp",err)
                 return res.json({ status: "error", message: err.message })
             } else {
                 const mailOptions = {
