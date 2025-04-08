@@ -10,6 +10,7 @@ const { VehicleModel } = require("../model/vehicle.model");
 const tripRouter = express.Router()
 const { DateTime } = require('luxon');
 const { default: mongoose } = require("mongoose");
+const { SuperviorReport } = require("../model/SupervisorReport.model");
 
 
 
@@ -324,6 +325,8 @@ tripRouter.get("/booking/:id", async (req, res) => {
 
         const vehicle = await VehicleModel.find({ name: trips[0].busid })
 
+        const report = await SuperviorReport.find({trip:req.params.id})
+
         // Seat's Which are already booked & Payment is completed
         let bookedseats = trips[0].seatsbooked;
 
@@ -343,7 +346,7 @@ tripRouter.get("/booking/:id", async (req, res) => {
         trips[0].bookedseats = currentseat.length;
         trips[0].availableseats = trips[0].totalseats - currentseat.length
         if (trips.length !== 0) {
-            return res.json({ status: "success", data: trips, bookings: bookings })
+            return res.json({ status: "success", data: trips, bookings: bookings,report:report })
         } else {
             return res.json({ status: "error", message: "No Trip Found With This ID" })
         }
