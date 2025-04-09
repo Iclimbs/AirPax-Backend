@@ -55,7 +55,6 @@ FoodBookingRouter.post("/add", AdminAuthentication, async (req, res) => {
         }
         // 1. Find Seat Details
         const seatdetails = await SeatModel.findOne({_id:seatId});
-        console.log("seatdetails",seatdetails);
         
 
         // 2. Find Trip Details
@@ -86,9 +85,7 @@ FoodBookingRouter.post("/add", AdminAuthentication, async (req, res) => {
             }
         })
 
-    } catch (error) {
-        console.log("error",error.message);
-        
+    } catch (error) {        
         return res.json({ status: "error", message: `Failed To Order Food For The User ${error.message}` })
     }
 })
