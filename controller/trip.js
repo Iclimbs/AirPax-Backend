@@ -241,30 +241,15 @@ tripRouter.get("/list", async (req, res) => {
     }
 })
 
+
+
 // Trip Filter For HR 
 tripRouter.get("/list/hr", async (req, res) => {
-    const { filter } = req.query;
-
+    const { from, to, date } = req.query
+    // Getting Current Date & Time Using Luxon Library
+    
     try {
-        let condition;
-        const trips = await TripModel.find({})
-
-
-        // if (todayDate == date) {
-        //     // const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > currentMinutes);
-        //     const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > timeToMinutes(currenttime));
-        //     if (upcomingEvents.length >= 1) {
-        //         return res.json({ status: "success", data: upcomingEvents })
-        //     } else {
-        //         return res.json({ status: "error", message: "No Upcoming Trips Found" })
-        //     }
-        // } else {
-        //     if (trips.length >= 1) {
-        //         return res.json({ status: "success", data: trips })
-        //     } else {
-        //         return res.json({ status: "error", message: "No Upcoming Trips Found" })
-        //     }
-        // }
+        const trips = await TripModel.find({ from: from, to: to, journeystartdate: date, disabled: false, cancelled: false })
         return res.json({ status: "status", message: `Working On Trip List's`, data: trips })
 
     } catch (error) {
