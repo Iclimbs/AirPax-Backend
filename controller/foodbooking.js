@@ -55,6 +55,7 @@ FoodBookingRouter.post("/add", AdminAuthentication, async (req, res) => {
         }
         // 1. Find Seat Details
         const seatdetails = await SeatModel.findOne({_id:seatId});
+        console.log("seatdetails",seatdetails);
         
 
         // 2. Find Trip Details
@@ -68,7 +69,7 @@ FoodBookingRouter.post("/add", AdminAuthentication, async (req, res) => {
             } else {
                 const mailOptions = {
                     from: process.env.emailuser,
-                    to: `${seatdetails.email}`,
+                    to: `${seatdetails.details.email}`,
                     bcc: process.env.imp_email,
                     subject: `Food Order Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                     html: template,
