@@ -18,7 +18,7 @@ FoodBookingRouter.post("/add", AdminAuthentication, async (req, res) => {
     const { foodItems, price, seatId, tripId } = req.body;
     try {
         const newfood = new FoodBookingModel({ foodItems, price, seatId, tripId, bookedBy: decoded._id })
-        // await newfood.save()
+        await newfood.save()
 
         // Updating Allocated Food Details 
         let foodServed = [];
