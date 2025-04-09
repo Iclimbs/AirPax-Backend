@@ -100,7 +100,8 @@
         }
 
         h2 {
-            color: #2563eb; /* Changed from aqua to blue */
+            color: #2563eb;
+            /* Changed from aqua to blue */
             text-align: center;
             margin-top: 0;
             margin-bottom: 20px;
@@ -109,7 +110,8 @@
         }
 
         h3 {
-            color: #2563eb; /* Changed from aqua to blue */
+            color: #2563eb;
+            /* Changed from aqua to blue */
             margin-top: 25px;
             margin-bottom: 10px;
             font-size: 18px;
@@ -154,7 +156,8 @@
         }
 
         .footer a {
-            color: #2563eb; /* Changed from aqua to blue */
+            color: #2563eb;
+            /* Changed from aqua to blue */
             text-decoration: none;
         }
 
@@ -252,9 +255,9 @@
                     <div class="email-content" style="padding: 20px; font-size: 16px; line-height: 1.5;">
                         <h2
                             style="color: #2563eb; text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 24px; font-weight: bold;">
-                            Payment Confirmed – Your Trip Details</h2>
+                            Food Order Detail's</h2>
                         <p style="margin-bottom: 15px;">Dear <strong>
-                                <%= user.name.charAt(0).toUpperCase() + user.name.slice(1).toLowerCase() %>
+                                <%= user.fname.charAt(0).toUpperCase() + user.lname.slice(1).toLowerCase() %>
                             </strong>,</p>
                         <p style="margin-bottom: 15px;">Your payment has been successfully processed! Here are your trip
                             details:</p>
@@ -318,7 +321,7 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     PNR Number</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;"><strong>
-                                        <%= payment.pnr %>
+                                        <%= pnr %>
                                     </strong></td>
                             </tr>
                             <tr>
@@ -326,7 +329,7 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     Total Amount</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    INR <%= payment.amount %>
+                                    INR <%= amount %>
                                 </td>
                             </tr>
                         </table>
@@ -335,63 +338,31 @@
                         <h3
                             style="color: #2563eb; margin-top: 25px; margin-bottom: 10px; font-size: 18px; font-weight: bold;">
                             Passenger Details:</h3>
-                        <% seat.forEach(function(seat) { %>
+                        <% food.forEach(function(seat) { %>
                             <table class="details-table"
                                 style="width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; table-layout: fixed;">
                                 <tr>
                                     <th
                                         style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                        First Name</th>
+                                        Food Name</th>
                                     <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.fname.charAt(0).toUpperCase() + seat.details.fname.slice(1).toLowerCase() %>
+                                        <%= seat.name%>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th
                                         style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                        Last Name</th>
+                                        Food Price Name</th>
                                     <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.lname.charAt(0).toUpperCase() + seat.details.lname.slice(1).toLowerCase() %>
+                                        <%= seat.price %>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th
                                         style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                        Age</th>
+                                        Quantity</th>
                                     <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.age %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th
-                                        style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                        Gender</th>
-                                    <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.gender.charAt(0).toUpperCase() + seat.details.gender.slice(1).toLowerCase() %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th
-                                        style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                        Email</th>
-                                    <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.email %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th
-                                        style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                        Phone No</th>
-                                    <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        +91-<%= seat.details.mobileno %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th
-                                        style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                        Seat No</th>
-                                    <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.seatNumber %>
+                                        <%= seat.quantity %>
                                     </td>
                                 </tr>
                             </table>
@@ -404,7 +375,8 @@
                                             style="color: #2563eb; text-decoration: none;">info@airpax.co</a> or call <a
                                             href="tel:+919990301111"
                                             style="color: #2563eb; text-decoration: none;">+91-9990301111</a>.<br>
-                                        For complaints or feedback, email us at <a href="mailto:feedback.igiairport@gmrgroup.in"
+                                        For complaints or feedback, email us at <a
+                                            href="mailto:feedback.igiairport@gmrgroup.in"
                                             style="color: #2563eb; text-decoration: none;">feedback.igiairport@gmrgroup.in</a>
                                         <br>Visit
                                         <a href="https://airpax.co/"
@@ -413,10 +385,12 @@
                                     <p style="margin-bottom: 15px;">Safe travels!</p>
                                     <div class="dual-logo">
                                         <span class="logo-container">
-                                            <img src="https://www.newdelhiairport.in/src/images/dial-logo-new.png?q=21042027-AZ" alt="DIAL Logo" class="logo-img">
+                                            <img src="https://www.newdelhiairport.in/src/images/dial-logo-new.png?q=21042027-AZ"
+                                                alt="DIAL Logo" class="logo-img">
                                         </span>
                                         <span class="logo-container">
-                                            <img src="https://www.airpax.co/assets/logo3.png" alt="Airpax Logo" class="logo-img">
+                                            <img src="https://www.airpax.co/assets/logo3.png" alt="Airpax Logo"
+                                                class="logo-img">
                                         </span>
                                     </div>
                                     <p style="font-weight: bold;">Best Regards,<br>DIAL & Airpax Team</p>
