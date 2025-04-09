@@ -221,21 +221,21 @@ tripRouter.get("/list", async (req, res) => {
         // const newDate = year + "-" + month + "-" + day;
 
         // Checking For Current Date If The Current Date & Date passed in Query is Same Return The list of trips based on timing or return all trip list.
-        if (todayDate == date) {
-            // const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > currentMinutes);
-            const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > timeToMinutes(currenttime));
-            if (upcomingEvents.length >= 1) {
-                return res.json({ status: "success", data: upcomingEvents })
-            } else {
-                return res.json({ status: "error", message: "No Upcoming Trips Found" })
-            }
-        } else {
+        // if (todayDate == date) {
+        //     // const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > currentMinutes);
+        //     const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > timeToMinutes(currenttime));
+        //     if (upcomingEvents.length >= 1) {
+        //         return res.json({ status: "success", data: upcomingEvents })
+        //     } else {
+        //         return res.json({ status: "error", message: "No Upcoming Trips Found" })
+        //     }
+        // } else {
             if (trips.length >= 1) {
                 return res.json({ status: "success", data: trips })
             } else {
                 return res.json({ status: "error", message: "No Upcoming Trips Found" })
             }
-        }
+        // }
     } catch (error) {
         return res.json({ status: "error", message: `Failed To Get List Of Today's Trip's ${error.message}` })
     }
@@ -247,10 +247,10 @@ tripRouter.get("/list", async (req, res) => {
 tripRouter.get("/list/hr", async (req, res) => {
     const { from, to, date } = req.query
     // Getting Current Date & Time Using Luxon Library
-    
+
     try {
         const trips = await TripModel.find({ from: from, to: to, journeystartdate: date, disabled: false, cancelled: false })
-        return res.json({ status: "status", message: `Working On Trip List's`, data: trips })
+        return res.json({ status: "status", data: trips })
 
     } catch (error) {
         return res.json({ status: "error", message: `Failed To Get List Of Today's Trip's ${error.message}` })
