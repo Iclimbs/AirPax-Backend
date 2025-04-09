@@ -48,6 +48,9 @@ FoodBookingRouter.post("/add", AdminAuthentication, async (req, res) => {
             }
         });
 
+        console.log("total allocated ",totalAllocatedFood);
+        
+
         const updateFoodAllocation = await FoodAllocation.findOneAndUpdate({ trip: tripId }, { $set: { foodUnit: totalAllocatedFood } }, { new: true });
 
         if (updateFoodAllocation === null) {
@@ -61,29 +64,30 @@ FoodBookingRouter.post("/add", AdminAuthentication, async (req, res) => {
         const tripdetails = await TripModel.find({_id:tripId})
         
 
-        let confirmpayment = path.join(__dirname, "../emailtemplate/foodbooking.ejs")
-        ejs.renderFile(confirmpayment, { user: seatdetails.details, seat: seatdetails, trip: tripdetails[0], amount:price,pnr:seatdetails.pnr, food:foodItems }, async function (err, template) {
-            if (err) {
-                return res.json({ status: "error", message: err.message })
-            } else {
-                const mailOptions = {
-                    from: process.env.emailuser,
-                    to: `${seatdetails.details.email}`,
-                    bcc: process.env.imp_email,
-                    subject: `Food Order Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
-                    html: template,
-                }
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        console.log("Error in Sending Mail ", error.message);
-                        return res.json({ status: "error", message: 'Failed to send email' });
-                    } else {
-                        console.log("Email Sent ", info);
-                        return res.json({ status: "success", message: 'Please Check Your Email', redirect: "/" });
-                    }
-                })
-            }
-        })
+        // let confirmpayment = path.join(__dirname, "../emailtemplate/foodbooking.ejs")
+        // ejs.renderFile(confirmpayment, { user: seatdetails.details, seat: seatdetails, trip: tripdetails[0], amount:price,pnr:seatdetails.pnr, food:foodItems }, async function (err, template) {
+        //     if (err) {
+        //         return res.json({ status: "error", message: err.message })
+        //     } else {
+        //         const mailOptions = {
+        //             from: process.env.emailuser,
+        //             to: `${seatdetails.details.email}`,
+        //             bcc: process.env.imp_email,
+        //             subject: `Food Order Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
+        //             html: template,
+        //         }
+        //         transporter.sendMail(mailOptions, (error, info) => {
+        //             if (error) {
+        //                 console.log("Error in Sending Mail ", error.message);
+        //                 return res.json({ status: "error", message: 'Failed to send email' });
+        //             } else {
+        //                 console.log("Email Sent ", info);
+        //                 return res.json({ status: "success", message: 'Please Check Your Email', redirect: "/" });
+        //             }
+        //         })
+        //     }
+        // })
+        return res.json({ status: "success", message: `Failed To Order Food For The User` })
 
     } catch (error) {        
         return res.json({ status: "error", message: `Failed To Order Food For The User ${error.message}` })

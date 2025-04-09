@@ -392,7 +392,7 @@ ReportRouter.post("/group/age/custom", async (req, res) => {
             {
                 $bucket: {
                     groupBy: "$details.age", // Field to group by
-                    boundaries: [0, 18, 60, 100], // Define age groups: 0-17, 18-29, 30-49, 50+
+                    boundaries: [0, 12, 18, 61], // Define age groups: 0-11, 12-17,18-60, 61+
                     default: "Other", // Catch-all for out-of-bound ages
                     output: {
                         ticketsCount: { $sum: 1 }, // Count tickets in each group
@@ -412,6 +412,8 @@ ReportRouter.post("/group/age/custom", async (req, res) => {
                 },
             }
         ]);
+        console.log("Result",result);
+        
         if (result.length > 0) {
             return res.json({ status: "success", data: result })
         } else {
@@ -620,6 +622,7 @@ ReportRouter.post("/group/utilisation/trip", async (req, res) => {
                 $project: {
                     name: 1,
                     journeystartdate: 1,
+                    starttime:1,
                     tripId: 1, // Assuming each trip has a unique identifier field
                     totalseats: 1, // Total seats available for the trip
                     bookedseats: 1, // Number of seats booked for the trip
