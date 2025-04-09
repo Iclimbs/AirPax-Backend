@@ -27,31 +27,30 @@ FoodBookingRouter.post("/add", AdminAuthentication, async (req, res) => {
         for (let index = 0; index < foodItems.length; index++) {
             foodServed.push(foodItems[index])
         }
+        
 
         const allocatedFood = await FoodAllocation.find({ trip: tripId })
         totalAllocatedFood = allocatedFood[0].foodUnit;
+        
 
         const servedMap = {};
 
-        foodServed.forEach(({ name, quantity }) => {
-            if (servedMap[name]) {
-                servedMap[name] += quantity;
+        foodServed.forEach(({ foodName, quantity }) => {
+            if (servedMap[foodName]) {
+                servedMap[foodName] += quantity;
             } else {
-                servedMap[name] = quantity;
+                servedMap[foodName] = quantity;
             }
-        });
+        });        
 
         // Update quantities
         totalAllocatedFood.forEach(foodItem => {
             if (servedMap.hasOwnProperty(foodItem.foodName)) {
                 foodItem.quantity -= servedMap[foodItem.foodName];
             }
-        });
+        });        
 
-        console.log("total allocated ",totalAllocatedFood);
-        
-
-        const updateFoodAllocation = await FoodAllocation.findOneAndUpdate({ trip: tripId }, { $set: { foodUnit: totalAllocatedFood } }, { new: true });
+        const updateFoodAllocation = await FoodAllocation.findOneAndUpdate({ trip: tripId }, { $set: { foodUnit: totalAllocatedFood } }, { new: true });        
 
         if (updateFoodAllocation === null) {
             return res.json({ status: 'error', message: `Failed To Update Food Allocation Details.` })
@@ -64,30 +63,30 @@ FoodBookingRouter.post("/add", AdminAuthentication, async (req, res) => {
         const tripdetails = await TripModel.find({_id:tripId})
         
 
-        // let confirmpayment = path.join(__dirname, "../emailtemplate/foodbooking.ejs")
-        // ejs.renderFile(confirmpayment, { user: seatdetails.details, seat: seatdetails, trip: tripdetails[0], amount:price,pnr:seatdetails.pnr, food:foodItems }, async function (err, template) {
-        //     if (err) {
-        //         return res.json({ status: "error", message: err.message })
-        //     } else {
-        //         const mailOptions = {
-        //             from: process.env.emailuser,
-        //             to: `${seatdetails.details.email}`,
-        //             bcc: process.env.imp_email,
-        //             subject: `Food Order Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
-        //             html: template,
-        //         }
-        //         transporter.sendMail(mailOptions, (error, info) => {
-        //             if (error) {
-        //                 console.log("Error in Sending Mail ", error.message);
-        //                 return res.json({ status: "error", message: 'Failed to send email' });
-        //             } else {
-        //                 console.log("Email Sent ", info);
-        //                 return res.json({ status: "success", message: 'Please Check Your Email', redirect: "/" });
-        //             }
-        //         })
-        //     }
-        // })
-        return res.json({ status: "success", message: `Failed To Order Food For The User` })
+        let confirmpayment = path.join(__dirname, "../emailtemplate/foodbooking.ejs")
+        ejs.renderFile(confirmpayment, { user: seatdetails.details, seat: seatdetails, trip: tripdetails[0], amount:price,pnr:seatdetails.pnr, food:foodItems }, async function (err, template) {
+            if (err) {
+                return res.json({ status: "error", message: err.message })
+            } else {
+                const mailOptions = {
+                    from: process.env.emailuser,
+                    to: `${seatdetails.details.email}`,
+                    bcc: process.env.imp_email,
+                    subject: `Food Order Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
+                    html: template,
+                }
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.log("Error in Sending Mail ", error.message);
+                        return res.json({ status: "error", message: 'Failed to send email' });
+                    } else {
+                        console.log("Email Sent ", info);
+                        return res.json({ status: "success", message: 'Please Check Your Email', redirect: "/" });
+                    }
+                })
+            }
+        })
+        // return res.json({ status: "success", message: `Failed To Order Food For The User` })
 
     } catch (error) {        
         return res.json({ status: "error", message: `Failed To Order Food For The User ${error.message}` })
