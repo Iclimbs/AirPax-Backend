@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { AgraLounge } = require("../controller/AgraLounge");
 const { BlogRouter } = require("../controller/blog");
+const { BusRoutesRouter } = require("../controller/busRoutes");
 const { ContactRouter } = require("../controller/contact");
 const { CounterRouter } = require("../controller/counter");
 const { FoodRouter } = require("../controller/food");
@@ -41,6 +42,7 @@ router
     .use("/contact", ContactRouter)
     .use("/agraLounge", AgraLounge)
     .use("/supervisor", SupervisorRouter)
+    .use("/busroutes",BusRoutesRouter)
 
 
 module.exports = router;
