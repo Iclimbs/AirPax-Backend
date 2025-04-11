@@ -64,7 +64,8 @@ const tripschema = mongoose.Schema({
     totalseats: {
         type: Number,
         required: true
-    }, bookedseats: {
+    },
+    bookedseats: {
         type: Number,
         required: true
     },
@@ -101,6 +102,8 @@ const tripschema = mongoose.Schema({
         type: String,
         trim: true
     },
+    pickuppoints: [mongoose.Types.ObjectId],
+    dropoffpoints: [mongoose.Types.ObjectId],
     conductordetails: ConductorSchema,
     driverdetails: DriverSchema,
     CreatedAt: { type: Date, default: Date.now },

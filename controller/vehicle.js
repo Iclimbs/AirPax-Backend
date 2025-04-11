@@ -57,6 +57,20 @@ vehicleRouter.get("/listall", async (req, res) => {
 })
 
 
+vehicleRouter.get("/listall/active", async (req, res) => {
+    try {
+        const vehicleList = await VehicleModel.find({active:true})
+        if (vehicleList.length !== 0) {
+            return res.json({ status: "success", data: vehicleList })
+        } else {
+            return res.json({ status: "error", message: "No Bus is Available Right Now !" })
+        }
+    } catch (error) {
+        return res.json({ status: "error", message:`Failed To Fetch Details Of Each Vehicle error:-${error.message}`  })
+    }
+})
+
+
 vehicleRouter.get("/search/:name", async (req, res) => {
     try {
         const vehicleList = await VehicleModel.find({ name: req.params.name })

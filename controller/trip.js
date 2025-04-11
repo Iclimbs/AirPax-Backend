@@ -243,8 +243,8 @@ tripRouter.get("/list/hr", async (req, res) => {
 
     try {
         const trips = await TripModel.find({ from: from, to: to, journeystartdate: date, disabled: false, cancelled: false })
-        if (trips.length===0) {
-            return res.json({status:'error',message:'No Trip Found'})
+        if (trips.length === 0) {
+            return res.json({ status: 'error', message: 'No Trip Found' })
         } else {
             return res.json({ status: "success", data: trips })
         }
@@ -255,7 +255,106 @@ tripRouter.get("/list/hr", async (req, res) => {
 
 tripRouter.get("/detailone/:id", async (req, res) => {
     try {
-        const trips = await TripModel.find({ _id: req.params.id })
+        // const trips = await TripModel.find({ _id: req.params.id })
+        const trips = await TripModel.aggregate([{ $match: { _id: new mongoose.SchemaType.ObjectId(id) } }])
+
+        if (trips.length === 0) {
+            return res.json({ status: "error", message: "No Trip Found With This ID" })
+        }
+        const seats = await SeatModel.find({ tripId: req.params.id })
+
+        const vehicle = await VehicleModel.find({ name: trips[0].busid })
+
+        // Seat's Which are already booked & Payment is completed
+        let bookedseats = trips[0].seatsbooked;
+
+        // check the list of Seat's whose seats are already booked. So that we can inform the user to change his seat's
+        let lockedseats = [];
+
+        for (let index = 0; index < seats.length; index++) {
+            if (seats[index].details.status == "Pending") {
+                lockedseats.push(seats[index].seatNumber)
+            }
+        }
+
+        let currentseat = bookedseats.concat(lockedseats)
+
+        trips[0].facilities = vehicle[0].facilities
+
+        trips[0].seatsbooked = currentseat
+
+        trips[0].bookedseats = currentseat.length;
+
+        trips[0].availableseats = trips[0].totalseats - currentseat.length
+
+        if (trips.length !== 0) {
+            return res.json({ status: "success", data: trips })
+        } else {
+            return res.json({ status: "error", message: "No Trip Found With This ID" })
+        }
+
+    } catch (error) {
+        return res.json({ status: "error", message: `Get List Failed ${error.message}` })
+    }
+})
+
+tripRouter.get("/testing/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const trips = await TripModel.aggregate([
+            {
+              $match: { _id: new mongoose.Types.ObjectId(id) }
+            },
+            {
+              $lookup: {
+                from: 'busroutes',
+                let: {
+                  fromCounter: '$from',
+                  startTime: '$starttime'
+                },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $and: [
+                          { $eq: ['$counter', '$$fromCounter'] },
+                          { $eq: ['$purpose', 'PickUp'] },
+                          { $eq: ['$status', true] },
+                          { $eq: ['$time', '$$startTime'] }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                as: 'pickup'
+              }
+            },
+            {
+                $lookup: {
+                  from: 'busroutes',
+                  let: {
+                    toCounter: '$to',
+                    endTime: '$endtime'
+                  },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $and: [
+                            { $eq: ['$counter', '$$toCounter'] },
+                            { $eq: ['$purpose', 'DropOff'] },
+                            { $eq: ['$status', true] },
+                            { $eq: ['$time', '$$endTime'] }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  as: 'drop'
+                }
+              }
+          ]);
+          
         if (trips.length === 0) {
             return res.json({ status: "error", message: "No Trip Found With This ID" })
         }
@@ -306,7 +405,7 @@ tripRouter.get("/booking/:id", async (req, res) => {
 
         const vehicle = await VehicleModel.find({ name: trips[0].busid })
 
-        const report = await SuperviorReport.find({trip:req.params.id})
+        const report = await SuperviorReport.find({ trip: req.params.id })
 
         // Seat's Which are already booked & Payment is completed
         let bookedseats = trips[0].seatsbooked;
@@ -327,7 +426,7 @@ tripRouter.get("/booking/:id", async (req, res) => {
         trips[0].bookedseats = currentseat.length;
         trips[0].availableseats = trips[0].totalseats - currentseat.length
         if (trips.length !== 0) {
-            return res.json({ status: "success", data: trips, bookings: bookings,report:report })
+            return res.json({ status: "success", data: trips, bookings: bookings, report: report })
         } else {
             return res.json({ status: "error", message: "No Trip Found With This ID" })
         }
