@@ -12,7 +12,8 @@ const { BookingModel } = require("../model/booking.model");
 const { UserAuthentication } = require("../middleware/Authentication");
 const { UserModel } = require("../model/user.model");
 const { OtpModel } = require("../model/otp.model");
-const otpGenerator = require('otp-generator')
+const otpGenerator = require('otp-generator');
+const { default: mongoose } = require("mongoose");
 
 
 const RefundAmountCalculator = (props) => {
@@ -30,14 +31,13 @@ const RefundAmountCalculator = (props) => {
     return refundamount
 }
 
-
+// Ticket Cancellation For GMR Tickets
 
 TicketRouter.post("/gmr/cancel", async (req, res) => {
     const { tripId, bookingRefId, pnr, cancelticket } = req.body;
     // Basic Detail's Requirements
     let ticketcost = 0;
     let totalamount = 0;
-    let cancelticketno = cancelticket.length;
     let journeytime = '';
     const currentDateTime = new Date();
 
@@ -62,11 +62,13 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
 
     // Changing Seat Status in Seat Model     
     const seatdetails = await SeatModel.find({ pnr: pnr, tripId: tripId })
+
     if (seatdetails.length == 0) {
         return res.json({ status: "error", message: "No Seat Detail's Found Related to this Pnr" })
     }
 
-    const tripdetails = await TripModel.find({ _id: ticketdetails[0].tripId })
+    const tripdetails = await TripModel.find({ _id: tripId })
+
     if (tripdetails.length == 0) {
         return res.json({ status: "error", message: "No Trip Detail's Found Related to this Pnr" })
     }
@@ -74,9 +76,10 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
     journeytime = new Date(`${tripdetails[0].journeystartdate}T${tripdetails[0].starttime}:00`)
 
 
+
     let bulkwriteseat = []
     for (let index = 0; index < seatdetails.length; index++) {
-        if (cancelticket.includes(seatdetails[index].seatNumber) && (seatdetails[index].tripId === tripId) && (seatdetails[index].pnr === pnr)) {
+        if (cancelticket.includes(seatdetails[index].seatNumber) && (seatdetails[index].tripId.toString() === tripId) && (seatdetails[index].pnr === pnr)) {
             totalamount += seatdetails[index].details.amount;
             bulkwriteseat.push({
                 updateOne: {
@@ -109,7 +112,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
     tripdetails[0].availableseats = tripdetails[0].totalseats - newseats.length
 
     try {
-        await tripdetails[0].save()
+        // await tripdetails[0].save()
     } catch (error) {
         return res.json({ status: "error", message: "Ticket Cancellation Process Failed " })
     }
@@ -141,7 +144,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
                 const mailOptions = {
                     from: process.env.emailuser,
                     to: `${user.email}`,
-                    bcc:process.env.imp_email,
+                    bcc: process.env.imp_email,
                     subject: `Booking Cancellation, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                     html: template
                 }
@@ -369,7 +372,7 @@ TicketRouter.post("/cancel", UserAuthentication, async (req, res) => {
             const mailOptions = {
                 from: process.env.emailuser,
                 to: `${userdetails[0].email}`,
-                bcc:process.env.imp_email,
+                bcc: process.env.imp_email,
                 subject: `Booking Cancellation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                 html: template
             }
