@@ -143,6 +143,7 @@ PnrRouter.get("/gmr/:pnr", async (req, res) => {
     details.journeystartdate = tripdetails[0].journeystartdate;
     details.journeyenddate = tripdetails[0].journeyenddate;
     details.busid = vehicledetails[0].gpsname;
+    details.busname = vehicledetails[0].name;
     details.starttime = tripdetails[0].starttime;
     details.endtime = tripdetails[0].endtime;
     details.totaltime = tripdetails[0].totaltime;
