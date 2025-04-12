@@ -187,8 +187,6 @@ tripRouter.get("/listall", async (req, res) => {
         // Calculate the total number of pages
         const totalPages = Math.ceil(totalDocuments / limit);
 
-        // const trips = await TripModel.find({}).sort({ journeystartdate: -1 }).limit(25)    
-
         return res.json({ status: "success", data: trips, totalPages: totalPages })
     } catch (error) {
         return res.json({ status: "error", message: "Get List Failed" })
@@ -233,8 +231,6 @@ tripRouter.get("/list", async (req, res) => {
         return res.json({ status: "error", message: `Failed To Get List Of Today's Trip's ${error.message}` })
     }
 })
-
-
 
 // Trip Filter For HR 
 tripRouter.get("/list/hr", async (req, res) => {

@@ -602,7 +602,7 @@ userRouter.post("/create/admin", AdminAuthentication, async (req, res) => {
 userRouter.get("/admin/listall", AdminAuthentication, async (req, res) => {
     try {
         const user = await UserModel.find({
-            accounttype: { $in: ["supervisor", "Mt's", "hr"] }
+            accounttype: { $in: ["supervisor", "Mt's", "hr","agra-lounge"] }
         })
         return res.json({ status: "success", data: user })
     } catch (error) {

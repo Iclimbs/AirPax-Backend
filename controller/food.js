@@ -50,9 +50,23 @@ FoodRouter.patch("/disable/:id", async (req, res) => {
 
 
 FoodRouter.get("/listall", async (req, res) => {
+    const { page, limit, filter } = req.query;
+    console.log("filter",filter);
+    
     try {
-        const foodList = await FoodModel.find()
-        return res.json({ status: "success", data: foodList })
+        const skip = (page - 1) * limit;
+
+        const foodList = await FoodModel.find({availableAt:filter})
+            .skip(skip)
+            .limit(limit)
+            .exec();
+        const totalDocuments = await FoodModel.countDocuments({availableAt:filter});
+
+        // Calculate the total number of pages
+        const totalPages = Math.ceil(totalDocuments / limit);
+
+
+        return res.json({ status: "success", data: foodList, totalPages: totalPages })
     } catch (error) {
         return res.json({ status: "error", message: error.message })
     }
@@ -75,7 +89,7 @@ FoodRouter.get("/listall/active", async (req, res) => {
 FoodRouter.get("/listall/active/food-allocation/:id", async (req, res) => {
     const { id } = req.params;
     try {
-        const foodList = await FoodAllocation.aggregate([{ $match: { trip : new mongoose.Types.ObjectId(id) }}])
+        const foodList = await FoodAllocation.aggregate([{ $match: { trip: new mongoose.Types.ObjectId(id) } }])
         if (foodList.length >= 1) {
             return res.json({ status: "success", data: foodList })
         } else {

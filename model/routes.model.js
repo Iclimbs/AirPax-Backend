@@ -15,6 +15,11 @@ const RoutesSchema = mongoose.Schema({
         required: true,
         trim: true
     },
+    commontime: {
+        type: String,
+        required: true,
+        trim: true
+    },
     purpose: {
         type: String,
         trim: true,
