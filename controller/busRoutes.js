@@ -10,7 +10,7 @@ const BusRoutesRouter = express.Router();
 // Generating Bus Routes
 BusRoutesRouter.post("/add", async (req, res) => {
     try {
-        const { counter, time, purpose, location } = req.body;
+        const { counter, time, purpose, location,commontime } = req.body;
 
         // Optional: Validate required fields
         if (!counter || !time || !purpose || !location || !commontime) {
@@ -82,6 +82,23 @@ BusRoutesRouter.get("/list/admin", async (req, res) => {
     }
 });
 
+
+// Getting List Of Different Bus Routes for Admin
+BusRoutesRouter.get("/list/purpose", async (req, res) => {
+    try {
+        const list = [{name:'PickUp' },{name:'DropOff'}]
+        return res.json({
+            status: 'success',
+            data: list
+        });
+    } catch (error) {
+        return res.json({
+            status: 'error',
+            message: `Failed to get details of bus route: ${error.message}`
+        });
+    }
+});
+
 // Edit Bus Routes Details
 BusRoutesRouter.patch("/edit/:id", async (req, res) => {
     try {
@@ -130,12 +147,12 @@ BusRoutesRouter.patch("/edit/:id", async (req, res) => {
 BusRoutesRouter.patch("/status/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const {status} = req.body;
+        const { status } = req.body;
         if (!id || !status) {
             return res.json({ status: 'error', message: 'Bus Route ID & Status is Required!' })
         }
 
-        const list = await RoutesModel.findByIdAndUpdate(id, {status:status}, { new: true })
+        const list = await RoutesModel.findByIdAndUpdate(id, { status: status }, { new: true })
         if (list !== null) {
             return res.json({ status: 'success', message: 'Bus Route Status Updated Successfully.' })
         } else {
