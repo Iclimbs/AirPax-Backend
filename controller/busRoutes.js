@@ -147,20 +147,14 @@ BusRoutesRouter.patch("/edit/:id", async (req, res) => {
 BusRoutesRouter.patch("/status/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const { status } = req.body;
-        if (!id || !status) {
-            return res.json({ status: 'error', message: 'Bus Route ID & Status is Required!' })
+        if (!id) {
+            return res.json({ status: 'error', message: 'Bus Route ID is Required!' })
         }
 
-        const list = await RoutesModel.findByIdAndUpdate(id, { status: status }, { new: true })
-        if (list !== null) {
-            return res.json({ status: 'success', message: 'Bus Route Status Updated Successfully.' })
-        } else {
-            return res.json({
-                status: 'error',
-                data: `Failed To Update Bus Route Status`
-            });
-        }
+        const list = await RoutesModel.findById({_id:id})
+        list.status = !list.status;
+        await list.save()
+        return res.json({ status: "success", message: "Bus Route Status Availability Updated !!" })
     } catch (error) {
         return res.json({
             status: 'error',
