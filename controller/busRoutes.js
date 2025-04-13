@@ -13,16 +13,17 @@ BusRoutesRouter.post("/add", async (req, res) => {
         const { counter, time, purpose, location } = req.body;
 
         // Optional: Validate required fields
-        if (!counter || !time || !purpose || !location) {
+        if (!counter || !time || !purpose || !location || !commontime) {
             return res.json({
                 status: 'error',
-                message: 'All fields (counter, time, purpose, location) are required.'
+                message: 'All fields (counter, time, commontime, purpose, location) are required.'
             });
         }
 
         const addRoutes = new RoutesModel({
             counter,
             time,
+            commontime,
             purpose,
             location
         });
@@ -81,28 +82,6 @@ BusRoutesRouter.get("/list/admin", async (req, res) => {
     }
 });
 
-
-// Disable Or Enable Bus Routes
-BusRoutesRouter.get("/list/admin", async (req, res) => {
-    try {
-        const list = await RoutesModel.find({});
-        if (list.length === 0) {
-            return res.json({ status: 'error', message: 'Failed To Find Any Routes For Buses' })
-        } else {
-            return res.json({
-                status: 'success',
-                data: list
-            });
-        }
-    } catch (error) {
-        return res.json({
-            status: 'error',
-            message: `Failed to get details of bus route: ${error.message}`
-        });
-    }
-});
-
-
 // Edit Bus Routes Details
 BusRoutesRouter.patch("/edit/:id", async (req, res) => {
     try {
@@ -117,6 +96,9 @@ BusRoutesRouter.patch("/edit/:id", async (req, res) => {
         }
         if (req.body?.time) {
             data.time = req.body?.time
+        }
+        if (req.body?.commontime) {
+            data.commontime = req.body?.commontime
         }
         if (req.body?.purpose) {
             data.purpose = req.body?.purpose
@@ -139,6 +121,33 @@ BusRoutesRouter.patch("/edit/:id", async (req, res) => {
         return res.json({
             status: 'error',
             message: `Failed to Update bus route detail's : ${error.message}`
+        });
+    }
+});
+
+
+// Update Bus Routes Details Status
+BusRoutesRouter.patch("/status/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {status} = req.body;
+        if (!id || !status) {
+            return res.json({ status: 'error', message: 'Bus Route ID & Status is Required!' })
+        }
+
+        const list = await RoutesModel.findByIdAndUpdate(id, {status:status}, { new: true })
+        if (list !== null) {
+            return res.json({ status: 'success', message: 'Bus Route Status Updated Successfully.' })
+        } else {
+            return res.json({
+                status: 'error',
+                data: `Failed To Update Bus Route Status`
+            });
+        }
+    } catch (error) {
+        return res.json({
+            status: 'error',
+            message: `Failed to Update Bus Route Status : ${error.message}`
         });
     }
 });
