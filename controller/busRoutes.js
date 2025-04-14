@@ -142,7 +142,6 @@ BusRoutesRouter.patch("/edit/:id", async (req, res) => {
     }
 });
 
-
 // Update Bus Routes Details Status
 BusRoutesRouter.patch("/status/:id", async (req, res) => {
     try {
