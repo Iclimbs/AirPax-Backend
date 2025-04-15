@@ -100,7 +100,8 @@
         }
 
         h2 {
-            color: #2a9d8f;
+            color: #2563eb;
+            /* Changed from aqua to blue */
             text-align: center;
             margin-top: 0;
             margin-bottom: 20px;
@@ -109,7 +110,8 @@
         }
 
         h3 {
-            color: #2a9d8f;
+            color: #2563eb;
+            /* Changed from aqua to blue */
             margin-top: 25px;
             margin-bottom: 10px;
             font-size: 18px;
@@ -154,7 +156,8 @@
         }
 
         .footer a {
-            color: #2a9d8f;
+            color: #2563eb;
+            /* Changed from aqua to blue */
             text-decoration: none;
         }
 
@@ -165,6 +168,7 @@
         .logo-container {
             display: inline-block;
             vertical-align: middle;
+            margin: 0 10px;
         }
 
         .logo-img {
@@ -176,6 +180,13 @@
             outline: none;
             text-decoration: none;
             display: block;
+        }
+
+        .dual-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
         }
 
         /* Responsive styles */
@@ -209,6 +220,10 @@
                 margin-bottom: 10px;
                 display: block;
             }
+
+            .dual-logo {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -239,17 +254,17 @@
                     <!-- Content -->
                     <div class="email-content" style="padding: 20px; font-size: 16px; line-height: 1.5;">
                         <h2
-                            style="color: #2a9d8f; text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 24px; font-weight: bold;">
+                            style="color: #2563eb; text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 24px; font-weight: bold;">
                             Payment Confirmed – Your Trip Details</h2>
                         <p style="margin-bottom: 15px;">Dear <strong>
-                                <%= user.name %>
+                                <%= user %>
                             </strong>,</p>
-                        <p style="margin-bottom: 15px;">We are excited to inform you that your payment has been successfully processed! Please find the details of your upcoming trip below. If you have any questions, feel free to reach out to our support team.
-                        </p>
+                        <p style="margin-bottom: 15px;">Your payment has been successfully processed! Here are your trip
+                            details:</p>
 
                         <!-- Trip Details Table -->
                         <h3
-                            style="color: #2a9d8f; margin-top: 25px; margin-bottom: 10px; font-size: 18px; font-weight: bold;">
+                            style="color: #2563eb; margin-top: 25px; margin-bottom: 10px; font-size: 18px; font-weight: bold;">
                             Trip Details:</h3>
                         <table class="details-table"
                             style="width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; table-layout: fixed;">
@@ -258,7 +273,8 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     From</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= trip.from %>
+                                    <%= pickup.counter %> - <%= pickup.location %>
+
                                 </td>
                             </tr>
                             <tr>
@@ -266,46 +282,39 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     To</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= trip.to %>
+                                    <%= dropoff.counter %> - <%= dropoff.location %>
+
                                 </td>
                             </tr>
                             <tr>
                                 <th
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                    Journey Start Date</th>
+                                    Journey Date</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= trip.journeystartdate %>
+                                    <%= new Date(trip.journeystartdate).toLocaleDateString('en-GB') %>
                                 </td>
                             </tr>
                             <tr>
                                 <th
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                    Journey End Date</th>
+                                    Scheduled Departure Time</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= trip.journeyenddate %>
+                                    <%= pickuptime %>
                                 </td>
                             </tr>
                             <tr>
                                 <th
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                    Start Time</th>
+                                    Scheduled Arrival Time</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= trip.starttime %>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th
-                                    style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
-                                    End Time</th>
-                                <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= trip.endtime %>
+                                    <%= dropofftime %>
                                 </td>
                             </tr>
                         </table>
 
                         <!-- Ticket Information Table -->
                         <h3
-                            style="color: #2a9d8f; margin-top: 25px; margin-bottom: 10px; font-size: 18px; font-weight: bold;">
+                            style="color: #2563eb; margin-top: 25px; margin-bottom: 10px; font-size: 18px; font-weight: bold;">
                             Ticket Information:</h3>
                         <table class="details-table"
                             style="width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; table-layout: fixed;">
@@ -322,14 +331,14 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     Total Amount</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= amount %>
+                                    INR <%= amount %>
                                 </td>
                             </tr>
                         </table>
 
                         <!-- Passenger Details -->
                         <h3
-                            style="color: #2a9d8f; margin-top: 25px; margin-bottom: 10px; font-size: 18px; font-weight: bold;">
+                            style="color: #2563eb; margin-top: 25px; margin-bottom: 10px; font-size: 18px; font-weight: bold;">
                             Passenger Details:</h3>
                         <% seat.forEach(function(seat) { %>
                             <table class="details-table"
@@ -339,7 +348,8 @@
                                         style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                         First Name</th>
                                     <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.fname %>
+                                        <%= seat.details.fname.charAt(0).toUpperCase() +
+                                            seat.details.fname.slice(1).toLowerCase() %>
                                     </td>
                                 </tr>
                                 <tr>
@@ -347,7 +357,8 @@
                                         style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                         Last Name</th>
                                     <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.lname %>
+                                        <%= seat.details.lname.charAt(0).toUpperCase() +
+                                            seat.details.lname.slice(1).toLowerCase() %>
                                     </td>
                                 </tr>
                                 <tr>
@@ -363,7 +374,8 @@
                                         style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                         Gender</th>
                                     <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.gender %>
+                                        <%= seat.details.gender.charAt(0).toUpperCase() +
+                                            seat.details.gender.slice(1).toLowerCase() %>
                                     </td>
                                 </tr>
                                 <tr>
@@ -379,7 +391,7 @@
                                         style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                         Phone No</th>
                                     <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.mobileno %>
+                                        +91-<%= seat.details.mobileno %>
                                     </td>
                                 </tr>
                                 <tr>
@@ -397,35 +409,49 @@
                                 <div class="centered-content" style="text-align: center; margin: 25px 0;">
                                     <p style="margin-bottom: 15px;">If you need assistance, contact us at <a
                                             href="mailto:info@airpax.co"
-                                            style="color: #2a9d8f; text-decoration: none;">info@airpax.co</a> or call <a
+                                            style="color: #2563eb; text-decoration: none;">info@airpax.co</a> or call <a
                                             href="tel:+919990301111"
-                                            style="color: #2a9d8f; text-decoration: none;">+919990301111</a>.<br>Visit
+                                            style="color: #2563eb; text-decoration: none;">+91-9990301111</a>.<br>
+                                        For complaints or feedback, email us at <a
+                                            href="mailto:feedback.igiairport@gmrgroup.in"
+                                            style="color: #2563eb; text-decoration: none;">feedback.igiairport@gmrgroup.in</a>
+                                        <br>Visit
                                         <a href="https://airpax.co/"
-                                            style="color: #2a9d8f; text-decoration: none;">Airpax</a> for more details.
+                                            style="color: #2563eb; text-decoration: none;">Airpax</a> for more details.
                                     </p>
                                     <p style="margin-bottom: 15px;">Safe travels!</p>
-                                    <p style="font-weight: bold;">Airpax Team</p>
+                                    <div class="dual-logo">
+                                        <span class="logo-container">
+                                            <img src="https://www.newdelhiairport.in/src/images/dial-logo-new.png?q=21042027-AZ"
+                                                alt="DIAL Logo" class="logo-img">
+                                        </span>
+                                        <span class="logo-container">
+                                            <img src="https://www.airpax.co/assets/logo3.png" alt="Airpax Logo"
+                                                class="logo-img">
+                                        </span>
+                                    </div>
+                                    <p style="font-weight: bold;">Best Regards,<br>DIAL & Airpax Team</p>
                                 </div>
                     </div>
 
                     <!-- Footer -->
-                    <div class="footer"
+                    <!-- <div class="footer"
                         style="text-align: center; font-size: 12px; color: #666666; padding: 20px; background-color: #f9f9f9; border-top: 1px solid #eeeeee;">
                         <p style="margin: 5px 0; font-weight: bold;">RIGI TRANS TECH PVT LTD</p>
                         <p style="margin: 5px 0;">PERNAM INN, 837/1, MANDI ESTATE, NEW DELHI, 110047</p>
                         <p style="margin: 5px 0;">Email: <a href="mailto:info@airpax.co"
-                                style="color: #2a9d8f; text-decoration: none;">info@airpax.co</a> | Phone: <a
+                                style="color: #2563eb; text-decoration: none;">info@airpax.co</a> | Phone: <a
                                 href="tel:+919990301111"
-                                style="color: #2a9d8f; text-decoration: none;">+919990301111</a></p>
+                                style="color: #2563eb; text-decoration: none;">+91-9990301111</a></p>
                         <p style="margin: 5px 0;">
                             <span class="logo-container" style="display: inline-block; vertical-align: middle;">
-                                <a href="https://airpax.co/" style="color: #2a9d8f; text-decoration: none;">
+                                <a href="https://airpax.co/" style="color: #2563eb; text-decoration: none;">
                                     <img src="https://www.airpax.co/assets/logo3.png" alt="Airpax Logo" class="logo-img"
                                         style="height: 20px; width: auto; vertical-align: middle; margin-right: 5px; border: 0; outline: none; text-decoration: none; display: block;">
                                 </a>
                             </span>
                         </p>
-                    </div>
+                    </div> -->
 
                     <!-- Footer spacing -->
                     <div style="font-size: 0; line-height: 0; height: 20px;">&nbsp;</div>

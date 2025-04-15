@@ -11,14 +11,20 @@ const path = require('node:path');
 const ejs = require("ejs")
 const { transporter } = require('../service/transporter');
 const { DateTime } = require('luxon')
-
-
-
-
 const { BookingModel } = require('../model/booking.model');
 const { TripModel } = require('../model/trip.model');
 const { AdminAuthentication } = require('../middleware/Authorization');
 const { FoodAllocation } = require('../model/SupervisorReport.model');
+const { RoutesModel } = require('../model/routes.model');
+
+
+const convertTo12HourFormat = (time24) => {
+    let [hours, minutes] = time24.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12 || 12; // convert '0' to '12'
+    return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
+}
 
 const toProperCase = (word) => {
     if (!word) return ''; // Return empty string if input is falsy
@@ -44,8 +50,8 @@ SeatRouter.post("/selectedseats", async (req, res) => {
             expireAt: Date.now() + 15 * 60 * 1000, // Lock for 15 minutes
             pnr: ticketpnr,
             platform: platform,
-            dropoff:dropoff,
-            pickup:pickup,
+            dropoff: dropoff,
+            pickup: pickup,
             details: {
                 fname: toProperCase(passengerdetails[index].fname),
                 lname: toProperCase(passengerdetails[index].lname),
@@ -139,7 +145,7 @@ SeatRouter.post("/selectedseats", async (req, res) => {
 SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
     const token = req.headers.authorization.split(" ")[1]
     const decoded = jwt.verify(token, 'Authorization')
-    const { passengerdetails, tripId, amount } = req.body
+    const { passengerdetails, tripId, amount,paymentmethod,pickupid,dropoffid } = req.body
     // Generating Random Ticket PNR
     const ticketpnr = generateUniqueId({
         length: 10,
@@ -156,6 +162,8 @@ SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
             seatNumber: passengerdetails[index].seatno, isLocked: true, isBooked: true, tripId: tripId, bookedby: decoded._id,
             expireAt: null,
             pnr: ticketpnr,
+            pickup:pickupid,
+            dropoff:dropoffid,
             platform: "Admin",
             details: {
                 fname: toProperCase(passengerdetails[index].fname),
@@ -225,6 +233,8 @@ SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
         distance: tripdetails[0].distance,
         pnr: ticketpnr,
         seats: seats,
+        dropoffid:dropoffid,
+        pickupid:pickupid,
         userid: decoded._id,
         tripId: tripdetails[0]._id
     })
@@ -244,7 +254,7 @@ SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
         }
         // Saving Payment Detail's In Payment Model
         try {
-            const paymentdetails = new PaymentModel({ pnr: ticketpnr, userid: decoded._id, amount: amount, paymentstatus: "Confirmed", method: "Cash", refundamount: 0 })
+            const paymentdetails = new PaymentModel({ pnr: ticketpnr, userid: decoded._id, amount: amount, paymentstatus: "Confirmed", method:paymentmethod, refundamount: 0 })
             await paymentdetails.save()
         } catch (error) {
             return res.json({ status: "error", message: `Failed To Added Payment Details ${error.message}` })
@@ -267,9 +277,18 @@ SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
         } catch (error) {
             return res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
         }
+
+         const pickupdetails = await RoutesModel.find({ _id: pickupid })
+        
+            const dropoffdetails = await RoutesModel.find({ _id: dropoffid })
+        
+            if (pickupdetails.length === 0 || dropoffdetails.length === 0) {
+                return res.json({ status: 'error', message: 'Both PickUp & DropOff Details are required!' })
+            }
+
         let confirmpayment = path.join(__dirname, "../emailtemplate/confirmpaymentAdmin.ejs")
 
-        ejs.renderFile(confirmpayment, { user: "Sir/Madam", seat: seatdetails, trip: tripdetails[0], pnr: ticketpnr, amount: amount }, function (err, template) {
+        ejs.renderFile(confirmpayment, { user: "Sir/Madam",pickuptime: convertTo12HourFormat(pickupdetails[0].time), dropofftime: convertTo12HourFormat(dropoffdetails[0].time), pickup: pickupdetails[0], dropoff: dropoffdetails[0], seat: seatdetails, trip: tripdetails[0], pnr: ticketpnr, amount: amount }, function (err, template) {
             if (err) {
                 console.log("email temp", err)
                 return res.json({ status: "error", message: err.message })

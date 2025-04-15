@@ -158,7 +158,24 @@ tripRouter.get("/passenger/list/:id", async (req, res) => {
     }
     try {
         // const list = await SeatModel.find({ tripId: id });
-        const list = await SeatModel.aggregate([{ $match: { tripId: new mongoose.Types.ObjectId(id) } }, { $lookup: { from: 'trips', localField: 'tripId', foreignField: '_id', pipeline: [{ $project: { from: 1, to: 1, journeystartdate: 1, journeyenddate: 1, starttime: 1, endtime: 1 } }], as: 'tripdetails' } }])
+        const list = await SeatModel.aggregate([{ $match: { tripId: new mongoose.Types.ObjectId(id) } },
+        { $lookup: { from: 'trips', localField: 'tripId', foreignField: '_id', pipeline: [{ $project: { from: 1, to: 1, journeystartdate: 1, journeyenddate: 1, starttime: 1, endtime: 1 } }], as: 'tripdetails' } },
+         {
+            $lookup: {
+                from: 'busroutes',
+                localField: "pickup",
+                foreignField: "_id",
+                as: 'pickup'
+            }
+        },
+        {
+            $lookup: {
+                from: 'busroutes',
+                localField: "dropoff",
+                foreignField: "_id",
+                as: 'drop'
+            }
+        }])
         if (list.length === 0) {
             return res.json({ status: 'error', message: 'No Ticket Booked For This Trip' })
         } else {
@@ -212,7 +229,7 @@ tripRouter.get("/list", async (req, res) => {
         // const trips = await TripModel.find({ from: from, to: to, journeystartdate: date, disabled: false, cancelled: false })
         const trips = await TripModel.aggregate([
             {
-                $match: { from: from, to: to, journeystartdate:date,disabled:false,cancelled:false}
+                $match: { from: from, to: to, journeystartdate: date, disabled: false, cancelled: false }
             },
             {
                 $lookup: {
@@ -263,7 +280,7 @@ tripRouter.get("/list", async (req, res) => {
                 }
             }
         ]);
-        
+
         // Checking For Current Date If The Current Date & Date passed in Query is Same Return The list of trips based on timing or return all trip list.
         if (todayDate == date) {
             // const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > currentMinutes);
@@ -405,7 +422,25 @@ tripRouter.get("/booking/:id", async (req, res) => {
         if (trips.length === 0) {
             return res.json({ status: "error", message: "No Trip Found With This ID" })
         }
-        const seats = await SeatModel.find({ tripId: req.params.id })
+        // const seats = await SeatModel.find({ tripId: req.params.id })
+        const seats = await SeatModel.aggregate([{ $match: { tripId: new mongoose.Types.ObjectId(req.params.id) } },
+        {
+            $lookup: {
+                from: 'busroutes',
+                localField: "pickup",
+                foreignField: "_id",
+                as: 'pickup'
+            }
+        },
+        {
+            $lookup: {
+                from: 'busroutes',
+                localField: "dropoff",
+                foreignField: "_id",
+                as: 'drop'
+            }
+        }
+        ])
 
         const vehicle = await VehicleModel.find({ name: trips[0].busid })
 
