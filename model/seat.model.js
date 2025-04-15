@@ -45,6 +45,8 @@ const seatSchema = mongoose.Schema({
     pnr: String,
     totalamount: Number,
     platform: String,
+    pickup:ObjectId,
+    dropoff:ObjectId,
     tripId: {
         type: ObjectId,
         required: true

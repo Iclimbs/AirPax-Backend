@@ -100,7 +100,8 @@
         }
 
         h2 {
-            color: #2563eb; /* Changed from aqua to blue */
+            color: #2563eb;
+            /* Changed from aqua to blue */
             text-align: center;
             margin-top: 0;
             margin-bottom: 20px;
@@ -109,7 +110,8 @@
         }
 
         h3 {
-            color: #2563eb; /* Changed from aqua to blue */
+            color: #2563eb;
+            /* Changed from aqua to blue */
             margin-top: 25px;
             margin-bottom: 10px;
             font-size: 18px;
@@ -154,7 +156,8 @@
         }
 
         .footer a {
-            color: #2563eb; /* Changed from aqua to blue */
+            color: #2563eb;
+            /* Changed from aqua to blue */
             text-decoration: none;
         }
 
@@ -224,6 +227,20 @@
         }
     </style>
 </head>
+<script>
+    // Example 24-hour time
+    // let time24 = "18:45"; // 6:45 PM
+
+    function convertTo12Hour(time24) {
+        let [hours, minutes] = time24.split(":").map(Number);
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12; // Convert 0 -> 12
+        return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    }
+
+    // let time12 = convertTo12Hour(time24);
+    // document.getElementById("timeDisplay").textContent = "12-hour format: " + time12;
+</script>
 
 <body style="margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
     <!--[if mso]>
@@ -270,7 +287,8 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     From</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    Delhi Airport (Terminal 3 Arrival Forecourt, Near Pillar No. 10)
+                                    <%= pickup.counter %> - <%= pickup.location %>
+
                                 </td>
                             </tr>
                             <tr>
@@ -278,7 +296,8 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     To</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    Agra Lounge (Near Fatehabad Road, Agra)
+                                    <%= dropoff.counter %> - <%= dropoff.location %>
+
                                 </td>
                             </tr>
                             <tr>
@@ -294,7 +313,7 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     Scheduled Departure Time</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= trip.starttime %>
+                                    <%= to12Hour(pickup.time) %>
                                 </td>
                             </tr>
                             <tr>
@@ -302,7 +321,7 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     Scheduled Arrival Time</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= trip.endtime %>
+                                    <%= to12Hour(dropoff.time) %>
                                 </td>
                             </tr>
                         </table>
@@ -343,7 +362,8 @@
                                         style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                         First Name</th>
                                     <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.fname.charAt(0).toUpperCase() + seat.details.fname.slice(1).toLowerCase() %>
+                                        <%= seat.details.fname.charAt(0).toUpperCase() +
+                                            seat.details.fname.slice(1).toLowerCase() %>
                                     </td>
                                 </tr>
                                 <tr>
@@ -351,7 +371,8 @@
                                         style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                         Last Name</th>
                                     <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.lname.charAt(0).toUpperCase() + seat.details.lname.slice(1).toLowerCase() %>
+                                        <%= seat.details.lname.charAt(0).toUpperCase() +
+                                            seat.details.lname.slice(1).toLowerCase() %>
                                     </td>
                                 </tr>
                                 <tr>
@@ -367,7 +388,8 @@
                                         style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                         Gender</th>
                                     <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                        <%= seat.details.gender.charAt(0).toUpperCase() + seat.details.gender.slice(1).toLowerCase() %>
+                                        <%= seat.details.gender.charAt(0).toUpperCase() +
+                                            seat.details.gender.slice(1).toLowerCase() %>
                                     </td>
                                 </tr>
                                 <tr>
@@ -404,7 +426,8 @@
                                             style="color: #2563eb; text-decoration: none;">info@airpax.co</a> or call <a
                                             href="tel:+919990301111"
                                             style="color: #2563eb; text-decoration: none;">+91-9990301111</a>.<br>
-                                        For complaints or feedback, email us at <a href="mailto:feedback.igiairport@gmrgroup.in"
+                                        For complaints or feedback, email us at <a
+                                            href="mailto:feedback.igiairport@gmrgroup.in"
                                             style="color: #2563eb; text-decoration: none;">feedback.igiairport@gmrgroup.in</a>
                                         <br>Visit
                                         <a href="https://airpax.co/"
@@ -413,10 +436,12 @@
                                     <p style="margin-bottom: 15px;">Safe travels!</p>
                                     <div class="dual-logo">
                                         <span class="logo-container">
-                                            <img src="https://www.newdelhiairport.in/src/images/dial-logo-new.png?q=21042027-AZ" alt="DIAL Logo" class="logo-img">
+                                            <img src="https://www.newdelhiairport.in/src/images/dial-logo-new.png?q=21042027-AZ"
+                                                alt="DIAL Logo" class="logo-img">
                                         </span>
                                         <span class="logo-container">
-                                            <img src="https://www.airpax.co/assets/logo3.png" alt="Airpax Logo" class="logo-img">
+                                            <img src="https://www.airpax.co/assets/logo3.png" alt="Airpax Logo"
+                                                class="logo-img">
                                         </span>
                                     </div>
                                     <p style="font-weight: bold;">Best Regards,<br>DIAL & Airpax Team</p>

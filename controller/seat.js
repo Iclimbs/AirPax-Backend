@@ -26,7 +26,8 @@ const toProperCase = (word) => {
 };
 
 SeatRouter.post("/selectedseats", async (req, res) => {
-    const { userdetails, passengerdetails, tripId, totalamount, platform } = req.body
+    const { userdetails, passengerdetails, tripId, totalamount, platform, pickup, dropoff } = req.body
+
     // Generating Random Ticket PNR
     const ticketpnr = generateUniqueId({
         length: 10,
@@ -43,6 +44,8 @@ SeatRouter.post("/selectedseats", async (req, res) => {
             expireAt: Date.now() + 15 * 60 * 1000, // Lock for 15 minutes
             pnr: ticketpnr,
             platform: platform,
+            dropoff:dropoff,
+            pickup:pickup,
             details: {
                 fname: toProperCase(passengerdetails[index].fname),
                 lname: toProperCase(passengerdetails[index].lname),
@@ -265,17 +268,17 @@ SeatRouter.post("/booking/admin", AdminAuthentication, async (req, res) => {
             return res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
         }
         let confirmpayment = path.join(__dirname, "../emailtemplate/confirmpaymentAdmin.ejs")
-        
+
         ejs.renderFile(confirmpayment, { user: "Sir/Madam", seat: seatdetails, trip: tripdetails[0], pnr: ticketpnr, amount: amount }, function (err, template) {
             if (err) {
-                console.log("email temp",err)
+                console.log("email temp", err)
                 return res.json({ status: "error", message: err.message })
             } else {
                 const mailOptions = {
                     from: process.env.emailuser,
                     to: `${decoded.email}`,
                     cc: `${emails}`,
-                    bcc:process.env.imp_email,
+                    bcc: process.env.imp_email,
                     subject: `Booking Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                     html: template
                 }

@@ -6,14 +6,16 @@ const { PaymentModel } = require('../model/payment.model');
 const { UserModel } = require('../model/user.model');
 const ejs = require("ejs")
 const path = require('node:path');
-const puppeteer = require('puppeteer');
 const { transporter } = require('../service/transporter');
 const { BookingModel } = require('../model/booking.model');
+const { RoutesModel } = require('../model/routes.model');
 const PaymentRouter = express.Router()
 
 PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
     const { pnr, ref_no, mode } = req.params
     let emails = [];
+    let pickupid = "";
+    let dropoffid = "";
     const filter = { pnr: pnr };
     const update = {
         $set: { isBooked: true, expireAt: null, "details.status": "Confirmed" }
@@ -29,6 +31,12 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
     const bookedSeats = await SeatModel.find({ pnr: pnr, "details.status": "Confirmed" })
 
     for (let index = 0; index < bookedSeats.length; index++) {
+        if (pickupid === "") {
+            pickupid = bookedSeats[index].pickup
+        }
+        if (dropoffid === "") {
+            dropoffid = bookedSeats[index].dropoff
+        }
         if (emails.includes(bookedSeats[index].details?.email.toLowerCase()) === false) {
             emails.push(bookedSeats[index].details.email.toLowerCase())
         }
@@ -87,6 +95,8 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
         totaltime: tripdetails[0].totaltime,
         distance: tripdetails[0].distance,
         pnr,
+        pickupid,
+        dropoffid,
         seats: bookedseats,
         userid: userdetails[0]._id,
         tripId: tripdetails[0]._id
@@ -99,35 +109,30 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
             return res.json({ status: "error", message: `Failed To Save Booking Detail's ${error.message}` })
         }
     }
-    let confirmpayment = path.join(__dirname, "../emailtemplate/confirmpayment.ejs")
-    let ticket = path.join(__dirname, "../emailtemplate/ticket.ejs")
+    const pickupdetails = await RoutesModel.find({ _id: pickupid })
+    console.log("pickup", pickupdetails);
 
-    // const ticketpdf = await ejs.renderFile(ticket, { user: userdetails[0], seat: seatdetails, trip: tripdetails[0], payment: paymentdetails[0] });
-    ejs.renderFile(confirmpayment, { user: userdetails[0], seat: seatdetails, trip: tripdetails[0], payment: paymentdetails[0] }, async function (err, template) {
+    const dropoffdetails = await RoutesModel.find({ _id: dropoffid })
+    console.log("drop", dropoffdetails);
+
+    if (pickupdetails.length === 0 || dropoffdetails.length === 0) {
+        return res.json({ status: 'error', message: 'Both PickUp & DropOff Details are required!' })
+    }
+
+    let confirmpayment = path.join(__dirname, "../emailtemplate/confirmpayment.ejs")
+
+    ejs.renderFile(confirmpayment, { user: userdetails[0], seat: seatdetails, pickup: pickupdetails[0], dropoff: dropoffdetails[0], trip: tripdetails[0], payment: paymentdetails[0] }, async function (err, template) {
         if (err) {
             return res.json({ status: "error", message: err.message })
         } else {
-            // Launch Puppeteer to generate PDF from rendered HTML
-            // const browser = await puppeteer.launch();
-            // const page = await browser.newPage();
-            // await page.setContent(ticketpdf);
-            // const pdfBuffer = await page.pdf({ format: 'A4' });
-            // await browser.close();
 
             const mailOptions = {
                 from: process.env.emailuser,
                 to: `${userdetails[0].email}`,
                 cc: `${emails}`,
-                bcc:process.env.imp_email,
+                bcc: process.env.imp_email,
                 subject: `Booking Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                 html: template,
-                // attachments: [
-                //     {
-                //         filename: 'ticket.pdf',
-                //         content: pdfBuffer,
-                //         contentType: 'application/pdf'
-                //     }
-                // ]
             }
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
@@ -189,7 +194,7 @@ PaymentRouter.get("/failure/:pnr/:ref_no/:mode", async (req, res) => {
             const mailOptions = {
                 from: process.env.emailuser,
                 to: `${emails}`,
-                bcc:process.env.imp_email,
+                bcc: process.env.imp_email,
                 subject: `Booking Failed on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                 html: template
             }

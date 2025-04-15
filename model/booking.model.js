@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema.Types;
 const bookingSchema = mongoose.Schema({
     name: {
         type: String,
@@ -23,6 +24,14 @@ const bookingSchema = mongoose.Schema({
     busid: {
         type: String,
         required: true
+    },
+    pickupid:{
+        type:ObjectId,
+        required:true
+    },
+    dropoffid:{
+        type:ObjectId,
+        required:true
     },
     starttime: {
         type: String,
