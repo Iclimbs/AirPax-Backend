@@ -162,6 +162,59 @@ BusRoutesRouter.patch("/status/:id", async (req, res) => {
     }
 });
 
+// Getting List Of Pickup Counters For Different Bus Routes which are active
+BusRoutesRouter.get("/list/pickup/counters", async (req, res) => {
+    try {
+        const list = await RoutesModel.find({ status: true, purpose:'PickUp'});
+        let pickuplist = [];
+        for (let index = 0; index < list.length; index++) {
+            const found = pickuplist.some(el => el.location === list[index].location);
+            if (!found) pickuplist.push( list[index]);
+        }        
+        if (list.length === 0) {
+            return res.json({ status: 'error', message: 'Failed To Find Any Acitve Routes For Buses' })
+        } else {
+            return res.json({
+                status: 'success',
+                data: pickuplist
+            });
+        }
+    } catch (error) {
+        return res.json({
+            status: 'error',
+            message: `Failed to get details of bus route: ${error.message}`
+        });
+    }
+});
+
+// Getting List Of Pickup Counters For Different Bus Routes which are active
+BusRoutesRouter.get("/list/dropoff/counters/:id", async (req, res) => {
+    try {
+        const {id} = req.params
+        if (!id) {
+            return res.json({status:'error',message:'Id is required!'})
+        }
+        const list = await RoutesModel.find({ status: true, purpose:'DropOff',counter:{$ne:id}});
+        let dropofflist = [];
+        for (let index = 0; index < list.length; index++) {
+            const found = dropofflist.some(el => el.location === list[index].location);
+            if (!found) dropofflist.push( list[index]);
+        }        
+        if (list.length === 0) {
+            return res.json({ status: 'error', message: 'Failed To Find Any Acitve Routes For Buses' })
+        } else {
+            return res.json({
+                status: 'success',
+                data: dropofflist
+            });
+        }
+    } catch (error) {
+        return res.json({
+            status: 'error',
+            message: `Failed to get details of bus route: ${error.message}`
+        });
+    }
+});
 
 
 

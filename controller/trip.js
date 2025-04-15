@@ -209,8 +209,61 @@ tripRouter.get("/list", async (req, res) => {
     // const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     try {
-        const trips = await TripModel.find({ from: from, to: to, journeystartdate: date, disabled: false, cancelled: false })
-
+        // const trips = await TripModel.find({ from: from, to: to, journeystartdate: date, disabled: false, cancelled: false })
+        const trips = await TripModel.aggregate([
+            {
+                $match: { from: from, to: to, journeystartdate:date,disabled:false,cancelled:false}
+            },
+            {
+                $lookup: {
+                    from: 'busroutes',
+                    let: {
+                        fromCounter: '$from',
+                        startTime: '$starttime'
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$counter', '$$fromCounter'] },
+                                        { $eq: ['$purpose', 'PickUp'] },
+                                        { $eq: ['$status', true] },
+                                        { $eq: ['$commontime', '$$startTime'] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'pickup'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'busroutes',
+                    let: {
+                        toCounter: '$to',
+                        endTime: '$endtime'
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$counter', '$$toCounter'] },
+                                        { $eq: ['$purpose', 'DropOff'] },
+                                        { $eq: ['$status', true] },
+                                        { $eq: ['$time', '$$endTime'] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'drop'
+                }
+            }
+        ]);
+        
         // Checking For Current Date If The Current Date & Date passed in Query is Same Return The list of trips based on timing or return all trip list.
         if (todayDate == date) {
             // const upcomingEvents = trips.filter(item => timeToMinutes(item.starttime) > currentMinutes);
@@ -254,58 +307,58 @@ tripRouter.get("/detailone/:id", async (req, res) => {
         const { id } = req.params;
         const trips = await TripModel.aggregate([
             {
-              $match: { _id: new mongoose.Types.ObjectId(id) }
-            },
-            {
-              $lookup: {
-                from: 'busroutes',
-                let: {
-                  fromCounter: '$from',
-                  startTime: '$starttime'
-                },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: {
-                        $and: [
-                          { $eq: ['$counter', '$$fromCounter'] },
-                          { $eq: ['$purpose', 'PickUp'] },
-                          { $eq: ['$status', true] },
-                          { $eq: ['$commontime', '$$startTime'] }
-                        ]
-                      }
-                    }
-                  }
-                ],
-                as: 'pickup'
-              }
+                $match: { _id: new mongoose.Types.ObjectId(id) }
             },
             {
                 $lookup: {
-                  from: 'busroutes',
-                  let: {
-                    toCounter: '$to',
-                    endTime: '$endtime'
-                  },
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: {
-                          $and: [
-                            { $eq: ['$counter', '$$toCounter'] },
-                            { $eq: ['$purpose', 'DropOff'] },
-                            { $eq: ['$status', true] },
-                            { $eq: ['$time', '$$endTime'] }
-                          ]
+                    from: 'busroutes',
+                    let: {
+                        fromCounter: '$from',
+                        startTime: '$starttime'
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$counter', '$$fromCounter'] },
+                                        { $eq: ['$purpose', 'PickUp'] },
+                                        { $eq: ['$status', true] },
+                                        { $eq: ['$commontime', '$$startTime'] }
+                                    ]
+                                }
+                            }
                         }
-                      }
-                    }
-                  ],
-                  as: 'drop'
+                    ],
+                    as: 'pickup'
                 }
-              }
-          ]);
-          
+            },
+            {
+                $lookup: {
+                    from: 'busroutes',
+                    let: {
+                        toCounter: '$to',
+                        endTime: '$endtime'
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$counter', '$$toCounter'] },
+                                        { $eq: ['$purpose', 'DropOff'] },
+                                        { $eq: ['$status', true] },
+                                        { $eq: ['$time', '$$endTime'] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'drop'
+                }
+            }
+        ]);
+
         if (trips.length === 0) {
             return res.json({ status: "error", message: "No Trip Found With This ID" })
         }
