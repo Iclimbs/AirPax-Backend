@@ -227,20 +227,6 @@
         }
     </style>
 </head>
-<script>
-    // Example 24-hour time
-    // let time24 = "18:45"; // 6:45 PM
-
-    function convertTo12Hour(time24) {
-        let [hours, minutes] = time24.split(":").map(Number);
-        let ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12 || 12; // Convert 0 -> 12
-        return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
-    }
-
-    // let time12 = convertTo12Hour(time24);
-    // document.getElementById("timeDisplay").textContent = "12-hour format: " + time12;
-</script>
 
 <body style="margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
     <!--[if mso]>
@@ -313,7 +299,7 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     Scheduled Departure Time</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= to12Hour(pickup.time) %>
+                                    <%= pickuptime %>
                                 </td>
                             </tr>
                             <tr>
@@ -321,7 +307,7 @@
                                     style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd; background-color: #f0f0f0; color: #333333; width: 30%; font-weight: bold;">
                                     Scheduled Arrival Time</th>
                                 <td style="text-align: left; padding: 10px; border-bottom: 1px solid #dddddd;">
-                                    <%= to12Hour(dropoff.time) %>
+                                    <%= dropofftime %>
                                 </td>
                             </tr>
                         </table>

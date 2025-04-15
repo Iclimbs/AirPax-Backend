@@ -11,6 +11,15 @@ const { BookingModel } = require('../model/booking.model');
 const { RoutesModel } = require('../model/routes.model');
 const PaymentRouter = express.Router()
 
+const convertTo12HourFormat = (time24) => {
+    let [hours, minutes] = time24.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12 || 12; // convert '0' to '12'
+    return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
+}
+
+
 PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
     const { pnr, ref_no, mode } = req.params
     let emails = [];
@@ -109,11 +118,10 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
             return res.json({ status: "error", message: `Failed To Save Booking Detail's ${error.message}` })
         }
     }
+
     const pickupdetails = await RoutesModel.find({ _id: pickupid })
-    console.log("pickup", pickupdetails);
 
     const dropoffdetails = await RoutesModel.find({ _id: dropoffid })
-    console.log("drop", dropoffdetails);
 
     if (pickupdetails.length === 0 || dropoffdetails.length === 0) {
         return res.json({ status: 'error', message: 'Both PickUp & DropOff Details are required!' })
@@ -121,7 +129,7 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
 
     let confirmpayment = path.join(__dirname, "../emailtemplate/confirmpayment.ejs")
 
-    ejs.renderFile(confirmpayment, { user: userdetails[0], seat: seatdetails, pickup: pickupdetails[0], dropoff: dropoffdetails[0], trip: tripdetails[0], payment: paymentdetails[0] }, async function (err, template) {
+    ejs.renderFile(confirmpayment, { user: userdetails[0], seat: seatdetails, pickuptime: convertTo12HourFormat(pickupdetails[0].time), dropofftime: convertTo12HourFormat(dropoffdetails[0].time), pickup: pickupdetails[0], dropoff: dropoffdetails[0], trip: tripdetails[0], payment: paymentdetails[0] }, async function (err, template) {
         if (err) {
             return res.json({ status: "error", message: err.message })
         } else {
@@ -150,6 +158,12 @@ PaymentRouter.get("/success/:pnr/:ref_no/:mode", async (req, res) => {
 
 PaymentRouter.get("/failure/:pnr/:ref_no/:mode", async (req, res) => {
     const { pnr, ref_no, mode } = req.params;
+
+    let emails = [];
+    let tripId = "";
+    let pickupid = "";
+    let dropoffid = "";
+
     const filter = { pnr: pnr };
     const update = {
         $set: { isBooked: false, isLocked: false, expireAt: null, "details.status": "Failed" }
@@ -161,14 +175,21 @@ PaymentRouter.get("/failure/:pnr/:ref_no/:mode", async (req, res) => {
         return res.json({ status: "error", message: `Failed To Update Seat Status ${error.message}` })
     }
 
-    let emails = [];
-    let tripId;
+    // Get All Emails
 
     const bookedSeats = await SeatModel.find({ pnr: pnr, "details.status": "Failed" })
+    
     if (bookedSeats.length !== 0) {
         tripId = bookedSeats[0].tripId;
     }
+
     for (let index = 0; index < bookedSeats.length; index++) {
+        if (pickupid === "") {
+            pickupid = bookedSeats[index].pickup
+        }
+        if (dropoffid === "") {
+            dropoffid = bookedSeats[index].dropoff
+        }
         if (emails.includes(bookedSeats[index].details?.email.toLowerCase()) === false) {
             emails.push(bookedSeats[index].details.email.toLowerCase())
         }
@@ -186,8 +207,17 @@ PaymentRouter.get("/failure/:pnr/:ref_no/:mode", async (req, res) => {
     } catch (error) {
         return res.json({ status: "error", message: `Failed To Update Payment  Status ${error.message}` })
     }
+
+    const pickupdetails = await RoutesModel.find({ _id: pickupid })
+
+    const dropoffdetails = await RoutesModel.find({ _id: dropoffid })
+
+    if (pickupdetails.length === 0 || dropoffdetails.length === 0) {
+        return res.json({ status: 'error', message: 'Both PickUp & DropOff Details are required!' })
+    }
+
     let failedpayment = path.join(__dirname, "../emailtemplate/failedpayment.ejs")
-    ejs.renderFile(failedpayment, { user: "Sir/Madam", seat: bookedSeats, trip: tripdetails[0], payment: paymentdetails[0] }, function (err, template) {
+    ejs.renderFile(failedpayment, { user: "Sir/Madam", seat: bookedSeats,pickuptime: convertTo12HourFormat(pickupdetails[0].time), dropofftime: convertTo12HourFormat(dropoffdetails[0].time), pickup: pickupdetails[0], dropoff: dropoffdetails[0], trip: tripdetails[0], payment: paymentdetails[0] }, function (err, template) {
         if (err) {
             return res.json({ status: "error", message: err.message })
         } else {
