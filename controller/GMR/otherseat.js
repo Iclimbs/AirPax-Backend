@@ -7,7 +7,7 @@ const { PaymentModel } = require('../../model/payment.model');
 const OtherSeatRouter = express.Router()
 
 OtherSeatRouter.post("/selectedseats", async (req, res) => {
-    const { PrimaryUser, PassengerDetails, TripId, BookingRefId, Amount } = req.body
+    const { PrimaryUser, PassengerDetails, TripId, BookingRefId, Amount,pickupid,dropoffid } = req.body
     const ticketpnr = generateUniqueId({
         length: 10,
         useLetters: true,
@@ -22,6 +22,8 @@ OtherSeatRouter.post("/selectedseats", async (req, res) => {
             seatNumber: PassengerDetails[index].SeatNo, isLocked: true, tripId: TripId, bookedby: PrimaryUser.PhoneNo,
             expireAt: Date.now() + 15 * 60 * 1000, // Lock for 15 minutes
             pnr: ticketpnr,
+            pickup:pickupid,
+            dropoff:dropoffid,
             platform: "others",
             details: {
                 fname: PassengerDetails[index].Fname,
