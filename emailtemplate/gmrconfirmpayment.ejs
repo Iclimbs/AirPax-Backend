@@ -1,259 +1,765 @@
 <!DOCTYPE html>
 <html lang="en-US">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Airpax - Trip Confirmation Email</title>
     <style type="text/css">
-        /* Client-specific resets */
-        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-        img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; display: block; }
-        
-        /* Reset styles */
-        body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
-        
-        /* iOS blue links fix */
-        a[x-apple-data-detectors] {
-            color: inherit !important;
-            text-decoration: none !important;
-            font-size: inherit !important;
-            font-family: inherit !important;
-            font-weight: inherit !important;
-            line-height: inherit !important;
-        }
-        
-        /* Main styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            line-height: 1.5;
-        }
-        
-        .email-wrapper {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
+      /* Client-specific resets */
+      body,
+      table,
+      td,
+      a {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      table,
+      td {
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+      }
+      img {
+        -ms-interpolation-mode: bicubic;
+        border: 0;
+        height: auto;
+        line-height: 100%;
+        outline: none;
+        text-decoration: none;
+        display: block;
+      }
+
+      /* Reset styles */
+      body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+      }
+
+      /* iOS blue links fix */
+      a[x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+
+      /* Main styles */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        line-height: 1.5;
+      }
+
+      .email-wrapper {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .email-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #2a9d8f;
+        margin-top: 0;
+        text-align: center;
+        font-size: 24px;
+      }
+
+      p {
+        font-size: 16px;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+
+      .details-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 14px;
+        table-layout: fixed;
+      }
+
+      .details-table th,
+      .details-table td {
+        text-align: left;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .details-table th {
+        background-color: #f0f0f0;
+        color: #333;
+        width: 30%;
+      }
+
+      .footer {
+        text-align: center;
+        font-size: 12px;
+        color: #666;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+      }
+
+      .footer p {
+        margin: 5px 0;
+        font-size: 12px;
+      }
+
+      .logo-container {
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      /* Responsive styles */
+      @media screen and (max-width: 600px) {
         .email-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          width: 100% !important;
+          padding: 10px !important;
+          border-radius: 0 !important;
         }
-        
-        h2 {
-            color: #2a9d8f;
-            margin-top: 0;
-            text-align: center;
-            font-size: 24px;
-        }
-        
-        p {
-            font-size: 16px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        
-        .details-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 14px;
-            table-layout: fixed;
-        }
-        
         .details-table th,
         .details-table td {
-            text-align: left;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
+          display: block;
+          width: 100% !important;
+          box-sizing: border-box;
         }
-        
         .details-table th {
-            background-color: #f0f0f0;
-            color: #333;
-            width: 30%;
+          background-color: transparent;
+          padding-bottom: 0;
         }
-        
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #666;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+        .details-table tr {
+          margin-bottom: 15px;
+          display: block;
         }
-        
-        .footer p {
-            margin: 5px 0;
-            font-size: 12px;
+        h2 {
+          font-size: 24px !important;
         }
-        
-        .logo-container {
-            display: inline-block;
-            vertical-align: middle;
-        }
-        
-        /* Responsive styles */
-        @media screen and (max-width: 600px) {
-            .email-container {
-                width: 100% !important;
-                padding: 10px !important;
-                border-radius: 0 !important;
-            }
-            .details-table th,
-            .details-table td {
-                display: block;
-                width: 100% !important;
-                box-sizing: border-box;
-            }
-            .details-table th {
-                background-color: transparent;
-                padding-bottom: 0;
-            }
-            .details-table tr {
-                margin-bottom: 15px;
-                display: block;
-            }
-            h2 {
-                font-size: 24px !important;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body style="margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    "
+  >
     <!--[if mso]>
-    <style type="text/css">
-        body, table, td {font-family: Arial, sans-serif !important;}
-        .logo-container {display: inline !important;}
-    </style>
+      <style type="text/css">
+        body,
+        table,
+        td {
+          font-family: Arial, sans-serif !important;
+        }
+        .logo-container {
+          display: inline !important;
+        }
+      </style>
     <![endif]-->
-    
+
     <!-- Email wrapper -->
-    <table role="presentation" class="email-wrapper" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
-        <tr>
-            <td style="padding: 20px 0;">
-                <!--[if mso]>
+    <table
+      role="presentation"
+      class="email-wrapper"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      align="center"
+      width="100%"
+    >
+      <tr>
+        <td style="padding: 20px 0">
+          <!--[if mso]>
                 <table role="presentation" align="center" border="0" cellspacing="0" cellpadding="0" width="600">
                 <tr>
                 <td>
                 <![endif]-->
-                
-                <div class="email-container" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                    <h2 style="color: #2a9d8f; margin-top: 0; text-align: center; font-size: 24px;">Payment Confirmed – Your Trip Details</h2>
-                    <p style="font-size: 16px; margin-bottom: 16px; text-align: center;">Dear <strong><%= user.name %></strong>,</p>
-                    <p style="font-size: 16px; margin-bottom: 16px; text-align: center;">We are excited to inform you that your payment has been successfully processed! Please find the details of your upcoming trip below. If you have any questions, feel free to reach out to our support team.</p>
 
-                    <h3 style="color: #2a9d8f; margin-top: 20px; margin-bottom: 10px; text-align: center; font-size: 18px;">Trip Details:</h3>
-                    <table class="details-table" style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; table-layout: fixed;">
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">From</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%= trip.from %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">To</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%= trip.to %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Journey Start Date</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%= trip.journeystartdate %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Journey End Date</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%= trip.journeyenddate %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Journey Start Time</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%= trip.starttime %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Journey End Time</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%= trip.endtime %></td>
-                        </tr>
-                    </table>
+          <div
+            class="email-container"
+            style="
+              width: 100%;
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: #fff;
+              padding: 20px;
+              border-radius: 8px;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <h2
+              style="
+                color: #2a9d8f;
+                margin-top: 0;
+                text-align: center;
+                font-size: 24px;
+              "
+            >
+              Payment Confirmed – Your Trip Details
+            </h2>
+            <p style="font-size: 16px; margin-bottom: 16px; text-align: center">
+              Dear <strong><%= user.name %></strong>,
+            </p>
+            <p style="font-size: 16px; margin-bottom: 16px; text-align: center">
+              We are excited to inform you that your payment has been
+              successfully processed! Please find the details of your upcoming
+              trip below. If you have any questions, feel free to reach out to
+              our support team.
+            </p>
 
-                    <h3 style="color: #2a9d8f; margin-top: 20px; margin-bottom: 10px; text-align: center; font-size: 18px;">Ticket Information:</h3>
-                    <table class="details-table" style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; table-layout: fixed;">
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">PNR Number</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><strong><%= pnr %></strong></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Total Amount</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%= amount %></td>
-                        </tr>
-                    </table>
+            <h3
+              style="
+                color: #2a9d8f;
+                margin-top: 20px;
+                margin-bottom: 10px;
+                text-align: center;
+                font-size: 18px;
+              "
+            >
+              Trip Details:
+            </h3>
+            <table
+              class="details-table"
+              style="
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 14px;
+                table-layout: fixed;
+              "
+            >
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  From
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%= pickup.counter %> - <%= pickup.location %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  To
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%= dropoff.counter %> - <%= dropoff.location %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Journey Start Date
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%= new
+                  Date(trip.journeystartdate).toLocaleDateString('en-GB') %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Journey End Date
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%= new Date(trip.journeyenddate).toLocaleDateString('en-GB')
+                  %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Scheduled Departure Time
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%= pickuptime %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Scheduled Arrival Time
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%= dropofftime %>
+                </td>
+              </tr>
+            </table>
 
-                    <h3 style="color: #2a9d8f; margin-top: 20px; margin-bottom: 10px; text-align: center; font-size: 18px;">Passenger Details:</h3>
-                    <% seat.forEach(function(seat) { %>
-                    <table class="details-table" style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; table-layout: fixed;">
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">First Name</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%=seat.Fname %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Last Name</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%=seat.Lname %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Age</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%=seat.Age %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Gender</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%=seat.Gender %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Seat No</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%=seat.SeatNo %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Phone No</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%=seat.PhoneNo %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Email</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%=seat.Email %></td>
-                        </tr>
-                        <tr>
-                            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd; background-color: #f0f0f0; color: #333; width: 30%;">Country</th>
-                            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #ddd;"><%=seat.Country %></td>
-                        </tr>
-                    </table>
-                    <% }); %>
+            <h3
+              style="
+                color: #2a9d8f;
+                margin-top: 20px;
+                margin-bottom: 10px;
+                text-align: center;
+                font-size: 18px;
+              "
+            >
+              Ticket Information:
+            </h3>
+            <table
+              class="details-table"
+              style="
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 14px;
+                table-layout: fixed;
+              "
+            >
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  PNR Number
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <strong><%= pnr %></strong>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Total Amount
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%= amount %>
+                </td>
+              </tr>
+            </table>
 
-                    <p style="font-size: 16px; margin-bottom: 16px; text-align: center;">If you need any further assistance, please feel free to contact us at <a href="mailto:info@airpax.co" style="color: #2a9d8f; text-decoration: none;">info@airpax.co</a> or call us at <a href="tel:+919990301111" style="color: #2a9d8f; text-decoration: none;">+919990301111</a>.</p>
+            <h3
+              style="
+                color: #2a9d8f;
+                margin-top: 20px;
+                margin-bottom: 10px;
+                text-align: center;
+                font-size: 18px;
+              "
+            >
+              Passenger Details:
+            </h3>
+            <% seat.forEach(function(seat) { %>
+            <table
+              class="details-table"
+              style="
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 14px;
+                table-layout: fixed;
+              "
+            >
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  First Name
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%=seat.Fname %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Last Name
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%=seat.Lname %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Age
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%=seat.Age %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Gender
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%=seat.Gender %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Seat No
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%=seat.SeatNo %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Phone No
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%=seat.PhoneNo %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Email
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%=seat.Email %>
+                </td>
+              </tr>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                    background-color: #f0f0f0;
+                    color: #333;
+                    width: 30%;
+                  "
+                >
+                  Country
+                </th>
+                <td
+                  style="
+                    text-align: left;
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                  "
+                >
+                  <%=seat.Country %>
+                </td>
+              </tr>
+            </table>
+            <% }); %>
 
-                    <p style="font-size: 16px; margin-bottom: 16px; text-align: center;">We wish you a pleasant and enjoyable trip!</p>
+            <p style="font-size: 16px; margin-bottom: 16px; text-align: center">
+              If you need any further assistance, please feel free to contact us
+              at
+              <a
+                href="mailto:info@airpax.co"
+                style="color: #2a9d8f; text-decoration: none"
+                >info@airpax.co</a
+              >
+              or call us at
+              <a
+                href="tel:+919990301111"
+                style="color: #2a9d8f; text-decoration: none"
+                >+919990301111</a
+              >.
+            </p>
 
-                    <p style="font-size: 16px; margin-bottom: 16px; text-align: center;">Best regards,</p>
-                    <p style="font-size: 16px; margin-bottom: 16px; text-align: center; font-weight: bold;">Airpax</p>
+            <p style="font-size: 16px; margin-bottom: 16px; text-align: center">
+              We wish you a pleasant and enjoyable trip!
+            </p>
 
-                    <div class="footer" style="text-align: center; font-size: 12px; color: #666; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-                        <p style="margin: 5px 0; font-size: 12px;"><strong>RIGI TRANS TECH PVT LTD</strong></p>
-                        <p style="margin: 5px 0; font-size: 12px;">PERNAM INN 837/1</p>
-                        <p style="margin: 5px 0; font-size: 12px;">MANDI ESTATE, NEW DELHI</p>
-                        <p style="margin: 5px 0; font-size: 12px;">110047</p>
-                        <p style="margin: 5px 0; font-size: 12px;">Email: <a href="mailto:info@airpax.co" style="color: #2a9d8f; text-decoration: none;">info@airpax.co</a> | Phone: <a href="tel:+919990301111" style="color: #2a9d8f; text-decoration: none;">+919990301111</a></p>
-                        <p style="margin: 5px 0; font-size: 12px;">
-                            <span class="logo-container" style="display: inline-block; vertical-align: middle;">
-                                <a href="https://airpax.co/" style="color: #2a9d8f; text-decoration: none;">
-                                    <img src="https://www.airpax.co/assets/logo3.png" alt="Airpax Logo" style="height: 20px; width: auto; vertical-align: middle; margin-right: 5px; border: 0; outline: none; text-decoration: none; display: inline-block;">
-                                </a>
-                            </span>
-                        </p>
-                    </div>
-                </div>
-            </td>
-        </tr>
+            <p style="font-size: 16px; margin-bottom: 16px; text-align: center">
+              Best regards,
+            </p>
+            <p
+              style="
+                font-size: 16px;
+                margin-bottom: 16px;
+                text-align: center;
+                font-weight: bold;
+              "
+            >
+              Airpax
+            </p>
+
+            <div
+              class="footer"
+              style="
+                text-align: center;
+                font-size: 12px;
+                color: #666;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #eee;
+              "
+            >
+              <p style="margin: 5px 0; font-size: 12px">
+                <strong>RIGI TRANS TECH PVT LTD</strong>
+              </p>
+              <p style="margin: 5px 0; font-size: 12px">PERNAM INN 837/1</p>
+              <p style="margin: 5px 0; font-size: 12px">
+                MANDI ESTATE, NEW DELHI
+              </p>
+              <p style="margin: 5px 0; font-size: 12px">110047</p>
+              <p style="margin: 5px 0; font-size: 12px">
+                Email:
+                <a
+                  href="mailto:info@airpax.co"
+                  style="color: #2a9d8f; text-decoration: none"
+                  >info@airpax.co</a
+                >
+                | Phone:
+                <a
+                  href="tel:+919990301111"
+                  style="color: #2a9d8f; text-decoration: none"
+                  >+919990301111</a
+                >
+              </p>
+              <p style="margin: 5px 0; font-size: 12px">
+                <span
+                  class="logo-container"
+                  style="display: inline-block; vertical-align: middle"
+                >
+                  <a
+                    href="https://airpax.co/"
+                    style="color: #2a9d8f; text-decoration: none"
+                  >
+                    <img
+                      src="https://www.airpax.co/assets/logo3.png"
+                      alt="Airpax Logo"
+                      style="
+                        height: 20px;
+                        width: auto;
+                        vertical-align: middle;
+                        margin-right: 5px;
+                        border: 0;
+                        outline: none;
+                        text-decoration: none;
+                        display: inline-block;
+                      "
+                    />
+                  </a>
+                </span>
+              </p>
+            </div>
+          </div>
+        </td>
+      </tr>
     </table>
-</body>
+  </body>
 </html>

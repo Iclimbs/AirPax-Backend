@@ -7,11 +7,29 @@ const { SeatModel } = require("../../model/seat.model")
 const { TripModel } = require("../../model/trip.model");
 const { PaymentModel } = require('../../model/payment.model');
 const { OtherUserModel } = require('../../model/Other.seat.model');
-const { BookingModel } = require('../../model/booking.model');
+const { RoutesModel } = require("../../model/routes.model")
 const OtherPaymentRouter = express.Router()
+
+// 1. Seat Model Update
+// 2. Payment Model Update
+// 3. Trip model Update
+// 4. GMR Seat Model Update
+
+
+
+const convertTo12HourFormat = (time24) => {
+    let [hours, minutes] = time24.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12 || 12; // convert '0' to '12'
+    return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
+}
+
 
 OtherPaymentRouter.get("/success/", async (req, res) => {
     const { pnr, ref, method } = req.query
+    let pickupid = "";
+    let dropoffid = "";
     const filter = { pnr: pnr };
     const update = {
         $set: { isBooked: true, expireAt: null, "details.status": "Confirmed" }
@@ -43,7 +61,13 @@ OtherPaymentRouter.get("/success/", async (req, res) => {
     let bookedseats = []
 
     for (let index = 0; index < seatdetails.length; index++) {
-        bookedseats.push(seatdetails[index].seatNumber)
+        if (pickupid === "") {
+            pickupid = seatdetails[index].pickup
+        }
+        if (dropoffid === "") {
+            dropoffid = seatdetails[index].dropoff
+        }
+        bookedseats.push(seatdetails[index].seatNumber);
     }
 
     // Getting Trip Detail's
@@ -68,22 +92,38 @@ OtherPaymentRouter.get("/success/", async (req, res) => {
         const userdata = await OtherUserModel.updateOne({ pnr: pnr }, { $set: { "passengerdetails.$[elem].status": "Confirmed" } }, {
             arrayFilters: [{ "elem.status": "Pending" }]
         })
-
     } catch (error) {
         return res.json({ status: "error", message: `Failed To Update Trip Booked Seat Details ${error.message}` })
     }
 
+    // Fetching User Detail's
     const userdetails = await OtherUserModel.find({ pnr: pnr })
+
+    // Fetching Trip Detail's
     const tripdetails = await TripModel.find({ _id: userdetails[0].tripId })
+
+    // Fetching Pickup Detail's
+    const pickupdetails = await RoutesModel.find({ _id: pickupid })
+
+    // Fetching DropOff Detail's
+    const dropoffdetails = await RoutesModel.find({ _id: dropoffid })
+
+
+    if (pickupdetails.length === 0 || dropoffdetails.length === 0) {
+        return res.json({ status: 'error', message: 'Both PickUp & DropOff Details are required!' })
+    }
+
+
+
     let Gmrconfirmpayment = path.join(__dirname, "../../emailtemplate/gmrconfirmpayment.ejs")
-    ejs.renderFile(Gmrconfirmpayment, { user: userdetails[0].primaryuser, seat: userdetails[0].passengerdetails, trip: tripdetails[0], pnr: userdetails[0].pnr, amount: userdetails[0].amount }, function (err, template) {
+    ejs.renderFile(Gmrconfirmpayment, { user: userdetails[0].primaryuser, pickuptime: convertTo12HourFormat(pickupdetails[0].time), dropofftime: convertTo12HourFormat(dropoffdetails[0].time), pickup: pickupdetails[0], dropoff: dropoffdetails[0], seat: userdetails[0].passengerdetails, trip: tripdetails[0], pnr: userdetails[0].pnr, amount: userdetails[0].amount }, function (err, template) {
         if (err) {
             return res.json({ status: "error", message: err.message })
         } else {
             const mailOptions = {
                 from: process.env.emailuser,
                 to: `${userdetails[0].primaryuser.email}`,
-                bcc:process.env.imp_email,
+                bcc: process.env.imp_email,
                 subject: `Booking Confirmation on AIRPAX, Bus: ${tripdetails[0].busid}, ${tripdetails[0].journeystartdate}, ${tripdetails[0].from} - ${tripdetails[0].to}`,
                 html: template
             }
