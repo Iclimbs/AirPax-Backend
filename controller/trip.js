@@ -478,17 +478,17 @@ tripRouter.get("/booking/:id", async (req, res) => {
 tripRouter.get("/assigned/conductor", AdminAuthentication, async (req, res) => {
     const token = req.headers.authorization.split(" ")[1]
     const decoded = jwt.verify(token, 'Authorization')
-    console.log("reached here for mtls ");
 
     const dateObj = new Date();
     // Creating Date
     const month = (dateObj.getUTCMonth() + 1) < 10 ? String(dateObj.getUTCMonth() + 1).padStart(2, '0') : dateObj.getUTCMonth() + 1 // months from 1-12
-    const day = dateObj.getUTCDate() < 10 ? String(dateObj.getUTCDate()).padStart(2, '0') : dateObj.getUTCDate()
+    const day = dateObj.getUTCDate() < 10 ? String(dateObj.getUTCDate()-1).padStart(2, '0') : dateObj.getUTCDate()-1
     const year = dateObj.getUTCFullYear();
     const newDate = year + "-" + month + "-" + day;
+    
 
     try {
-        const trip = await TripModel.find({ journeystartdate: { $gte: newDate }, conductor: decoded._id })
+        const trip = await TripModel.find({ journeystartdate: { $gte: newDate }, conductor: decoded._id }).sort({CreaatedAt:-1})
         if (trip.length > 0) {
             return res.json({ status: "success", data: trip })
         } else {
@@ -505,7 +505,7 @@ tripRouter.get("/assigned/driver", AdminAuthentication, async (req, res) => {
     const dateObj = new Date();
     // Creating Date
     const month = (dateObj.getUTCMonth() + 1) < 10 ? String(dateObj.getUTCMonth() + 1).padStart(2, '0') : dateObj.getUTCMonth() + 1 // months from 1-12
-    const day = dateObj.getUTCDate() < 10 ? String(dateObj.getUTCDate()).padStart(2, '0') : dateObj.getUTCDate()
+    const day = dateObj.getUTCDate() < 10 ? String(dateObj.getUTCDate()-1).padStart(2, '0') : dateObj.getUTCDate()-1
     const year = dateObj.getUTCFullYear();
     const newDate = year + "-" + month + "-" + day;
 
