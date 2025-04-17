@@ -36,7 +36,6 @@ const RefundAmountCalculator = (props) => {
 TicketRouter.post("/gmr/cancel", async (req, res) => {
     const { tripId, bookingRefId, pnr, cancelticket } = req.body;
     // Basic Detail's Requirements
-    let ticketcost = 0;
     let totalamount = 0;
     let journeytime = '';
     const currentDateTime = new Date();
@@ -61,7 +60,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
     }
 
     // Changing Seat Status in Seat Model     
-    const seatdetails = await SeatModel.find({ pnr: pnr, tripId: tripId })
+    const seatdetails = await SeatModel.find({ pnr: pnr, tripId: tripId, "details.status":'Confirmed'})
 
     if (seatdetails.length == 0) {
         return res.json({ status: "error", message: "No Seat Detail's Found Related to this Pnr" })
@@ -103,7 +102,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
     }
 
     // Getting Trip Details Like JourNey Data & Ticket Cost
-    ticketcost = tripdetails[0].price;
+    // ticketcost = tripdetails[0].price;
     let bookedseats = tripdetails[0].seatsbooked;
     let newseats = bookedseats.filter(seat => !cancelticket.includes(seat));
 
@@ -112,7 +111,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
     tripdetails[0].availableseats = tripdetails[0].totalseats - newseats.length
 
     try {
-        // await tripdetails[0].save()
+        await tripdetails[0].save()
     } catch (error) {
         return res.json({ status: "error", message: "Ticket Cancellation Process Failed " })
     }
@@ -137,7 +136,7 @@ TicketRouter.post("/gmr/cancel", async (req, res) => {
         let seat = ticketdetails[0].passengerdetails;
 
         let ticketcanceltemplate = path.join(__dirname, "../emailtemplate/gmrticketcancel.ejs")
-        ejs.renderFile(ticketcanceltemplate, { user: ticketdetails[0].primaryuser, pnr: pnr, seat: seat, trip: tripdetails[0], payment: paymentdetails[0], amount: refundamount }, function (err, template) {
+        ejs.renderFile(ticketcanceltemplate, { user: ticketdetails[0].primaryuser, pnr: pnr, seat: seat, trip: tripdetails[0], payment: paymentdetails[0], ticketcost: totalamount, refundamount: refundamount }, function (err, template) {
             if (err) {
                 return res.json({ status: "error", message: err.message })
             } else {
